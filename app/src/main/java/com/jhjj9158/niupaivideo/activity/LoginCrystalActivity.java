@@ -1,0 +1,221 @@
+package com.jhjj9158.niupaivideo.activity;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+
+import com.google.gson.Gson;
+import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.bean.LoginResultBean;
+import com.jhjj9158.niupaivideo.bean.UserBean;
+import com.jhjj9158.niupaivideo.utils.CacheUtils;
+import com.jhjj9158.niupaivideo.utils.CommonUtil;
+import com.jhjj9158.niupaivideo.utils.Contact;
+
+import java.io.IOException;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+public class LoginCrystalActivity extends AppCompatActivity {
+
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.name)
+    AutoCompleteTextView name;
+    @BindView(R.id.pwd)
+    EditText pwd;
+    @BindView(R.id.btn_login)
+    Button btnLogin;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    String jsonLogin = msg.obj.toString();
+                    CacheUtils.setString(LoginCrystalActivity.this, "userInfoJson", jsonLogin);
+                    Gson gson = new Gson();
+                    LoginResultBean loginResult = gson.fromJson(jsonLogin, LoginResultBean.class);
+                    CommonUtil.showTextToast(loginResult.getMsg(), LoginCrystalActivity.this);
+                    if (loginResult.getCode() == 100) {
+                        CacheUtils.setInt(LoginCrystalActivity.this, "useridx", loginResult
+                                .getData().get(0).getUseridx());
+                        finish();
+                    }
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
+        ButterKnife.bind(this);
+
+        toolbar.setTitle(R.string.title_activity_login);
+        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        toolbar.setNavigationIcon(R.drawable.ic_navigate_before);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        setSupportActionBar(toolbar);
+
+        initAutoComplete("history", name);
+
+        btnLogin.setClickable(false);
+
+        name.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                userIsEmpty();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                userIsEmpty();
+            }
+        });
+
+        pwd.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                userIsEmpty();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                userIsEmpty();
+            }
+        });
+    }
+
+    public void userIsEmpty() {
+        if (!TextUtils.isEmpty(name.getText()) && !TextUtils.isEmpty(pwd.getText())) {
+            btnLogin.setClickable(true);
+            btnLogin.setBackgroundColor(getResources().getColor(R.color.button_login_click));
+        } else {
+            btnLogin.setClickable(false);
+            btnLogin.setBackgroundColor(getResources().getColor(R.color.button_login));
+        }
+    }
+
+
+    @OnClick(R.id.btn_login)
+    public void onViewClicked() {
+        UserBean userBean = new UserBean();
+        userBean.setOpcode("UserLogin");
+        userBean.setUseridx(name.getText().toString());
+        userBean.setPassword(pwd.getText().toString());
+        userBean.setPlatformtype(0);
+
+        Gson gson = new Gson();
+        String jsonUser = gson.toJson(userBean);
+
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        RequestBody formBody = null;
+        try {
+            formBody = new FormBody.Builder()
+                    .add("user", CommonUtil.EncryptAsDoNet(jsonUser, Contact.KEY))
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Request request = new Request.Builder()
+                .url(Contact.USER_INFO)
+                .post(formBody)
+                .build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Message message = new Message();
+                message.obj = response.body().string();
+                message.what = 1;
+                handler.sendMessage(message);
+            }
+        });
+    }
+
+    private void initAutoComplete(String field, AutoCompleteTextView auto) {
+        SharedPreferences sp = getSharedPreferences("name_login", 0);
+        String longhistory = sp.getString("history", "nothing");
+        if (longhistory.equals("nothing"))
+            return;
+        String[] hisArrays = longhistory.split(",");
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, hisArrays);
+        //只保留最近的50条的记录
+        if (hisArrays.length > 50) {
+            String[] newArrays = new String[50];
+            System.arraycopy(hisArrays, 0, newArrays, 0, 50);
+            adapter = new ArrayAdapter<String>(this,
+                    android.R.layout.simple_dropdown_item_1line, newArrays);
+        }
+        auto.setAdapter(adapter);
+        auto.setDropDownHeight(350);
+        auto.setThreshold(1);
+        auto.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                AutoCompleteTextView view = (AutoCompleteTextView) v;
+                if (hasFocus) {
+                    view.showDropDown();
+                }
+            }
+        });
+    }
+
+    private void saveHistory(String field, AutoCompleteTextView auto) {
+        String text = auto.getText().toString();
+        SharedPreferences sp = getSharedPreferences("name_login", 0);
+        String longhistory = sp.getString(field, "nothing");
+        if (!longhistory.contains(text + ",")) {
+            StringBuilder sb = new StringBuilder(longhistory);
+            sb.insert(0, text + ",");
+            sp.edit().putString("history", sb.toString()).apply();
+        }
+
+    }
+}

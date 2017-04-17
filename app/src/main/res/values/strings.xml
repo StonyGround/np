@@ -1,0 +1,53 @@
+<resources>
+    <string name="app_name">NiuPai</string>
+
+    <string name="home">首页</string>
+    <string name="my">我的</string>
+    <!-- Login Start -->
+    <string name="login">登录</string>
+    <string name="title_activity_login">水晶直播登录</string>
+
+    <string name="login_name">请输入账号</string>
+    <string name="login_pwd">请输入6&#8211;10位的密码</string>
+    <string name="text_login">登录</string>
+    <string name="login_wechat">微信登录</string>
+    <string name="login_qq">QQ登录</string>
+    <string name="login_sina">微博登录</string>
+
+    <string name="login_happy">欢乐直播登录</string>
+    <string name="login_crystal">水晶直播登录</string>
+    <string name="agreement_1">登录即代表您同意</string>
+    <string name="agreement_2">使用协议和隐私政策</string>
+
+    <!--Login End-->
+
+    <string name="umeng_check_sign">检查签名</string>
+    <string name="umeng_check_sina">检查新浪</string>
+    <string name="umeng_check_wx">检查微信</string>
+    <string name="umeng_check_alipay">检查支付宝</string>
+    <string name="umeng_check_qq">检查qq</string>
+    <string name="umeng_check_fb">检查facebook</string>
+    <string name="umeng_check_vk">vkontakte</string>
+    <string name="umeng_choose_style">选择分享类型</string>
+    <string name="umeng_check_title">自检工具</string>
+
+    <!--FragmentMy Start-->
+    <string name="bio_default">签名:这个人很懒，什么都没有写。</string>
+
+    <string name="works_my">作品</string>
+    <string name="favorite_my">喜欢</string>
+    <string name="follow_my">关注</string>
+    <string name="fans_my">粉丝</string>
+    <string name="wallet_my">我的钱包</string>
+    <string name="make_money">去赚钱 ></string>
+
+    <string name="rmb_sign">¥</string>
+    <string name="money_my">10000</string>
+    <string name="withdraw">提现</string>
+    <string name="daily_redraw">每日奖励</string>
+    <string name="yuan">元</string>
+    <string name="maked_today">今日已得</string>
+    <string name="tv_msg">消息</string>
+    <string name="tv_setting">设置</string>
+    <!--FragmentMy End-->
+</resources>
