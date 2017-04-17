@@ -92,9 +92,9 @@ public class FragmentHome extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        titles.add("hot");
-        titles.add("new");
-        titles.add("follow");
+        titles.add("热门");
+        titles.add("最新");
+        titles.add("关注");
         fragmentList.add(new FragmentHot());
         fragmentList.add(new FragmentNew());
         fragmentList.add(new FragmentFollow());

@@ -270,7 +270,7 @@ public class QuickLoignActivity extends AppCompatActivity {
                 }
             });
         }
-        if(CacheUtils.getInt(QuickLoignActivity.this,"useridx")==0){
+        if(CacheUtils.getInt(QuickLoignActivity.this,"useridx")!=0){
             finish();
         }
     }

@@ -126,7 +126,9 @@ public class FragmentMy extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
+        if(CacheUtils.getInt(getActivity(),"useridx")==0){
+           return;
+        }
         getUserInfo();
         getUserDate();
     }

@@ -1,5 +1,6 @@
 package com.jhjj9158.niupaivideo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.VideoActivity;
 import com.jhjj9158.niupaivideo.adapter.AdapterHomeRecyler;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.utils.Contact;
@@ -65,23 +67,24 @@ public class FragmentHot extends Fragment {
 
     private void setHotData(String json) {
         Gson gson = new Gson();
-        List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
+        final List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
         AdapterHomeRecyler adapterHomeRecyler = new AdapterHomeRecyler(getActivity(), resultBeanList);
+        adapterHomeRecyler.setOnItemClickListener(new AdapterHomeRecyler.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, IndexBean.ResultBean data) {
+                Intent intent=new Intent(getActivity(), VideoActivity.class);
+                intent.putExtra("video",data);
+                startActivity(intent);
+            }
+        });
         recyclerview.setAdapter(adapterHomeRecyler);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.e("FragmentHot","onCreate");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
-        Log.e("FragmentHot","onCreateView");
         View view = inflater.inflate(R.layout.tab_hot, container, false);
         unbinder = ButterKnife.bind(this, view);
 
@@ -102,7 +105,7 @@ public class FragmentHot extends Fragment {
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .INDEX + "?type=1&uidx=1&begin=1&num=10&vid=0&aes=false");
+                .INDEX + "?type=1&uidx=1&begin=1&num=100&vid=0&aes=false");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);
@@ -125,15 +128,8 @@ public class FragmentHot extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        Log.e("FragmentHot","onResume");
-        super.onResume();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         unbinder.unbind();
-        Log.e("FragmentHot","onDestroyView");
     }
 }
