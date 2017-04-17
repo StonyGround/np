@@ -20,6 +20,8 @@ import com.jhjj9158.niupaivideo.bean.TabTitleBean;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +63,7 @@ public class FragmentHome extends Fragment {
                 case 1:
                     Gson gson = new Gson();
                     resultBeanList = gson.fromJson(json, TabTitleBean.class).getResult();
-//                    for (int i = 0; i < resultBeanList.size(); i++) {
+                    for (int i = 0; i < resultBeanList.size(); i++) {
                         titles.add(new String(Base64.decode(resultBeanList.get(0).getVrname()
                                 .getBytes(), Base64.DEFAULT)));
 
@@ -74,8 +76,8 @@ public class FragmentHome extends Fragment {
                                 .getVrid().getBytes(), Base64.DEFAULT)));
                         fragmentDynamic.setArguments(bundle);
                         transaction.commit();
-                        fragmentList.add(new FragmentDynamic());
-//                    }
+                        fragmentList.add(fragmentDynamic);
+                    }
                     TabFragmentAdapter tabFragmentAdapter = new TabFragmentAdapter(getFragmentManager(),
                             fragmentList, titles);
                     viewpager.setAdapter(tabFragmentAdapter);
@@ -96,6 +98,7 @@ public class FragmentHome extends Fragment {
         fragmentList.add(new FragmentHot());
         fragmentList.add(new FragmentNew());
         fragmentList.add(new FragmentFollow());
+
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
@@ -126,12 +129,6 @@ public class FragmentHome extends Fragment {
             savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         unbinder = ButterKnife.bind(this, view);
-
-
-//        fragmentList.add(new FragmentHot());
-//        fragmentList.add(new FragmentNew());
-
-
 
 //        tabLayout.post(new Runnable() {
 //            @Override

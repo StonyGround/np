@@ -6,8 +6,10 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.adapter.AdapterHomeRecyler;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
 
 import java.io.IOException;
 import java.util.List;
@@ -83,7 +86,13 @@ public class FragmentHot extends Fragment {
         unbinder = ButterKnife.bind(this, view);
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerview.setLayoutManager(mLinearLayoutManager);
+        RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(2,
+                StaggeredGridLayoutManager.VERTICAL);
+        recyclerview.setLayoutManager(layoutManager);
+
+        recyclerview.addItemDecoration(new GridSpacingItemDecoration(2,10,true));
+        recyclerview.setItemAnimator(new DefaultItemAnimator());
+        recyclerview.setHasFixedSize(true);
 
         swipeRefresh.setColorSchemeResources(R.color.button_login_click);
         swipeRefresh.setProgressViewOffset(false, 0, (int) TypedValue

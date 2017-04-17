@@ -94,9 +94,6 @@ public class FragmentDynamic extends Fragment {
         Bundle bundle = getArguments();
         String type = "0";
         if (bundle != null) {
-            Log.e("FragmentDynamic", Contact.HOST + Contact.TAB_DYNAMIC + "?vrtype=" + type +
-                    "&uidx=" + CacheUtils.getInt(getActivity(),
-                    "useridx") + "&begin=1&num=10&vid=0&aes=false");
             type = bundle.getString("type");
         }
 

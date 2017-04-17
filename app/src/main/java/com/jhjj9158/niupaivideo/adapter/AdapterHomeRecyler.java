@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +95,8 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (viewHolder instanceof Holder) {
             String videoPic = new String(Base64.decode(data.getVideoPicUrl().getBytes(),
                     Base64.DEFAULT));
-            Glide.with(context).load(videoPic).into(((Holder) viewHolder).iv_video);
+            Picasso.with(context).load(videoPic).into(((Holder) viewHolder).iv_video);
+//            Glide.with(context).load(videoPic).into(((Holder) viewHolder).iv_video);
 
             if (mListener == null) return;
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
