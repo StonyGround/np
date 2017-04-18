@@ -47,7 +47,12 @@ public class VideoActivity extends AppCompatActivity {
         videoView.setVideoURI(Uri.parse(videoUrl));
 //        videoView.setMediaController(mMediaController);
 //        videoView.setHudView(hudView);
-        videoView.start();
+        videoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(IMediaPlayer mp) {
+                videoView.start();
+            }
+        });
     }
 
     @Override

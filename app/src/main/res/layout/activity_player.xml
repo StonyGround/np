@@ -1,22 +1,39 @@
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- The main content view -->
-    <!--<FrameLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:background="@color/umeng_blue">-->
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical">-->
 
-    <com.jhjj9158.niupaivideo.widget.IjkVideoView
-        android:id="@+id/video_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        <com.jhjj9158.niupaivideo.widget.MyDrawLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/drawer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/black">
 
-    </com.jhjj9158.niupaivideo.widget.IjkVideoView>
 
-    <!--</FrameLayout>-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/umeng_blue">
 
-</android.support.v4.widget.DrawerLayout>
+                <com.jhjj9158.niupaivideo.widget.IjkVideoView
+                    android:id="@+id/video_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </com.jhjj9158.niupaivideo.widget.IjkVideoView>
+
+            </RelativeLayout>
+        </com.jhjj9158.niupaivideo.widget.MyDrawLayout>
+
+
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginTop="30dp"-->
+            <!--android:text="test" />-->
+    <!--</LinearLayout>-->
+</ScrollView>

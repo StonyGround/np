@@ -233,6 +233,8 @@ public class IjkVideoView extends FrameLayout implements MediaController.MediaPl
             }
             case RENDER_SURFACE_VIEW: {
                 SurfaceRenderView renderView = new SurfaceRenderView(getContext());
+//                renderView.setAspectRatio(IRenderView.AR_16_9_FIT_PARENT);
+//                renderView.setVideoSize(mMediaPlayer.getVideoWidth(), mMediaPlayer.getVideoHeight());
                 setRenderView(renderView);
                 break;
             }

@@ -19,6 +19,7 @@ package com.jhjj9158.niupaivideo.widget;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 
 import com.jhjj9158.niupaivideo.R;
@@ -72,8 +73,8 @@ public final class MeasureHelper {
      * @param heightMeasureSpec
      */
     public void doMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        //Log.i("@@@@", "onMeasure(" + MeasureSpec.toString(widthMeasureSpec) + ", "
-        //        + MeasureSpec.toString(heightMeasureSpec) + ")");
+        Log.i("@@@@", "onMeasure(" + View.MeasureSpec.toString(widthMeasureSpec) + ", "
+                + View.MeasureSpec.toString(heightMeasureSpec) + ")");
         if (mVideoRotationDegree == 90 || mVideoRotationDegree == 270) {
             int tempSpec = widthMeasureSpec;
             widthMeasureSpec  = heightMeasureSpec;
