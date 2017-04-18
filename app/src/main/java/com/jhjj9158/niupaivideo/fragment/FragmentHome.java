@@ -70,8 +70,6 @@ public class FragmentHome extends Fragment {
                         fragmentDynamic = new FragmentDynamic();
                         transaction = getFragmentManager().beginTransaction();
                         Bundle bundle = new Bundle();
-                        Log.e("FragmentHome",new String(Base64.decode(resultBeanList.get(0)
-                                        .getVrid().getBytes(), Base64.DEFAULT)));
                         bundle.putString("type", new String(Base64.decode(resultBeanList.get(0)
                                 .getVrid().getBytes(), Base64.DEFAULT)));
                         fragmentDynamic.setArguments(bundle);

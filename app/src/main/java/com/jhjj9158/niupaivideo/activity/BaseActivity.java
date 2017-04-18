@@ -15,28 +15,30 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    @BindView(R.id.toolbar)
+    //    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.ll_child_content)
+    //    @BindView(R.id.ll_child_content)
     LinearLayout llChildContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-        ButterKnife.bind(this);
+
+        llChildContent = (LinearLayout) findViewById(R.id.ll_child_content);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         View child = getChildView();
-        if (child != null) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, -1);
-            llChildContent.addView(child, params);
-        }
+        ButterKnife.bind(this, child);
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, -1);
+        llChildContent.addView(child, params);
     }
 
     protected abstract View getChildView();
 
-    protected void setTitle(final Activity activity, String title){
+    protected void setTitle(final Activity activity, String title) {
         toolbar.setTitle(title);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         toolbar.setNavigationIcon(R.drawable.ic_navigate_before);
