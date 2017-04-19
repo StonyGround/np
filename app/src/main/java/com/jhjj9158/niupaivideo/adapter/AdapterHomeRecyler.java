@@ -19,6 +19,8 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.squareup.picasso.Picasso;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -95,8 +97,32 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (viewHolder instanceof Holder) {
             String videoPic = new String(Base64.decode(data.getVideoPicUrl().getBytes(),
                     Base64.DEFAULT));
+            String headImage = new String(Base64.decode(data.getHeadphoto().getBytes(),
+                    Base64.DEFAULT));
+            if (!headImage.contains("http")) {
+                headImage = "http://" + headImage;
+            }
+            String createTime = new String(Base64.decode(data.getCreateTime().getBytes(),
+                    Base64.DEFAULT));
+            String videoSize = data.getVideoSize();
+            if (videoSize.length() > 3) {
+                videoSize = videoSize.substring(0, 4) + "M";
+            }
+            String videoDesc = null;
+            try {
+                videoDesc = URLDecoder.decode(new String(Base64.decode(data.getDescriptions()
+                        .getBytes(), Base64.DEFAULT)), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
             Picasso.with(context).load(videoPic).into(((Holder) viewHolder).iv_video);
-//            Glide.with(context).load(videoPic).into(((Holder) viewHolder).iv_video);
+            if (!headImage.equals("")) {
+                Picasso.with(context).load(headImage).into(((Holder) viewHolder).iv_head);
+            }
+            ((Holder) viewHolder).tv_video_ago.setText(createTime);
+            ((Holder) viewHolder).tv_video_size.setText(videoSize);
+            ((Holder) viewHolder).tv_video_desc.setText(videoDesc);
 
             if (mListener == null) return;
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -122,11 +148,19 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
     class Holder extends RecyclerView.ViewHolder {
 
         ImageView iv_video;
+        ImageView iv_head;
+        TextView tv_video_ago;
+        TextView tv_video_size;
+        TextView tv_video_desc;
 
         public Holder(View itemView) {
             super(itemView);
             if (itemView == mHeaderView) return;
             iv_video = (ImageView) itemView.findViewById(R.id.iv_video);
+            iv_head = (ImageView) itemView.findViewById(R.id.iv_head);
+            tv_video_ago = (TextView) itemView.findViewById(R.id.tv_video_ago);
+            tv_video_size = (TextView) itemView.findViewById(R.id.tv_video_size);
+            tv_video_desc = (TextView) itemView.findViewById(R.id.tv_video_desc);
         }
     }
 

@@ -16,7 +16,6 @@ import javax.crypto.spec.IvParameterSpec;
 
 public class CommonUtil {
 
-    //加密
     public static String DecryptDoNet(String message, String key)
             throws Exception {
         byte[] bytesrc = Base64.decode(message.getBytes(), Base64.DEFAULT);
@@ -30,7 +29,6 @@ public class CommonUtil {
         return new String(retByte);
     }
 
-    // 解密
     public static String EncryptAsDoNet(String message, String key)
             throws Exception {
         Cipher cipher = Cipher.getInstance("DES/CBC/PKCS5Padding");

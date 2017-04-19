@@ -2,22 +2,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="vertical">-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <com.jhjj9158.niupaivideo.widget.MyDrawLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/black">
-
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/umeng_blue">
 
                 <com.jhjj9158.niupaivideo.widget.IjkVideoView
                     android:id="@+id/video_view"
@@ -26,14 +20,13 @@
 
                 </com.jhjj9158.niupaivideo.widget.IjkVideoView>
 
-            </RelativeLayout>
         </com.jhjj9158.niupaivideo.widget.MyDrawLayout>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="test" />
 
-        <!--<TextView-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginTop="30dp"-->
-            <!--android:text="test" />-->
-    <!--</LinearLayout>-->
+    </LinearLayout>
 </ScrollView>

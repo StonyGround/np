@@ -10,6 +10,7 @@ public class Contact {
 
     public static final String KEY = "q0m3sd81";
 
+    public static final String AES_KEY = "192c96beaec59d367329c700016e7a50f";
 
     public static final String USER_INFO = "http://down.tiange.com/NiupatInterface.aspx";
 

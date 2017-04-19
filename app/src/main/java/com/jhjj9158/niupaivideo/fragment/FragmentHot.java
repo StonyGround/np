@@ -7,10 +7,10 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -22,6 +22,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.activity.VideoActivity;
 import com.jhjj9158.niupaivideo.adapter.AdapterHomeRecyler;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
+import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
 
@@ -57,8 +58,9 @@ public class FragmentHot extends Fragment {
             String json = msg.obj.toString();
             switch (msg.what) {
                 case 1:
-                    Log.e("json", json);
-                    setHotData(json);
+                    String j = AESUtil.decrypt(Contact.AES_KEY, json);
+                    Log.e("hot", j+"========");
+//                    setHotData(json);
                     break;
             }
             super.handleMessage(msg);
@@ -69,12 +71,13 @@ public class FragmentHot extends Fragment {
         Gson gson = new Gson();
         final List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
-        AdapterHomeRecyler adapterHomeRecyler = new AdapterHomeRecyler(getActivity(), resultBeanList);
+        AdapterHomeRecyler adapterHomeRecyler = new AdapterHomeRecyler(getActivity(),
+                resultBeanList);
         adapterHomeRecyler.setOnItemClickListener(new AdapterHomeRecyler.OnItemClickListener() {
             @Override
             public void onItemClick(int position, IndexBean.ResultBean data) {
-                Intent intent=new Intent(getActivity(), VideoActivity.class);
-                intent.putExtra("video",data);
+                Intent intent = new Intent(getActivity(), VideoActivity.class);
+                intent.putExtra("video", data);
                 startActivity(intent);
             }
         });
@@ -93,10 +96,11 @@ public class FragmentHot extends Fragment {
                 StaggeredGridLayoutManager.VERTICAL);
         recyclerview.setLayoutManager(layoutManager);
 
-        recyclerview.addItemDecoration(new GridSpacingItemDecoration(2,10,true));
-        recyclerview.setItemAnimator(new DefaultItemAnimator());
+        recyclerview.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
+//        recyclerview.setItemAnimator(new DefaultItemAnimator());
         recyclerview.setHasFixedSize(true);
 
+        swipeRefresh.setEnabled(false);
         swipeRefresh.setColorSchemeResources(R.color.button_login_click);
         swipeRefresh.setProgressViewOffset(false, 0, (int) TypedValue
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getActivity().getResources()
@@ -105,7 +109,7 @@ public class FragmentHot extends Fragment {
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .INDEX + "?type=1&uidx=1&begin=1&num=100&vid=0&aes=false");
+                .INDEX + "?type=1&uidx=1&begin=1&num=100&vid=0");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);
@@ -129,6 +133,8 @@ public class FragmentHot extends Fragment {
 
     @Override
     public void onDestroyView() {
+        Log.e("FragmentHot", "onDestroyView");
+        swipeRefresh.setRefreshing(false);
         super.onDestroyView();
         unbinder.unbind();
     }

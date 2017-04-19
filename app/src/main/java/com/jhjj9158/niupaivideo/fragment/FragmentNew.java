@@ -1,5 +1,6 @@
 package com.jhjj9158.niupaivideo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.VideoActivity;
 import com.jhjj9158.niupaivideo.adapter.AdapterHomeRecyler;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.utils.Contact;
@@ -55,7 +57,6 @@ public class FragmentNew extends Fragment {
             String json = msg.obj.toString();
             switch (msg.what) {
                 case 1:
-                    Log.e("TabPageAdapter", json);
                     setHotData(json);
                     break;
             }
@@ -68,20 +69,26 @@ public class FragmentNew extends Fragment {
         List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
         AdapterHomeRecyler adapterHomeRecyler = new AdapterHomeRecyler(getActivity(), resultBeanList);
+        adapterHomeRecyler.setOnItemClickListener(new AdapterHomeRecyler.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, IndexBean.ResultBean data) {
+                Intent intent=new Intent(getActivity(), VideoActivity.class);
+                intent.putExtra("video",data);
+                startActivity(intent);
+            }
+        });
         recyclerview.setAdapter(adapterHomeRecyler);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("FragmentNew","onCreate");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
-        Log.e("FragmentNew","onCreateView");
         View view = inflater.inflate(R.layout.tab_hot, container, false);
         unbinder = ButterKnife.bind(this, view);
 
@@ -93,6 +100,7 @@ public class FragmentNew extends Fragment {
         recyclerview.setItemAnimator(new DefaultItemAnimator());
         recyclerview.setHasFixedSize(true);
 
+        swipeRefresh.setEnabled(false);
         swipeRefresh.setColorSchemeResources(R.color.button_login_click);
         swipeRefresh.setProgressViewOffset(false, 0, (int) TypedValue
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getActivity().getResources()

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+              android:layout_height="wrap_content"
+              xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -11,34 +12,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <LinearLayout
+
+            <com.jhjj9158.niupaivideo.widget.ResizableImageView
+                android:id="@+id/iv_video"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_height="wrap_content"/>
+
+
+            <TextView
+                android:id="@+id/tv_video_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/iv_video"
+                android:textColor="@color/button_login"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:id="@+id/tv_video_ago"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_video"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/tv_video_size"
+                android:textColor="@color/button_login"
+                android:textSize="10sp"/>
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_head"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                app:civ_border_color="@color/white"
+                app:civ_border_width="1dp"
+                android:layout_alignBottom="@+id/tv_video_size"/>
+
+            <TextView
+                android:id="@+id/tv_video_desc"
+                android:padding="10dp"
+                android:layout_below="@+id/iv_head"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <com.jhjj9158.niupaivideo.widget.ResizableImageView
-                    android:id="@+id/iv_video"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:id="@+id/tv_video_size"
-                        android:layout_alignParentRight="true"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="2.4M"/>
-
-                    <TextView
-                        android:layout_toLeftOf="@+id/tv_video_size"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="1分钟"/>
-                </RelativeLayout>
-            </LinearLayout>
+                android:textColor="@color/tv_black_my"
+                android:textSize="14sp"/>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

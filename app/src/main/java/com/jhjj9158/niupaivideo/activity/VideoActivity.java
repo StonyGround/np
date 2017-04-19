@@ -31,7 +31,7 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player);
+        setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
 //        setTitle(this, "播放");
 
@@ -50,6 +50,13 @@ public class VideoActivity extends AppCompatActivity {
         videoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(IMediaPlayer mp) {
+                videoView.start();
+            }
+        });
+
+        videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(IMediaPlayer iMediaPlayer) {
                 videoView.start();
             }
         });

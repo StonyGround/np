@@ -1,5 +1,6 @@
 package com.jhjj9158.niupaivideo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.VideoActivity;
 import com.jhjj9158.niupaivideo.adapter.AdapterHomeRecyler;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
@@ -54,7 +56,6 @@ public class FragmentFollow extends Fragment {
             String json = msg.obj.toString();
             switch (msg.what) {
                 case 1:
-                    Log.e("TabPageAdapter", json);
                     setHotData(json);
                     break;
             }
@@ -67,6 +68,14 @@ public class FragmentFollow extends Fragment {
         List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
         AdapterHomeRecyler adapterHomeRecyler = new AdapterHomeRecyler(getActivity(), resultBeanList);
+        adapterHomeRecyler.setOnItemClickListener(new AdapterHomeRecyler.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position, IndexBean.ResultBean data) {
+                Intent intent=new Intent(getActivity(), VideoActivity.class);
+                intent.putExtra("video",data);
+                startActivity(intent);
+            }
+        });
         recyclerview.setAdapter(adapterHomeRecyler);
     }
 
@@ -92,6 +101,7 @@ public class FragmentFollow extends Fragment {
         recyclerview.setItemAnimator(new DefaultItemAnimator());
         recyclerview.setHasFixedSize(true);
 
+        swipeRefresh.setEnabled(false);
         swipeRefresh.setColorSchemeResources(R.color.button_login_click);
         swipeRefresh.setProgressViewOffset(false, 0, (int) TypedValue
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getActivity().getResources()

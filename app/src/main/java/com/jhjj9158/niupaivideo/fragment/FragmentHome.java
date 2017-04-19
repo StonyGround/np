@@ -76,7 +76,8 @@ public class FragmentHome extends Fragment {
                         transaction.commit();
                         fragmentList.add(fragmentDynamic);
                     }
-                    TabFragmentAdapter tabFragmentAdapter = new TabFragmentAdapter(getFragmentManager(),
+                    TabFragmentAdapter tabFragmentAdapter = new TabFragmentAdapter
+                            (getFragmentManager(),
                             fragmentList, titles);
                     viewpager.setAdapter(tabFragmentAdapter);
                     tabLayout.setupWithViewPager(viewpager);

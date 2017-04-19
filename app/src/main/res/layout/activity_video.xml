@@ -1,51 +1,33 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context="com.jhjj9158.niupaivideo.activity.VideoActivity">
+            android:layout_height="match_parent">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/umeng_blue">
+        android:orientation="vertical">
 
-        <com.jhjj9158.niupaivideo.widget.IjkVideoView
-            android:id="@+id/video_view"
+        <com.jhjj9158.niupaivideo.widget.MyDrawLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/drawer_layout"
             android:layout_width="match_parent"
-            android:layout_height="350dp"
-            android:layout_gravity="center">
+            android:layout_height="wrap_content"
+            android:background="@color/black">
 
-        </com.jhjj9158.niupaivideo.widget.IjkVideoView>
+            <com.jhjj9158.niupaivideo.widget.IjkVideoView
+                android:id="@+id/video_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </com.jhjj9158.niupaivideo.widget.IjkVideoView>
+
+        </com.jhjj9158.niupaivideo.widget.MyDrawLayout>
 
         <TextView
-            android:id="@+id/toast_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical"
-            android:background="@color/ijk_transparent_dark"
-            android:padding="16dp"
-            android:textSize="16sp"
-            android:visibility="gone"/>
+            android:layout_marginTop="30dp"
+            android:text="test"/>
 
-        <TableLayout
-            android:id="@+id/hud_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"
-            android:background="@color/ijk_transparent_dark"
-            android:padding="8dp"
-            android:visibility="gone"/>
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:background="@color/ijk_transparent_dark"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            tools:context=".toolbar_widget"/>
-    </RelativeLayout>
+    </LinearLayout>
 </ScrollView>

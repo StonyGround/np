@@ -77,7 +77,7 @@ public final class MeasureHelper {
                 + View.MeasureSpec.toString(heightMeasureSpec) + ")");
         if (mVideoRotationDegree == 90 || mVideoRotationDegree == 270) {
             int tempSpec = widthMeasureSpec;
-            widthMeasureSpec  = heightMeasureSpec;
+            widthMeasureSpec = heightMeasureSpec;
             heightMeasureSpec = tempSpec;
         }
 
@@ -92,7 +92,8 @@ public final class MeasureHelper {
             int heightSpecMode = View.MeasureSpec.getMode(heightMeasureSpec);
             int heightSpecSize = View.MeasureSpec.getSize(heightMeasureSpec);
 
-            if (widthSpecMode == View.MeasureSpec.AT_MOST && heightSpecMode == View.MeasureSpec.AT_MOST) {
+            if (widthSpecMode == View.MeasureSpec.AT_MOST && heightSpecMode == View.MeasureSpec
+                    .AT_MOST) {
                 float specAspectRatio = (float) widthSpecSize / (float) heightSpecSize;
                 float displayAspectRatio;
                 switch (mCurrentAspectRatio) {
@@ -155,7 +156,8 @@ public final class MeasureHelper {
                         }
                         break;
                 }
-            } else if (widthSpecMode == View.MeasureSpec.EXACTLY && heightSpecMode == View.MeasureSpec.EXACTLY) {
+            } else if (widthSpecMode == View.MeasureSpec.EXACTLY && heightSpecMode == View
+                    .MeasureSpec.EXACTLY) {
                 // the size is fixed
                 width = widthSpecSize;
                 height = heightSpecSize;

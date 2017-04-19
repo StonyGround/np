@@ -58,7 +58,8 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SurfaceRenderView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public SurfaceRenderView(Context context, AttributeSet attrs, int defStyleAttr, int
+            defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initView(context);
     }
@@ -194,7 +195,8 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView {
         private int mHeight;
 
         private WeakReference<SurfaceRenderView> mWeakSurfaceView;
-        private Map<IRenderCallback, Object> mRenderCallbackMap = new ConcurrentHashMap<IRenderCallback, Object>();
+        private Map<IRenderCallback, Object> mRenderCallbackMap = new
+                ConcurrentHashMap<IRenderCallback, Object>();
 
         public SurfaceCallback(@NonNull SurfaceRenderView surfaceView) {
             mWeakSurfaceView = new WeakReference<SurfaceRenderView>(surfaceView);
@@ -206,13 +208,15 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView {
             ISurfaceHolder surfaceHolder = null;
             if (mSurfaceHolder != null) {
                 if (surfaceHolder == null)
-                    surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(), mSurfaceHolder);
+                    surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(),
+                            mSurfaceHolder);
                 callback.onSurfaceCreated(surfaceHolder, mWidth, mHeight);
             }
 
             if (mIsFormatChanged) {
                 if (surfaceHolder == null)
-                    surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(), mSurfaceHolder);
+                    surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(),
+                            mSurfaceHolder);
                 callback.onSurfaceChanged(surfaceHolder, mFormat, mWidth, mHeight);
             }
         }
@@ -229,7 +233,8 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView {
             mWidth = 0;
             mHeight = 0;
 
-            ISurfaceHolder surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(), mSurfaceHolder);
+            ISurfaceHolder surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(),
+                    mSurfaceHolder);
             for (IRenderCallback renderCallback : mRenderCallbackMap.keySet()) {
                 renderCallback.onSurfaceCreated(surfaceHolder, 0, 0);
             }
@@ -243,7 +248,8 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView {
             mWidth = 0;
             mHeight = 0;
 
-            ISurfaceHolder surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(), mSurfaceHolder);
+            ISurfaceHolder surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(),
+                    mSurfaceHolder);
             for (IRenderCallback renderCallback : mRenderCallbackMap.keySet()) {
                 renderCallback.onSurfaceDestroyed(surfaceHolder);
             }
@@ -260,7 +266,8 @@ public class SurfaceRenderView extends SurfaceView implements IRenderView {
 
             // mMeasureHelper.setVideoSize(width, height);
 
-            ISurfaceHolder surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(), mSurfaceHolder);
+            ISurfaceHolder surfaceHolder = new InternalSurfaceHolder(mWeakSurfaceView.get(),
+                    mSurfaceHolder);
             for (IRenderCallback renderCallback : mRenderCallbackMap.keySet()) {
                 renderCallback.onSurfaceChanged(surfaceHolder, format, width, height);
             }

@@ -11,6 +11,10 @@ import android.view.View;
  */
 
 public class MyDrawLayout extends DrawerLayout {
+
+    private boolean isFirst = true;
+    private int height;
+
     public MyDrawLayout(Context context) {
         super(context);
     }
@@ -27,8 +31,19 @@ public class MyDrawLayout extends DrawerLayout {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 //        widthMeasureSpec = MeasureSpec.makeMeasureSpec(
 //                MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY);
+
+//        Log.e("heigh", heightMeasureSpec + "");
+//
+//        if (isFirst) {
+//            isFirst = false;
+//            height = heightMeasureSpec;
+//        }
+        Log.i("----", "onMeasure(" + View.MeasureSpec.toString(widthMeasureSpec) + ", "
+                + View.MeasureSpec.toString(heightMeasureSpec) + ")");
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                MeasureSpec.getSize(heightMeasureSpec), MeasureSpec.EXACTLY);
+                MeasureSpec.getSize(1400), MeasureSpec.EXACTLY);
+
+//
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
