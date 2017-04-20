@@ -119,6 +119,9 @@ public class FragmentMy extends Fragment {
         tvFollowNum.setText(String.valueOf(resultBean.getFollowNum()));
         tvFansNum.setText(String.valueOf(resultBean.getFansNum()));
         tvMsgNum.setText(String.valueOf(resultBean.getNewmessage()));
+        if(resultBean.getGender()==1){
+            ivGender.setImageResource(R.drawable.man);
+        }
     }
 
 
