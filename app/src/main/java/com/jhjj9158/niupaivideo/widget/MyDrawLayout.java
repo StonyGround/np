@@ -29,21 +29,12 @@ public class MyDrawLayout extends DrawerLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        widthMeasureSpec = MeasureSpec.makeMeasureSpec(
-//                MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY);
-
-//        Log.e("heigh", heightMeasureSpec + "");
-//
-//        if (isFirst) {
-//            isFirst = false;
-//            height = heightMeasureSpec;
-//        }
-        Log.i("----", "onMeasure(" + View.MeasureSpec.toString(widthMeasureSpec) + ", "
+        Log.i("onMeasure", "onMeasure(" + View.MeasureSpec.toString(widthMeasureSpec) + ", "
                 + View.MeasureSpec.toString(heightMeasureSpec) + ")");
-        heightMeasureSpec = MeasureSpec.makeMeasureSpec(
-                MeasureSpec.getSize(1400), MeasureSpec.EXACTLY);
 
-//
+        heightMeasureSpec = MeasureSpec.makeMeasureSpec(
+                MeasureSpec.getSize(widthMeasureSpec * 1400 / 1080), MeasureSpec.EXACTLY);
+
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 

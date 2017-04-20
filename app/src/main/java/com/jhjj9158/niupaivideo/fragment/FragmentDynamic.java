@@ -117,7 +117,7 @@ public class FragmentDynamic extends Fragment {
 
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
                 .TAB_DYNAMIC + "?vrtype=" + type + "&uidx=" + CacheUtils.getInt(getActivity(),
-                "useridx") + "&begin=1&num=10&vid=0&aes=false");
+                "useridx") + "&begin=1&num=100&vid=0&aes=false");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

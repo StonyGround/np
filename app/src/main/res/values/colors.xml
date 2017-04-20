@@ -26,5 +26,7 @@
     <color name="tv_black_my">#303030</color>
     <color name="tv_maked_num">#FFA700</color>
 
+    <color name="bg_video_bottom">#F1F1F1</color>
+
     <color name="ijk_transparent_dark">#77000000</color>
 </resources>

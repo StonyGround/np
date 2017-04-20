@@ -108,7 +108,7 @@ public class FragmentNew extends Fragment {
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .INDEX + "?type=2&uidx=1&begin=1&num=10&vid=0&aes=false");
+                .INDEX + "?type=2&uidx=1&begin=1&num=100&vid=0&aes=false");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

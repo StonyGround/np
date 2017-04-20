@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -27,6 +28,8 @@ import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 
 import butterknife.BindView;
@@ -58,9 +61,15 @@ public class FragmentHot extends Fragment {
             String json = msg.obj.toString();
             switch (msg.what) {
                 case 1:
-                    String j = AESUtil.decrypt(Contact.AES_KEY, json);
-                    Log.e("hot", j+"========");
-//                    setHotData(json);
+//                    Log.e("hot", json + "-------");
+//                    String j = null;
+//                    try {
+//                        j = new String(Base64.decode(json, Base64.DEFAULT),"utf-8");
+//                    } catch (UnsupportedEncodingException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Log.e("hot", j + "========");
+                    setHotData(json);
                     break;
             }
             super.handleMessage(msg);
@@ -97,7 +106,7 @@ public class FragmentHot extends Fragment {
         recyclerview.setLayoutManager(layoutManager);
 
         recyclerview.addItemDecoration(new GridSpacingItemDecoration(2, 10, true));
-//        recyclerview.setItemAnimator(new DefaultItemAnimator());
+        recyclerview.setItemAnimator(new DefaultItemAnimator());
         recyclerview.setHasFixedSize(true);
 
         swipeRefresh.setEnabled(false);
@@ -109,7 +118,7 @@ public class FragmentHot extends Fragment {
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .INDEX + "?type=1&uidx=1&begin=1&num=100&vid=0");
+                .INDEX + "?type=1&uidx=1&begin=1&num=100&vid=0&aes=false");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

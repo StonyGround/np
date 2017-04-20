@@ -295,6 +295,9 @@ public class IndexBean  {
             this.fromtype = fromtype;
         }
 
+        public ResultBean() {
+        }
+
         @Override
         public int describeContents() {
             return 0;
@@ -329,9 +332,6 @@ public class IndexBean  {
             dest.writeInt(this.fromtype);
         }
 
-        public ResultBean() {
-        }
-
         protected ResultBean(Parcel in) {
             this.vid = in.readInt();
             this.uidx = in.readInt();
@@ -360,7 +360,7 @@ public class IndexBean  {
             this.fromtype = in.readInt();
         }
 
-        public static final Parcelable.Creator<ResultBean> CREATOR = new Parcelable.Creator<ResultBean>() {
+        public static final Creator<ResultBean> CREATOR = new Creator<ResultBean>() {
             @Override
             public ResultBean createFromParcel(Parcel source) {
                 return new ResultBean(source);
