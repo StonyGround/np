@@ -142,7 +142,6 @@ public class VideoActivity extends AppCompatActivity {
                 videoView.start();
             }
         });
-
         videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(IMediaPlayer iMediaPlayer) {
