@@ -54,6 +54,7 @@
     <string name="input_comment">输入评论&#8230;</string>
     <string name="video_bottom">主播在欢乐直播等你哟~</string>
     <string name="tv_video_btn">点击前往</string>
+    <string name="tv_send_comment">发送</string>
 
     <!--Ijkplayer Start-->
     <string name="N_A">N/A</string>
