@@ -19,6 +19,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.bean.UserDetailBean;
 import com.jhjj9158.niupaivideo.bean.UserInfoBean;
 import com.jhjj9158.niupaivideo.bean.UserPostBean;
+import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
@@ -95,12 +96,10 @@ public class FragmentMy extends Fragment {
             String json = msg.obj.toString();
             switch (msg.what) {
                 case 1:
-                    Log.e("login", json);
                     setUserInfo(json);
                     break;
                 case 2:
-                    Log.e("login", json);
-                    setUserData(json);
+                    setUserData(AESUtil.decode(json));
                     break;
             }
             super.handleMessage(msg);
@@ -141,7 +140,7 @@ public class FragmentMy extends Fragment {
         OkHttpClient mOkHttpClient = new OkHttpClient();
         int uid = CacheUtils.getInt(getContext(), "useridx");
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .GET_USER_INFO + "?uidx=" + uid + "&password=1&aes=false");
+                .GET_USER_INFO + "?uidx=" + uid + "&password=1");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

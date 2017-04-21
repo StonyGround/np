@@ -22,6 +22,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.activity.VideoActivity;
 import com.jhjj9158.niupaivideo.adapter.AdapterHomeRecyler;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
+import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
@@ -56,7 +57,7 @@ public class FragmentDynamic extends Fragment {
             String json = msg.obj.toString();
             switch (msg.what) {
                 case 1:
-                    setHotData(json);
+                    setHotData(AESUtil.decode(json));
                     break;
             }
             super.handleMessage(msg);
@@ -117,7 +118,7 @@ public class FragmentDynamic extends Fragment {
 
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
                 .TAB_DYNAMIC + "?vrtype=" + type + "&uidx=" + CacheUtils.getInt(getActivity(),
-                "useridx") + "&begin=1&num=100&vid=0&aes=false");
+                "useridx") + "&begin=1&num=100&vid=0");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

@@ -45,7 +45,6 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.e("MainActivity", "onCreate");
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -101,12 +100,10 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e("MainActivity", "onResume");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("MainActivity", "onDestroy");
     }
 }

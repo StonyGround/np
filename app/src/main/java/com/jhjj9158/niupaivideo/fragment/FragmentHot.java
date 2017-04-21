@@ -61,15 +61,8 @@ public class FragmentHot extends Fragment {
             String json = msg.obj.toString();
             switch (msg.what) {
                 case 1:
-//                    Log.e("hot", json + "-------");
-//                    String j = null;
-//                    try {
-//                        j = new String(Base64.decode(json, Base64.DEFAULT),"utf-8");
-//                    } catch (UnsupportedEncodingException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Log.e("hot", j + "========");
-                    setHotData(json);
+                    String j = AESUtil.decode(json);
+                    setHotData(j);
                     break;
             }
             super.handleMessage(msg);
@@ -118,7 +111,7 @@ public class FragmentHot extends Fragment {
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .INDEX + "?type=1&uidx=1&begin=1&num=100&vid=0&aes=false");
+                .INDEX + "?type=1&uidx=1&begin=1&num=100&vid=0");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

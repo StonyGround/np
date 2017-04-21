@@ -1,8 +1,15 @@
 package com.jhjj9158.niupaivideo.utils;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.Base64;
 import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.UUID;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -43,12 +50,48 @@ public class CommonUtil {
 
 
     public static void showTextToast(String msg, Context context) {
-        Toast toast=null;
+        Toast toast = null;
         if (toast == null) {
             toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
         } else {
             toast.setText(msg);
         }
         toast.show();
+    }
+
+
+    private static String sID = null;
+
+    private static final String INSTALLATION = "INSTALLATION";
+
+    public synchronized static String getDeviceID(Context context) {
+        if (sID == null) {
+            File installation = new File(context.getFilesDir(), INSTALLATION);
+            try {
+                if (!installation.exists())
+                    writeInstallationFile(installation);
+                sID = readInstallationFile(installation);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return sID;
+
+    }
+
+    private static String readInstallationFile(File installation) throws IOException {
+        RandomAccessFile f = new RandomAccessFile(installation, "r");
+        byte[] bytes = new byte[(int) f.length()];
+        f.readFully(bytes);
+        f.close();
+        return new String(bytes);
+    }
+
+    private static void writeInstallationFile(File installation) throws IOException {
+        FileOutputStream out = new FileOutputStream(installation);
+        String id = UUID.randomUUID().toString();
+        out.write(id.getBytes());
+        out.close();
+
     }
 }

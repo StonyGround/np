@@ -26,6 +26,7 @@ public class Contact {
     public static final String HOST = "http://service.quliao.com/";
     public static final String GET_USER_INFO = "user/GetUserInfo";
     public static final String INDEX = "works/getIndexRankVideo";
-    public static final String TAB_TITLE = "works/getVRVedioType?aes=false";
+    public static final String TAB_TITLE = "works/getVRVedioType";
     public static final String TAB_DYNAMIC = "works/getVRVideoInfo";
+    public static final String VIDEO_FOLLOW = "works/addVideoinfoIsreport";
 }

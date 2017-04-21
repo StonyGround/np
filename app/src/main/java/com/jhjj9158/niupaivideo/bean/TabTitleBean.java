@@ -2,7 +2,7 @@ package com.jhjj9158.niupaivideo.bean;
 
 import java.util.List;
 
-/**
+/**动态tab
  * Created by pc on 17-4-17.
  */
 

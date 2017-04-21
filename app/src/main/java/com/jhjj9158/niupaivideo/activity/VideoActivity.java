@@ -1,5 +1,6 @@
 package com.jhjj9158.niupaivideo.activity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,7 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -16,12 +19,22 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.Settings;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.bean.VideoDetailBean;
+import com.jhjj9158.niupaivideo.bean.VideoIsFollowBean;
+import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
+import com.jhjj9158.niupaivideo.utils.CommonUtil;
+import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.AndroidMediaController;
 import com.jhjj9158.niupaivideo.widget.IjkVideoView;
+import com.jhjj9158.niupaivideo.widget.MyDrawLayout;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +50,10 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class VideoActivity extends AppCompatActivity {
 
+    private static final int VIDEO_INFO = 1;
+    private static final int IS_FOLLOW = 2;
+    private static final int VIDEO_FOLLOW = 3;
+
     @BindView(R.id.video_view)
     IjkVideoView videoView;
     @BindView(R.id.video_back)
@@ -51,23 +68,81 @@ public class VideoActivity extends AppCompatActivity {
     CircleImageView ivHeadImage;
     @BindView(R.id.btn_video_bottom)
     TextView btnVideoBottom;
+    @BindView(R.id.tv_send_comment)
+    TextView tvSendComment;
+    @BindView(R.id.rl_comment)
+    RelativeLayout rlComment;
+    @BindView(R.id.et_comment)
+    EditText etComment;
+    @BindView(R.id.drawer_layout)
+    MyDrawLayout drawerLayout;
+    @BindView(R.id.video_user_name)
+    TextView videoUserName;
+    @BindView(R.id.video_desc)
+    TextView videoDesc;
+    @BindView(R.id.video_playnum)
+    TextView videoPlaynum;
+    @BindView(R.id.video_follow_num)
+    TextView videoFollowNum;
+    @BindView(R.id.video_comment_num)
+    TextView videoCommentNum;
+    @BindView(R.id.tv_date)
+    TextView tvDate;
+    @BindView(R.id.tv_distance)
+    TextView tvDistance;
 
     private Settings mSettings;
     private AndroidMediaController mMediaController;
     private boolean mBackPressed;
+    private VideoIsFollowBean isFollowBean;
+    private int vid;
+    private int videoUserId;
+    private int uidx = CacheUtils.getInt(this, "useridx");
+    private boolean isShowComment = false;
 
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             String json = msg.obj.toString();
             switch (msg.what) {
-                case 1:
-                    setVideoData(json);
+                case VIDEO_INFO:
+                    setVideoData(AESUtil.decode(json));
+                    break;
+                case IS_FOLLOW:
+                    setIsFollow(AESUtil.decode(json));
+                    break;
+                case VIDEO_FOLLOW:
+                    setFollowVideo(json);
                     break;
             }
             super.handleMessage(msg);
         }
     };
+
+    private void setFollowVideo(String json) {
+        int result = 0;
+        try {
+            JSONObject object = new JSONObject(json);
+            result = object.getInt("result");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (result == 1) {
+            CommonUtil.showTextToast("收藏成功", this);
+            videoHeart.setImageResource(R.drawable.heart1);
+        } else {
+            CommonUtil.showTextToast("收藏失败", this);
+        }
+    }
+
+    private void setIsFollow(String json) {
+        Log.e("setIsFollow", json);
+        Gson gson = new Gson();
+        isFollowBean = gson.fromJson(json, VideoIsFollowBean.class);
+        if (isFollowBean.getResult().get(0).getIsfollow() == 1) {
+            videoHeart.setImageResource(R.drawable.heart1);
+        }
+    }
 
     private void setVideoData(String json) {
         Gson gson = new Gson();
@@ -83,6 +158,8 @@ public class VideoActivity extends AppCompatActivity {
                 headImage = "http://" + headImage;
             }
             Picasso.with(this).load(headImage).into(ivHeadImage);
+            videoFollowNum.setText(resultBean.getGoodNum() + "赞");
+            videoCommentNum.setText(resultBean.getCNum() + "评论");
         }
     }
 
@@ -93,19 +170,18 @@ public class VideoActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 //        setTitle(this, "播放");
         IndexBean.ResultBean resultBean = getIntent().getParcelableExtra("video");
-        Log.e("VideoActivity", resultBean.getVideoUrl());
-        String videoUrl = new String(Base64.decode(resultBean.getVideoUrl()
-                .getBytes(), Base64.DEFAULT));
-        int vid = resultBean.getVid();
 
-        initVideoView(videoUrl);
+        initVideoView(resultBean);
         getVideoInfo(vid);
 
+        if (CacheUtils.getInt(this, "useridx") != 0) {
+            initIsFollow(vid, videoUserId);
+        }
     }
 
-    private void getVideoInfo(int vid) {
-        String url = "http://service.quliao.com/works/getVideoInfoByVid?uidx=" + CacheUtils
-                .getInt(this, "useridx") + "&vid=" + vid + "&aes=false";
+    private void initIsFollow(int vid, int videoUserId) {
+        String url = "http://service.quliao.com/works/getGCSByVId?vid=" + vid + "&uidx=" +
+                uidx + "&buidx=" + videoUserId;
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(url);
         requestBuilder.method("GET", null);
@@ -122,17 +198,62 @@ public class VideoActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 Message message = new Message();
                 message.obj = response.body().string();
-                message.what = 1;
+                message.what = IS_FOLLOW;
                 handler.sendMessage(message);
             }
         });
     }
 
-    private void initVideoView(String videoUrl) {
+    private void getVideoInfo(int vid) {
+        String url = "http://service.quliao.com/works/getVideoInfoByVid?uidx=" + uidx + "&vid=" +
+                vid;
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        Request.Builder requestBuilder = new Request.Builder().url(url);
+        requestBuilder.method("GET", null);
+        Request request = requestBuilder.build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Message message = new Message();
+                message.obj = response.body().string();
+                message.what = VIDEO_INFO;
+                handler.sendMessage(message);
+            }
+        });
+    }
+
+    private void initVideoView(IndexBean.ResultBean resultBean) {
+        vid = resultBean.getVid();
+        videoUserId = resultBean.getUidx();
+        String videoUrl = new String(Base64.decode(resultBean.getVideoUrl()
+                .getBytes(), Base64.DEFAULT));
+        String name = new String(Base64.decode(resultBean.getNickname()
+                .getBytes(), Base64.DEFAULT));
+        String desc = null;
+        try {
+            desc = URLDecoder.decode(new String(Base64.decode(resultBean.getDescriptions()
+                    .getBytes(), Base64.DEFAULT)), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String date = new String(Base64.decode(resultBean.getCreateTime()
+                .getBytes(), Base64.DEFAULT));
+
+        videoUserName.setText(name + "：");
+        videoDesc.setText(desc);
+        videoPlaynum.setText(resultBean.getPlayNum() + "次播放");
+        tvDate.setText("发布于:" + date);
+
         mSettings = new Settings(this);
         mMediaController = new AndroidMediaController(this, false);
         IjkMediaPlayer.loadLibrariesOnce(null);
         IjkMediaPlayer.native_profileBegin("libijkplayer.so");
+
         videoView.setVideoURI(Uri.parse(videoUrl));
 //        videoView.setMediaController(mMediaController);
 //        videoView.setHudView(hudView);
@@ -153,7 +274,6 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         mBackPressed = true;
-
         super.onBackPressed();
     }
 
@@ -176,20 +296,66 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     @OnClick({R.id.video_back, R.id.video_heart, R.id.video_share, R.id.tv_input, R.id
-            .btn_video_bottom})
+            .btn_video_bottom, R.id.tv_send_comment})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.video_back:
                 finish();
                 break;
             case R.id.video_heart:
+                if (uidx != 0) {
+                    startActivity(new Intent(this, QuickLoignActivity.class));
+                }
+
+                if (isFollowBean.getResult().get(0).getIsfollow() == 0) {
+
+                    setFollowVideo();
+                }
                 break;
             case R.id.video_share:
                 break;
             case R.id.tv_input:
+                if (isShowComment) {
+                    isShowComment = true;
+                    rlComment.setVisibility(View.VISIBLE);
+                } else {
+                    isShowComment = false;
+                    rlComment.setVisibility(View.GONE);
+                }
+
                 break;
             case R.id.btn_video_bottom:
                 break;
+            case R.id.tv_send_comment:
+                break;
         }
+    }
+
+    private void setFollowVideo() {
+
+        String device_id = CommonUtil.getDeviceID(this);
+
+        String url = Contact.HOST + Contact.VIDEO_FOLLOW + "?vid=" + vid + "&uidx=" + uidx +
+                "&unique=" + device_id + "&password=1";
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        Request.Builder requestBuilder = new Request.Builder().url(url);
+        requestBuilder.method("GET", null);
+        Request request = requestBuilder.build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Message message = new Message();
+                message.obj = response.body().string();
+                message.what = VIDEO_FOLLOW;
+                handler.sendMessage(message);
+            }
+        });
     }
 }
