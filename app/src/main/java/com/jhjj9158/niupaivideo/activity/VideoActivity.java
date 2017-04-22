@@ -60,6 +60,7 @@ public class VideoActivity extends AppCompatActivity {
     private static final int IS_FOLLOW = 2;
     private static final int VIDEO_FOLLOW = 3;
     private static final int COMMENT = 4;
+    private static final int ADD_COMMENT = 5;
 
     @BindView(R.id.video_view)
     IjkVideoView videoView;
@@ -128,6 +129,22 @@ public class VideoActivity extends AppCompatActivity {
                 case COMMENT:
                     setComment(AESUtil.decode(json));
                     break;
+                case ADD_COMMENT:
+                    String j = AESUtil.decode(json);
+                    int result = 0;
+                    try {
+                        JSONObject object = new JSONObject(j);
+                        result = object.getInt("result");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    if (result == 1) {
+                        CommonUtil.showTextToast("评论成功", VideoActivity.this);
+                        videoHeart.setImageResource(R.drawable.heart1);
+                    } else {
+                        CommonUtil.showTextToast("评论失败", VideoActivity.this);
+                    }
+                    break;
             }
             super.handleMessage(msg);
         }
@@ -139,7 +156,6 @@ public class VideoActivity extends AppCompatActivity {
                 .getResult();
         if (resultBeanList.size() == 0) {
             commentNothing.setVisibility(View.VISIBLE);
-            rvComment.setVisibility(View.GONE);
             return;
         }
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this,
@@ -400,10 +416,37 @@ public class VideoActivity extends AppCompatActivity {
             case R.id.btn_video_bottom:
                 break;
             case R.id.tv_send_comment:
+                sendComment();
                 break;
             case R.id.video_user_name:
                 break;
         }
+    }
+
+    private void sendComment() {
+        String url = Contact.HOST + Contact.ADD_COMMENT + "?vid=" + vid + "&uidx=" + uidx +
+                "&buidx=" + videoUserId + "&comment=" + etComment.getText().toString() +
+                "&identify=0&replyCid=0";
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        Request.Builder requestBuilder = new Request.Builder().url(url);
+        requestBuilder.method("GET", null);
+        Request request = requestBuilder.build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Message message = new Message();
+                message.obj = response.body().string();
+                message.what = ADD_COMMENT;
+                handler.sendMessage(message);
+            }
+        });
     }
 
     private void setFollowVideo() {

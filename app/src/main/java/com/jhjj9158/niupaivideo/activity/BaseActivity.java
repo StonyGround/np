@@ -3,6 +3,7 @@ package com.jhjj9158.niupaivideo.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -15,9 +16,7 @@ import butterknife.ButterKnife;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    //    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    //    @BindView(R.id.ll_child_content)
     LinearLayout llChildContent;
 
     @Override
@@ -38,7 +37,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected abstract View getChildView();
 
-    protected void setTitle(final Activity activity, String title) {
+    protected void initTitle(final Activity activity, String title) {
         toolbar.setTitle(title);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         toolbar.setNavigationIcon(R.drawable.ic_navigate_before);
