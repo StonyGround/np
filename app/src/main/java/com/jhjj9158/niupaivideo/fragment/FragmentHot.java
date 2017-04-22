@@ -70,6 +70,7 @@ public class FragmentHot extends Fragment {
     };
 
     private void setHotData(String json) {
+        Log.e("setHotData", json);
         Gson gson = new Gson();
         final List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();

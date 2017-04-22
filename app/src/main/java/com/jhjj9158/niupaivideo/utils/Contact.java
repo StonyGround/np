@@ -29,4 +29,5 @@ public class Contact {
     public static final String TAB_TITLE = "works/getVRVedioType";
     public static final String TAB_DYNAMIC = "works/getVRVideoInfo";
     public static final String VIDEO_FOLLOW = "works/addVideoinfoIsreport";
+    public static final String VIDEO_COMMETN = "works/getCommentInfoByVid";
 }

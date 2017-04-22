@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +19,8 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.Settings;
+import com.jhjj9158.niupaivideo.adapter.CommentAdapter;
+import com.jhjj9158.niupaivideo.bean.CommentBean;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.bean.VideoDetailBean;
 import com.jhjj9158.niupaivideo.bean.VideoIsFollowBean;
@@ -24,6 +28,7 @@ import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.LocationUtil;
 import com.jhjj9158.niupaivideo.widget.AndroidMediaController;
 import com.jhjj9158.niupaivideo.widget.IjkVideoView;
 import com.jhjj9158.niupaivideo.widget.MyDrawLayout;
@@ -35,6 +40,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,6 +59,7 @@ public class VideoActivity extends AppCompatActivity {
     private static final int VIDEO_INFO = 1;
     private static final int IS_FOLLOW = 2;
     private static final int VIDEO_FOLLOW = 3;
+    private static final int COMMENT = 4;
 
     @BindView(R.id.video_view)
     IjkVideoView videoView;
@@ -90,6 +97,10 @@ public class VideoActivity extends AppCompatActivity {
     TextView tvDate;
     @BindView(R.id.tv_distance)
     TextView tvDistance;
+    @BindView(R.id.rv_comment)
+    RecyclerView rvComment;
+    @BindView(R.id.comment_nothing)
+    TextView commentNothing;
 
     private Settings mSettings;
     private AndroidMediaController mMediaController;
@@ -98,7 +109,7 @@ public class VideoActivity extends AppCompatActivity {
     private int vid;
     private int videoUserId;
     private int uidx = CacheUtils.getInt(this, "useridx");
-    private boolean isShowComment = false;
+    private boolean isShowComment = true;
 
     private Handler handler = new Handler() {
         @Override
@@ -114,10 +125,34 @@ public class VideoActivity extends AppCompatActivity {
                 case VIDEO_FOLLOW:
                     setFollowVideo(json);
                     break;
+                case COMMENT:
+                    setComment(AESUtil.decode(json));
+                    break;
             }
             super.handleMessage(msg);
         }
     };
+
+    private void setComment(String json) {
+        Gson gson = new Gson();
+        List<CommentBean.ResultBean> resultBeanList = gson.fromJson(json, CommentBean.class)
+                .getResult();
+        if (resultBeanList.size() == 0) {
+            commentNothing.setVisibility(View.VISIBLE);
+            rvComment.setVisibility(View.GONE);
+            return;
+        }
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false) {
+
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
+        rvComment.setLayoutManager(mLinearLayoutManager);
+        rvComment.setAdapter(new CommentAdapter(this, resultBeanList));
+    }
 
     private void setFollowVideo(String json) {
         int result = 0;
@@ -177,6 +212,31 @@ public class VideoActivity extends AppCompatActivity {
         if (CacheUtils.getInt(this, "useridx") != 0) {
             initIsFollow(vid, videoUserId);
         }
+        getComment();
+    }
+
+    private void getComment() {
+        String url = Contact.HOST + Contact.VIDEO_COMMETN + "?vid=" + vid + "&cid=1&num=100";
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        Request.Builder requestBuilder = new Request.Builder().url(url);
+        requestBuilder.method("GET", null);
+        Request request = requestBuilder.build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Message message = new Message();
+                message.obj = response.body().string();
+                message.what = COMMENT;
+                handler.sendMessage(message);
+            }
+        });
     }
 
     private void initIsFollow(int vid, int videoUserId) {
@@ -243,11 +303,14 @@ public class VideoActivity extends AppCompatActivity {
         }
         String date = new String(Base64.decode(resultBean.getCreateTime()
                 .getBytes(), Base64.DEFAULT));
+        double longitude = resultBean.getLongitude();
+        double latitude = resultBean.getLatitude();
 
         videoUserName.setText(name + "：");
         videoDesc.setText(desc);
         videoPlaynum.setText(resultBean.getPlayNum() + "次播放");
         tvDate.setText("发布于:" + date);
+        tvDistance.setText(getDistance(longitude, latitude));
 
         mSettings = new Settings(this);
         mMediaController = new AndroidMediaController(this, false);
@@ -269,6 +332,19 @@ public class VideoActivity extends AppCompatActivity {
                 videoView.start();
             }
         });
+    }
+
+    private String getDistance(double longitude, double latitude) {
+        String tv_distance = null;
+        double distance = LocationUtil.gps2m(this, latitude, longitude) / 1000;
+        if (distance < 1) {
+            tv_distance = "距你" + (int) (distance * 1000) + "m";
+        } else if (distance > 1 && distance < 1000) {
+            tv_distance = "距你" + (int) distance + "km";
+        } else {
+            tv_distance = "距你1000km外";
+        }
+        return tv_distance;
     }
 
     @Override
@@ -296,7 +372,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     @OnClick({R.id.video_back, R.id.video_heart, R.id.video_share, R.id.tv_input, R.id
-            .btn_video_bottom, R.id.tv_send_comment})
+            .btn_video_bottom, R.id.tv_send_comment, R.id.video_user_name})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.video_back:
@@ -306,9 +382,7 @@ public class VideoActivity extends AppCompatActivity {
                 if (uidx != 0) {
                     startActivity(new Intent(this, QuickLoignActivity.class));
                 }
-
                 if (isFollowBean.getResult().get(0).getIsfollow() == 0) {
-
                     setFollowVideo();
                 }
                 break;
@@ -316,17 +390,18 @@ public class VideoActivity extends AppCompatActivity {
                 break;
             case R.id.tv_input:
                 if (isShowComment) {
-                    isShowComment = true;
+                    isShowComment = false;
                     rlComment.setVisibility(View.VISIBLE);
                 } else {
-                    isShowComment = false;
+                    isShowComment = true;
                     rlComment.setVisibility(View.GONE);
                 }
-
                 break;
             case R.id.btn_video_bottom:
                 break;
             case R.id.tv_send_comment:
+                break;
+            case R.id.video_user_name:
                 break;
         }
     }

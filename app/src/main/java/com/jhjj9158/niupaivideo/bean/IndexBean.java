@@ -11,7 +11,7 @@ import java.util.List;
  * Created by pc on 17-4-13.
  */
 
-public class IndexBean  {
+public class IndexBean {
     /**
      * result : [{"vid":531,"uidx":500553062,"showuidx":89836,
      * "videoUrl":"aHR0cDovL3ZpZGVvLnF1bGlhby5jb20vMjAxNzA0MTMvRTAxMzE1QTlGOEIyMTAwMjhCNUJEOTlCOUNFMzk3NDcubXA0","videoPicUrl":"aHR0cDovL2ltYWdlLnF1bGlhby5jb20vMjAxNzA0MTMvNkU0MTEwRjM5NTMxQjZCQkJGNTg3ODk0MTQwOEU4MUIuanBn","playNum":0,"goodNum":0,"cNum":0,"sNum":0,"nickname":"ODk4MzY=","headphoto":"ZG93bi50aWFuZ2UuY29tL0NvbnRlbnRVc2VyLzIwMTcvMDQvMTEvMTUvMTcvMjQvMG5pdXBhaTAvNTAwNTUzMDYybml1cGFpMC5qcGc=","phonebrand":"aXBob25l","descriptions":"JUU1JThGJThDJUU1JTg3JUJCJUU1JThGJThDJUU1JTg3JUJCJUU1JThGJThDJUU1JTg3JUJCJUVGJUJDJThDJUU5JTg3JThEJUU4JUE2JTgxJUU3JTlBJTg0JUU0JUJBJThCJUU2JTgzJTg1JUU4JUFGJUI0JUU0JUI4JTg5JUU5JTgxJThE","area":"KG51bGwp","isFollow":0,"longitude":119.637489318848,"latitude":29.0830745697021,"signatures":0,"states":"5Zyo57q/","createTime":"MeWIhumSn+WJjQ==","zbtime":"VGEg6L+Y5pyq5Zyo44CQ5rC05pm255u05pKt44CR5byA5pKt","praiseCount":0,"videoSize":"3.813904","imgScale":"0.750000","fromtype":11},{"vid":529,"uidx":500553062,"showuidx":89836,"videoUrl":"aHR0cDovL3ZpZGVvLnF1bGlhby5jb20vMjAxNzA0MTMvRkVGRkI1MkUzQTJBMURERjZDMzdCNjZFMjZFODEwNDIubXA0","videoPicUrl":"aHR0cDovL2ltYWdlLnF1bGlhby5jb20vMjAxNzA0MTMvN0ZENEExNTBBQUI0MTJGOEMwNzlBRkZDNjI5REY4RDMuanBn","playNum":0,"goodNum":0,"cNum":0,"sNum":0,"nickname":"ODk4MzY=","headphoto":"ZG93bi50aWFuZ2UuY29tL0NvbnRlbnRVc2VyLzIwMTcvMDQvMTEvMTUvMTcvMjQvMG5pdXBhaTAvNTAwNTUzMDYybml1cGFpMC5qcGc=","phonebrand":"aXBob25l","descriptions":"NjY2NiVFNSU4RiU4QyVFNSU4NyVCQg==","area":"KG51bGwp","isFollow":0,"longitude":119.637489318848,"latitude":29.0830745697021,"signatures":0,"states":"5Zyo57q/","createTime":"M+WIhumSn+WJjQ==","zbtime":"VGEg6L+Y5pyq5Zyo44CQ5rC05pm255u05pKt44CR5byA5pKt","praiseCount":0,"videoSize":"4.119979","imgScale":"0.750000","fromtype":11}]
@@ -248,12 +248,12 @@ public class IndexBean  {
             this.states = states;
         }
 
-        public String getCreateTime() {
-            return createTime;
-        }
-
         public void setCreateTime(String createTime) {
             this.createTime = createTime;
+        }
+
+        public String getCreateTime() {
+            return createTime;
         }
 
         public String getZbtime() {

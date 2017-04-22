@@ -5,8 +5,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:paddingBottom="50dp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingBottom="40dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -42,9 +42,9 @@
                 android:padding="10dp">
 
                 <ImageView
-                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/user"/>
 
                 <LinearLayout
@@ -77,9 +77,9 @@
                 android:paddingRight="10dp">
 
                 <ImageView
-                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/play"/>
 
                 <TextView
@@ -98,9 +98,9 @@
                 android:padding="10dp">
 
                 <ImageView
-                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/icon_heart"/>
 
                 <TextView
@@ -120,9 +120,9 @@
                 android:paddingRight="10dp">
 
                 <ImageView
-                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:src="@drawable/comment"/>
 
                 <TextView
@@ -144,6 +144,7 @@
                     android:id="@+id/tv_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
                     android:layout_toLeftOf="@+id/tv_distance"
                     android:textSize="12sp"/>
 
@@ -155,6 +156,32 @@
                     android:textSize="12sp"/>
 
             </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/button_login"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/comment_nothing"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/tv_nothing"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
     </ScrollView>
 
@@ -193,9 +220,9 @@
         <TextView
             android:id="@+id/tv_input"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:layout_marginRight="20dp"
             android:text="@string/input_comment"
             android:textColor="@color/home_tab"

@@ -1,6 +1,7 @@
 package com.jhjj9158.niupaivideo.utils;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -18,9 +19,17 @@ import static android.content.Context.LOCATION_SERVICE;
 public class LocationUtil {
 
 
-    public static Location getLocation(Context context) {
+    static Location getLocation(Context context) {
+
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission
+                    .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+        }
+
         LocationManager locationManager;
-        String locationProvider = null;
+        String locationProvider;
         locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
         if (providers.contains(LocationManager.GPS_PROVIDER)) {
@@ -32,17 +41,27 @@ public class LocationUtil {
             return null;
         }
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return null;
-        }
-
-        Location location = locationManager.getLastKnownLocation(locationProvider);
-        if (location != null) {
-            return location;
-        }
-
-        return null;
+        return locationManager.getLastKnownLocation(locationProvider);
     }
+
+    public static double gps2m(Context context, double lat_a, double lng_a) {
+        Location location = getLocation(context);
+        double lat_b = 0;
+        double lng_b = 0;
+        if (location != null) {
+            lat_b = location.getLatitude();
+            lng_b = location.getLongitude();
+        }
+        double radLat1 = (lat_a * Math.PI / 180.0);
+        double radLat2 = (lat_b * Math.PI / 180.0);
+        double a = radLat1 - radLat2;
+        double b = (lng_a - lng_b) * Math.PI / 180.0;
+        double s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2)
+                + Math.cos(radLat1) * Math.cos(radLat2)
+                * Math.pow(Math.sin(b / 2), 2)));
+        s = s * 6378137.0;
+        s = Math.round(s * 10000) / 10000;
+        return s;
+    }
+
 }
