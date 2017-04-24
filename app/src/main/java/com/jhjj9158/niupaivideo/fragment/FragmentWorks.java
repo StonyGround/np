@@ -83,7 +83,6 @@ public class FragmentWorks extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
-        Log.e("FragmentWorks", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_works, container, false);
         unbinder = ButterKnife.bind(this, view);
 
@@ -95,7 +94,6 @@ public class FragmentWorks extends Fragment {
         int buidx = CacheUtils.getInt(getActivity(), "buidx");
         String worksUrl = Contact.HOST + Contact.TAB_WORKS + "?uidx=" + buidx + "&loginUidx=" +
                 buidx + "&begin=1&num=100";
-        Log.e("work", worksUrl);
 //        OkHttpUtils.getOkHttpUtils().get(worksUrl, new OkHttpUtils.MCallBack
 //                () {
 //            @Override

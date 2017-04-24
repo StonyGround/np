@@ -292,6 +292,7 @@ public class FragmentMy extends Fragment {
             case R.id.profile_image:
                 break;
             case R.id.rl_works:
+                startActivity();
                 break;
             case R.id.tv_make_money:
                 break;
