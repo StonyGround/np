@@ -4,7 +4,13 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
                 tools:context="com.jhjj9158.niupaivideo.activity.PersonalActivity">
+
+    <com.jhjj9158.niupaivideo.widget.ResizableImageView
+        android:id="@+id/personal_bg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:id="@+id/ll_personal_info"
@@ -33,7 +39,7 @@
                     android:id="@+id/personal_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    />
+                    android:textColor="@color/white"/>
 
                 <ImageView
                     android:id="@+id/personal_gender"
@@ -52,9 +58,11 @@
         </RelativeLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/personal_headimg"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"
+            android:src="@drawable/me_user_admin"
             app:civ_border_color="@color/white"
             app:civ_border_width="2dp"/>
 
@@ -70,7 +78,8 @@
             android:id="@+id/personal_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:textColor="@color/white"/>
 
         <TextView
             android:id="@+id/btn_personal_follow"
@@ -96,12 +105,32 @@
             android:textColor="@color/white"/>
     </LinearLayout>
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/personal_"
-        style="@style/MyCustomTabLayout"
-        app:tabMode="scrollable"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_below="@+id/ll_personal_info">
 
-    </android.support.design.widget.TabLayout>
+        <android.support.design.widget.TabLayout
+            android:id="@+id/personal_tab"
+            style="@style/MyCustomTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabMode="scrollable">
+
+        </android.support.design.widget.TabLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/home_tab"/>
+
+        <com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager
+            android:id="@+id/personal_viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+        </com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager>
+    </LinearLayout>
 </RelativeLayout>

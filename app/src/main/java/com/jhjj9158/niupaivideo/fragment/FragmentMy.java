@@ -1,5 +1,7 @@
 package com.jhjj9158.niupaivideo.fragment;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,15 +16,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.PersonalActivity;
 import com.jhjj9158.niupaivideo.bean.UserDetailBean;
 import com.jhjj9158.niupaivideo.bean.UserInfoBean;
 import com.jhjj9158.niupaivideo.bean.UserPostBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
+import com.jhjj9158.niupaivideo.utils.BlurBitmapUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.widget.ResizableImageView;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.IOException;
 
@@ -88,6 +98,32 @@ public class FragmentMy extends Fragment {
     TextView tvBio;
     @BindView(R.id.tv_wallte)
     TextView tvWallte;
+    @BindView(R.id.fragment_my_bg)
+    ResizableImageView fragmentMyBg;
+    @BindView(R.id.tv_works)
+    TextView tvWorks;
+    @BindView(R.id.tv_favorite)
+    TextView tvFavorite;
+    @BindView(R.id.tv_follow)
+    TextView tvFollow;
+    @BindView(R.id.tv_fans)
+    TextView tvFans;
+    @BindView(R.id.tv_rmb_sign)
+    TextView tvRmbSign;
+    @BindView(R.id.icon_daily_reward)
+    ImageView iconDailyReward;
+    @BindView(R.id.tv_yuan)
+    TextView tvYuan;
+    @BindView(R.id.iv_reward_more)
+    ImageView ivRewardMore;
+    @BindView(R.id.icon_msg)
+    ImageView iconMsg;
+    @BindView(R.id.iv_msg_more)
+    ImageView ivMsgMore;
+    @BindView(R.id.icon_setting)
+    ImageView iconSetting;
+    @BindView(R.id.iv_setting_more)
+    ImageView ivSettingMore;
 
 
     private Handler handler = new Handler() {
@@ -118,7 +154,7 @@ public class FragmentMy extends Fragment {
         tvFollowNum.setText(String.valueOf(resultBean.getFollowNum()));
         tvFansNum.setText(String.valueOf(resultBean.getFansNum()));
         tvMsgNum.setText(String.valueOf(resultBean.getNewmessage()));
-        if(resultBean.getGender()==1){
+        if (resultBean.getGender() == 1) {
             ivGender.setImageResource(R.drawable.man);
         }
     }
@@ -128,8 +164,8 @@ public class FragmentMy extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(CacheUtils.getInt(getActivity(),"useridx")==0){
-           return;
+        if (CacheUtils.getInt(getActivity(), "useridx") == 0) {
+            return;
         }
         getUserInfo();
         getUserDate();
@@ -208,7 +244,11 @@ public class FragmentMy extends Fragment {
         UserInfoBean userInfoBean = gson.fromJson(json, UserInfoBean.class);
         UserInfoBean.DataBean data = userInfoBean.getData().get(0);
         if (userInfoBean.getCode() == 100) {
-            Glide.with(getContext()).load(data.getHeadimg()).into(profileImage);
+            String headImage = data.getHeadimg();
+            if (!headImage.contains("http")) {
+                headImage = "http://" + headImage;
+            }
+            Picasso.with(getContext()).load(headImage).into(profileImage);
             tvName.setText(data.getNickName());
             if (data.getUserSex().equals("1")) {
                 ivGender.setBackgroundResource(R.drawable.man);
@@ -218,6 +258,8 @@ public class FragmentMy extends Fragment {
             } else {
                 tvBio.setText(R.string.bio_default);
             }
+            Picasso.with(getContext()).load(headImage).transform(new BlurBitmapUtil
+                    .BlurTransformation(getContext())).into(fragmentMyBg);
         }
     }
 

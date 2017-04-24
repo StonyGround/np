@@ -51,7 +51,7 @@ public class OkHttpUtils {
 
 
     //设置拼接字符串的方法
-    public <T> void get(String url, final Class<T> cls) {
+    public void get(String url, MCallBack callBack) {
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(url);
         requestBuilder.method("GET", null);
@@ -67,16 +67,19 @@ public class OkHttpUtils {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 String json = response.body().string();
-                getJson(json, cls);
+//                getJson(json, cls);
+                mainThread(json);
             }
         });
+
+        this.mCallBack = callBack;
     }
 
     //解析
     public <T> void getJson(String json, Class<T> cls) {
 
-        T t = gson.fromJson(json, cls);
-        mainThread(t);
+//        T t = gson.fromJson(json, cls);
+//        mainThread(t);
     }
 
 //    //设置请求Post请求
@@ -117,7 +120,7 @@ public class OkHttpUtils {
 //    }
 
     //将消息发送到主线程
-    public void mainThread(final Object result) {
+    public void mainThread(final String result) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -129,7 +132,7 @@ public class OkHttpUtils {
 
     //设置接口
     public interface MCallBack {
-        void onResponse(Object object);
+        void onResponse(String json);
 
         void onFailure(Call call, IOException e);
     }

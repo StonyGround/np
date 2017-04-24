@@ -74,6 +74,7 @@ public class MainActivity extends FragmentActivity {
                 ivHome.setBackgroundResource(R.drawable.icon_home);
                 ivMy.setBackgroundResource(R.drawable.icon_my_selected);
                 switchFragment(fragmentHome, fragmentMy);
+                CacheUtils.setInt(this,"useridx",1628303784);
                 if (CacheUtils.getInt(MainActivity.this, "useridx") == 0) {
                     Log.e("useridx",String.valueOf(CacheUtils.getInt(MainActivity.this, "useridx")));
                     startActivity(new Intent(MainActivity.this, QuickLoignActivity.class));

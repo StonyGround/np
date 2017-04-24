@@ -86,8 +86,8 @@
             android:value="58eb71334ad1566c47001e16"/>
 
         <activity android:name=".activity.FollowActivity"/>
-        <activity android:name=".activity.BaseActivity"/>
-        <activity android:name=".activity.VideoActivity"/>
+        <activity
+            android:name=".activity.VideoActivity" />
         <activity android:name=".activity.PersonalActivity">
         </activity>
     </application>

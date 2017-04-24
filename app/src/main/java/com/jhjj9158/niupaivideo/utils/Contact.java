@@ -14,14 +14,12 @@ public class Contact {
 
     public static final String USER_INFO = "http://down.tiange.com/NiupatInterface.aspx";
 
-
     public static final String LOGIN_SINA = "http://down.tiange" +
             ".com/OAuth/SinaAuthForPhoneHappymoment.aspx";
     public static final String LOGIN_QQ = "http://down.tiange.com/OAuth/QQAuthForPhoneHappymoment" +
             ".aspx";
     public static final String LOGIN_WEIXIN = "http://down.tiange" +
             ".com/OAuth/WeixinAuthForPhoneHappymoment.aspx";
-
 
     public static final String HOST = "http://service.quliao.com/";
     public static final String GET_USER_INFO = "user/GetUserInfo";
@@ -31,4 +29,7 @@ public class Contact {
     public static final String VIDEO_FOLLOW = "works/addVideoinfoIsreport";
     public static final String VIDEO_COMMETN = "works/getCommentInfoByVid";
     public static final String ADD_COMMENT = "works/addCommentForDetails";
+    public static final String PERSONAL_INFO = "user/getUserByTa";
+    public static final String TAB_WORKS = "works/getVideoInfo";
+    public static final String TAB_FAVORITE = "works/getPraiseVideoListByTa";
 }

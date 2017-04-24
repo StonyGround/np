@@ -220,6 +220,7 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
 //        setTitle(this, "播放");
+
         IndexBean.ResultBean resultBean = getIntent().getParcelableExtra("video");
 
         initVideoView(resultBean);
@@ -419,6 +420,9 @@ public class VideoActivity extends AppCompatActivity {
                 sendComment();
                 break;
             case R.id.video_user_name:
+                Intent intent = new Intent(this,PersonalActivity.class);
+                intent.putExtra("buidx", videoUserId);
+                startActivity(intent);
                 break;
         }
     }
