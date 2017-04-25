@@ -1,5 +1,6 @@
 package com.jhjj9158.niupaivideo.activity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -67,8 +68,10 @@ public class PersonalActivity extends FragmentActivity {
     ImageView personalGender;
     @BindView(R.id.personal_more)
     ImageView personalMore;
-    @BindView(R.id.personal_follow_fans)
-    TextView personalFollowFans;
+    @BindView(R.id.personal_follow)
+    TextView personalFollow;
+    @BindView(R.id.personal_fans)
+    TextView personalFans;
     @BindView(R.id.personal_id)
     TextView personalId;
     @BindView(R.id.btn_personal_follow)
@@ -147,7 +150,8 @@ public class PersonalActivity extends FragmentActivity {
             personalGender.setImageResource(R.drawable.women);
         }
         Picasso.with(this).load(headImage).into(personalHeadimg);
-        personalFollowFans.setText("关注" + followNum + " | 粉丝" + fansNum);
+        personalFollow.setText("关注" + followNum + " |");
+        personalFans.setText(" " + "粉丝" + fansNum);
         personalSignature.setText(signature);
         personalId.setText("ID:" + showuidx);
         if (isFollow == 1) {
@@ -183,35 +187,6 @@ public class PersonalActivity extends FragmentActivity {
 
     private void initTabPager() {
 
-
-        String worksUrl = Contact.HOST + Contact.TAB_WORKS + "?uidx=" + buidx + "&loginUidx=" +
-                buidx + "&begin=1&num=100";
-        String faovriteUrl = Contact.HOST + Contact.TAB_FAVORITE + "?uidx=" + buidx +
-                "&loginUidx=" + buidx + "&begin=1&num=100";
-        String[] url = {worksUrl, faovriteUrl};
-
-//        for (int i = 0; i < 2; i++) {
-//
-//            FragmentWorks fragmentWorks = new FragmentWorks();
-//            Bundle bundle = new Bundle();
-//            bundle.putString("url" + i, url[i]);
-//            fragmentWorks.setArguments(bundle);
-//            fragmentList.add(fragmentWorks);
-//        }
-
-//        FragmentWorks fragmentWorks = new FragmentWorks();
-//        Bundle bundle = new Bundle();
-//        bundle.putString("url", worksUrl);
-//        fragmentWorks.setArguments(bundle);
-//        fragmentList.add(fragmentWorks);
-//
-//        FragmentFavorite fragmentFavorite = new FragmentFavorite();
-//        Bundle bundle1 = new Bundle();
-//        bundle1.putString("url", faovriteUrl);
-//        fragmentWorks.setArguments(bundle);
-//        fragmentList.add(fragmentFavorite);
-
-
         TabFragmentAdapter tabFragmentAdapter = new TabFragmentAdapter
                 (getSupportFragmentManager(), fragmentList, titles);
         personalViewpager.setAdapter(tabFragmentAdapter);
@@ -245,7 +220,8 @@ public class PersonalActivity extends FragmentActivity {
         });
     }
 
-    @OnClick({R.id.personal_more, R.id.personal_back, R.id.btn_personal_follow})
+    @OnClick({R.id.personal_more, R.id.personal_back, R.id.btn_personal_follow, R.id
+            .personal_follow, R.id.personal_fans})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.personal_more:
@@ -259,6 +235,16 @@ public class PersonalActivity extends FragmentActivity {
                 break;
             case R.id.personal_back:
                 finish();
+                break;
+            case R.id.personal_follow:
+                Intent intent = new Intent(PersonalActivity.this,FollowActivity.class);
+                intent.putExtra("buidx", buidx);
+                startActivity(intent);
+                break;
+            case R.id.personal_fans:
+                Intent intentFans = new Intent(PersonalActivity.this,FansActivity.class);
+                intentFans.putExtra("buidx", buidx);
+                startActivity(intentFans);
                 break;
         }
     }

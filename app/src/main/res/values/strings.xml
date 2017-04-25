@@ -56,8 +56,9 @@
     <string name="tv_video_btn">点击前往</string>
     <string name="tv_send_comment">发送</string>
     <string name="tv_nothing">暂无数据</string>
-    <string name="tv_personal_follow">+ 关注</string>
+    <string name="tv_personal_follow">+关注</string>
     <string name="unfollow">取消关注</string>
+    <string name="followed">已关注</string>
 
     <!--Ijkplayer Start-->
     <string name="N_A">N/A</string>

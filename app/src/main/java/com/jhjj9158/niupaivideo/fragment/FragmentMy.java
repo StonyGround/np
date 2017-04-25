@@ -1,7 +1,6 @@
 package com.jhjj9158.niupaivideo.fragment;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -15,13 +14,12 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
-import com.jhjj9158.niupaivideo.activity.PersonalActivity;
+import com.jhjj9158.niupaivideo.activity.FansActivity;
+import com.jhjj9158.niupaivideo.activity.FavoriteActivity;
+import com.jhjj9158.niupaivideo.activity.FollowActivity;
+import com.jhjj9158.niupaivideo.activity.WorksActivity;
 import com.jhjj9158.niupaivideo.bean.UserDetailBean;
 import com.jhjj9158.niupaivideo.bean.UserInfoBean;
 import com.jhjj9158.niupaivideo.bean.UserPostBean;
@@ -32,7 +30,6 @@ import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.ResizableImageView;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.IOException;
 
@@ -286,13 +283,14 @@ public class FragmentMy extends Fragment {
     }
 
     @OnClick({R.id.profile_image, R.id.rl_works, R.id.tv_make_money, R.id.tv_withdraw, R.id
-            .rl_daily_reward, R.id.rl_msg, R.id.rl_setting})
+            .rl_daily_reward, R.id.rl_msg, R.id.rl_setting, R.id.rl_favorite, R.id.rl_follow, R
+            .id.rl_fans})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.profile_image:
                 break;
             case R.id.rl_works:
-                startActivity();
+                startActivity(new Intent(getActivity(), WorksActivity.class));
                 break;
             case R.id.tv_make_money:
                 break;
@@ -303,6 +301,15 @@ public class FragmentMy extends Fragment {
             case R.id.rl_msg:
                 break;
             case R.id.rl_setting:
+                break;
+            case R.id.rl_favorite:
+                startActivity(new Intent(getActivity(), FavoriteActivity.class));
+                break;
+            case R.id.rl_follow:
+                startActivity(new Intent(getActivity(), FollowActivity.class));
+                break;
+            case R.id.rl_fans:
+                startActivity(new Intent(getActivity(), FansActivity.class));
                 break;
         }
     }

@@ -1,22 +1,21 @@
 package com.jhjj9158.niupaivideo.activity;
 
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
-import com.jhjj9158.niupaivideo.adapter.WorksAdapter;
-import com.jhjj9158.niupaivideo.bean.IndexBean;
+import com.jhjj9158.niupaivideo.adapter.FollowAdapter;
+import com.jhjj9158.niupaivideo.bean.FollowBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
-import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
 
 import java.io.IOException;
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import okhttp3.Call;
 
-public class WorksActivity extends BaseActivity {
+public class FansActivity extends BaseActivity {
 
     @BindView(R.id.works_nothing)
     TextView worksNothing;
@@ -34,39 +33,39 @@ public class WorksActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initTitle(this, "作品");
+        initTitle(this, "粉丝");
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rvWorks.setLayoutManager(linearLayoutManager);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
-        rvWorks.setLayoutManager(gridLayoutManager);
-        rvWorks.addItemDecoration(new SpaceItemDecoration(2));
-
+        int buidx = getIntent().getIntExtra("buidx", 0);
         int uidx = CacheUtils.getInt(this, "useridx");
-        String worksUrl = Contact.HOST + Contact.TAB_WORKS + "?uidx=" + uidx + "&loginUidx=" +
-                uidx + "&begin=1&num=100";
+        if (buidx != 0) {
+            uidx = buidx;
+        }
+        String worksUrl = Contact.HOST + Contact.GET_FANS + "?uidx=" + uidx + "&begin=1&num=100";
         OkHttpUtils.getOkHttpUtils().get(worksUrl, new OkHttpUtils.MCallBack
                 () {
             @Override
             public void onResponse(String json) {
                 String result = AESUtil.decode(json);
-                Log.e("work", result);
                 Gson gson = new Gson();
-                List<IndexBean.ResultBean> resultBean = gson.fromJson(result, IndexBean
+                List<FollowBean.ResultBean> resultBean = gson.fromJson(result, FollowBean
                         .class).getResult();
                 if (resultBean.size() == 0) {
                     worksNothing.setVisibility(View.VISIBLE);
                     return;
                 }
 
-                WorksAdapter adapter = new WorksAdapter(WorksActivity.this, resultBean);
-                adapter.setOnItemClickListener(new WorksAdapter.OnItemClickListener() {
+                FollowAdapter adapter = new FollowAdapter(FansActivity.this, resultBean);
+                adapter.setOnItemClickListener(new FollowAdapter.OnItemClickListener() {
                     @Override
-                    public void onItemClick(int position, IndexBean.ResultBean data) {
-                        Intent intent = new Intent(WorksActivity.this, VideoActivity.class);
-                        intent.putExtra("video", data);
+                    public void onItemClick(int position, FollowBean.ResultBean data) {
+                        Intent intent = new Intent(FansActivity.this, PersonalActivity.class);
+                        intent.putExtra("buidx", data.getUidx());
                         startActivity(intent);
                     }
                 });
-                rvWorks.setAdapter(new WorksAdapter(WorksActivity.this, resultBean));
+                rvWorks.setAdapter(adapter);
             }
 
             @Override

@@ -32,4 +32,6 @@ public class Contact {
     public static final String PERSONAL_INFO = "user/getUserByTa";
     public static final String TAB_WORKS = "works/getVideoInfo";
     public static final String TAB_FAVORITE = "works/getPraiseVideoListByTa";
+    public static final String GET_FOLLOW = "user/getFollowUserByTa";
+    public static final String GET_FANS = "user/getFansList";
 }
