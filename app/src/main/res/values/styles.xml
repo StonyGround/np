@@ -22,4 +22,5 @@
         <item name="android:textColor">@drawable/selector_tabtext</item>
         <item name="textAllCaps">true</item>
     </style>
+
 </resources>

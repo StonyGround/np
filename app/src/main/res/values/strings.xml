@@ -59,6 +59,9 @@
     <string name="tv_personal_follow">+关注</string>
     <string name="unfollow">取消关注</string>
     <string name="followed">已关注</string>
+    <string name="name">名称:</string>
+    <string name="signature">签名:</string>
+    <string name="save">保存</string>
 
     <!--Ijkplayer Start-->
     <string name="N_A">N/A</string>

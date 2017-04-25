@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -168,9 +169,18 @@ public class PersonalActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("PersonalActivity", "onCreate");
         setContentView(R.layout.activity_personal);
         ButterKnife.bind(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(Color.argb(99,00,00,00));
+        }
+
 
         buidx = getIntent().getIntExtra("buidx", 0);
         uidx = CacheUtils.getInt(this, "useridx");
@@ -237,12 +247,12 @@ public class PersonalActivity extends FragmentActivity {
                 finish();
                 break;
             case R.id.personal_follow:
-                Intent intent = new Intent(PersonalActivity.this,FollowActivity.class);
+                Intent intent = new Intent(PersonalActivity.this, FollowActivity.class);
                 intent.putExtra("buidx", buidx);
                 startActivity(intent);
                 break;
             case R.id.personal_fans:
-                Intent intentFans = new Intent(PersonalActivity.this,FansActivity.class);
+                Intent intentFans = new Intent(PersonalActivity.this, FansActivity.class);
                 intentFans.putExtra("buidx", buidx);
                 startActivity(intentFans);
                 break;

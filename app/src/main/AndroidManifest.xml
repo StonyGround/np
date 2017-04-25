@@ -93,6 +93,8 @@
         </activity>
         <activity android:name=".activity.FansActivity">
         </activity>
+        <activity android:name=".activity.ModifyActivity">
+        </activity>
     </application>
 
 </manifest>
