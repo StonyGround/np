@@ -1,6 +1,10 @@
 package com.jhjj9158.niupaivideo.utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Base64;
 import android.widget.Toast;
@@ -76,7 +80,6 @@ public class CommonUtil {
             }
         }
         return sID;
-
     }
 
     private static String readInstallationFile(File installation) throws IOException {
@@ -92,6 +95,5 @@ public class CommonUtil {
         String id = UUID.randomUUID().toString();
         out.write(id.getBytes());
         out.close();
-
     }
 }

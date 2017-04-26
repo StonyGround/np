@@ -1,5 +1,8 @@
 package com.jhjj9158.niupaivideo.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
@@ -44,7 +47,7 @@ public class UserInfoBean {
         this.data = data;
     }
 
-    public static class DataBean {
+    public static class DataBean implements Parcelable {
         /**
          * useridx : 1628330494
          * follownum : 0
@@ -118,5 +121,46 @@ public class UserInfoBean {
         public void setUserTrueName(String userTrueName) {
             this.userTrueName = userTrueName;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.useridx);
+            dest.writeString(this.follownum);
+            dest.writeString(this.headimg);
+            dest.writeString(this.nickName);
+            dest.writeString(this.userSex);
+            dest.writeString(this.fans);
+            dest.writeString(this.userTrueName);
+        }
+
+        public DataBean() {
+        }
+
+        protected DataBean(Parcel in) {
+            this.useridx = in.readInt();
+            this.follownum = in.readString();
+            this.headimg = in.readString();
+            this.nickName = in.readString();
+            this.userSex = in.readString();
+            this.fans = in.readString();
+            this.userTrueName = in.readString();
+        }
+
+        public static final Parcelable.Creator<DataBean> CREATOR = new Parcelable.Creator<DataBean>() {
+            @Override
+            public DataBean createFromParcel(Parcel source) {
+                return new DataBean(source);
+            }
+
+            @Override
+            public DataBean[] newArray(int size) {
+                return new DataBean[size];
+            }
+        };
     }
 }

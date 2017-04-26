@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.activity.FansActivity;
 import com.jhjj9158.niupaivideo.activity.FavoriteActivity;
 import com.jhjj9158.niupaivideo.activity.FollowActivity;
+import com.jhjj9158.niupaivideo.activity.ModifyActivity;
 import com.jhjj9158.niupaivideo.activity.WorksActivity;
 import com.jhjj9158.niupaivideo.bean.UserDetailBean;
 import com.jhjj9158.niupaivideo.bean.UserInfoBean;
@@ -121,6 +123,8 @@ public class FragmentMy extends Fragment {
     ImageView iconSetting;
     @BindView(R.id.iv_setting_more)
     ImageView ivSettingMore;
+    @BindView(R.id.ll_my_info)
+    LinearLayout llMyInfo;
 
 
     private Handler handler = new Handler() {
@@ -140,7 +144,6 @@ public class FragmentMy extends Fragment {
     };
 
     private void setUserData(String json) {
-        Log.e("setUserData", json);
         Gson gson = new Gson();
         UserDetailBean.ResultBean resultBean = gson.fromJson(json, UserDetailBean.class)
                 .getResult();
@@ -236,22 +239,24 @@ public class FragmentMy extends Fragment {
         });
     }
 
+    private UserInfoBean.DataBean userInfo;
+
     private void setUserInfo(String json) {
         Gson gson = new Gson();
         UserInfoBean userInfoBean = gson.fromJson(json, UserInfoBean.class);
-        UserInfoBean.DataBean data = userInfoBean.getData().get(0);
+        userInfo = userInfoBean.getData().get(0);
         if (userInfoBean.getCode() == 100) {
-            String headImage = data.getHeadimg();
+            String headImage = userInfo.getHeadimg();
             if (!headImage.contains("http")) {
                 headImage = "http://" + headImage;
             }
             Picasso.with(getContext()).load(headImage).into(profileImage);
-            tvName.setText(data.getNickName());
-            if (data.getUserSex().equals("1")) {
+            tvName.setText(userInfo.getNickName());
+            if (userInfo.getUserSex().equals("1")) {
                 ivGender.setBackgroundResource(R.drawable.man);
             }
-            if (!data.getUserTrueName().equals("")) {
-                tvBio.setText("签名：" + data.getUserTrueName());
+            if (!userInfo.getUserTrueName().equals("")) {
+                tvBio.setText("签名：" + userInfo.getUserTrueName());
             } else {
                 tvBio.setText(R.string.bio_default);
             }
@@ -273,7 +278,7 @@ public class FragmentMy extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("FragmentMy", "onResume");
+        getUserInfo();
     }
 
     @Override
@@ -284,7 +289,7 @@ public class FragmentMy extends Fragment {
 
     @OnClick({R.id.profile_image, R.id.rl_works, R.id.tv_make_money, R.id.tv_withdraw, R.id
             .rl_daily_reward, R.id.rl_msg, R.id.rl_setting, R.id.rl_favorite, R.id.rl_follow, R
-            .id.rl_fans})
+            .id.rl_fans, R.id.ll_my_info})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.profile_image:
@@ -310,6 +315,11 @@ public class FragmentMy extends Fragment {
                 break;
             case R.id.rl_fans:
                 startActivity(new Intent(getActivity(), FansActivity.class));
+                break;
+            case R.id.ll_my_info:
+                Intent intent=new Intent(getActivity(), ModifyActivity.class);
+                intent.putExtra("userInfo", userInfo);
+                startActivity(intent);
                 break;
         }
     }

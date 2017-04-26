@@ -62,6 +62,10 @@
     <string name="name">名称:</string>
     <string name="signature">签名:</string>
     <string name="save">保存</string>
+    <string name="gender">性别:</string>
+
+
+
 
     <!--Ijkplayer Start-->
     <string name="N_A">N/A</string>

@@ -8,6 +8,16 @@ public class UserPostBean {
 
     private String opcode;
     private int useridx;
+    private String name;
+    private int chooseSelect;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getUseridx() {
         return useridx;
@@ -23,5 +33,13 @@ public class UserPostBean {
 
     public void setOpcode(String opcode) {
         this.opcode = opcode;
+    }
+
+    public int getChooseSelect() {
+        return chooseSelect;
+    }
+
+    public void setChooseSelect(int chooseSelect) {
+        this.chooseSelect = chooseSelect;
     }
 }

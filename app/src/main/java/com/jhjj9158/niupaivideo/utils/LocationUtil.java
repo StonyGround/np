@@ -27,7 +27,6 @@ public class LocationUtil {
             ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission
                     .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
         }
-
         LocationManager locationManager;
         String locationProvider;
         locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);

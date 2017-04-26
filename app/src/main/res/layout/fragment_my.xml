@@ -16,15 +16,16 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/ll_my_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="10dp"
-            android:paddingTop="10dp"
             android:layout_marginTop="@dimen/toolbar_padding_top"
             android:background="@color/transparent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -72,17 +73,17 @@
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_margin="5dp"
-                    android:textColor="@color/white"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:textColor="@color/white"/>
 
                 <TextView
                     android:id="@+id/tv_bio"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_margin="5dp"
-                    android:textColor="@color/white"
                     android:layout_weight="1"
-                    android:text="@string/home"/>
+                    android:text="@string/home"
+                    android:textColor="@color/white"/>
             </LinearLayout>
 
         </LinearLayout>

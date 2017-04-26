@@ -32,4 +32,6 @@
     <color name="transparent">#00000000</color>
     <color name="transparent_half">#e0000000</color>
     <color name="tv_personal_follow">#FF9F08</color>
+    <color name="line">#ddd</color>
+    <color name="text">#323232</color>
 </resources>

@@ -34,4 +34,8 @@ public class Contact {
     public static final String TAB_FAVORITE = "works/getPraiseVideoListByTa";
     public static final String GET_FOLLOW = "user/getFollowUserByTa";
     public static final String GET_FANS = "user/getFansList";
+
+    public static final int REQUEST_TAKE_PHOTO = 9;
+    public static final int REQUEST_PHOTO_ZOOM = 10;
+    public static final int REQUEST_PHOTO_RESULT = 11;
 }
