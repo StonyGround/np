@@ -20,6 +20,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.activity.FansActivity;
 import com.jhjj9158.niupaivideo.activity.FavoriteActivity;
 import com.jhjj9158.niupaivideo.activity.FollowActivity;
+import com.jhjj9158.niupaivideo.activity.MessageActivity;
 import com.jhjj9158.niupaivideo.activity.ModifyActivity;
 import com.jhjj9158.niupaivideo.activity.WorksActivity;
 import com.jhjj9158.niupaivideo.bean.UserDetailBean;
@@ -304,6 +305,7 @@ public class FragmentMy extends Fragment {
             case R.id.rl_daily_reward:
                 break;
             case R.id.rl_msg:
+                startActivity(new Intent(getActivity(), MessageActivity.class));
                 break;
             case R.id.rl_setting:
                 break;

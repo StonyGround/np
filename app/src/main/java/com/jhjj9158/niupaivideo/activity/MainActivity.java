@@ -55,7 +55,7 @@ public class MainActivity extends FragmentActivity {
 
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.argb(99,00,00,00));
+            getWindow().setStatusBarColor(Color.argb(100,00,00,00));
         }
 
         setContentView(R.layout.activity_main);

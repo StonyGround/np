@@ -271,10 +271,6 @@ public class FollowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-//                Message message = new Message();
-//                message.obj = response.body().string();
-//                message.what = 1;
-//                handler.sendMessage(message);
                 mainThread(response.body().string());
             }
         });

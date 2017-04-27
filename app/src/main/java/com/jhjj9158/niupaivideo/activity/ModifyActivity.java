@@ -3,6 +3,7 @@ package com.jhjj9158.niupaivideo.activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
@@ -14,6 +15,8 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -40,6 +43,7 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -75,6 +79,8 @@ public class ModifyActivity extends AppCompatActivity {
     TextView modifyGender;
 
     private UserInfoBean.DataBean userInfo;
+    String headImgPath;
+    private DialogProgress progress;
 
     private Handler handler = new Handler() {
         @Override
@@ -82,6 +88,22 @@ public class ModifyActivity extends AppCompatActivity {
             String json = msg.obj.toString();
             switch (msg.what) {
                 case 1:
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        if (jsonObject.getInt("code") == 100) {
+                            CommonUtil.showTextToast("修改成功", ModifyActivity.this);
+                            Picasso.with(ModifyActivity.this).load(new File(headImgPath)).into(modifyHeadimg);
+                            finish();
+                        } else {
+                            CommonUtil.showTextToast(jsonObject.getString("msg"), ModifyActivity
+                                    .this);
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case 2:
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         if (jsonObject.getInt("code") == 100) {
@@ -212,7 +234,6 @@ public class ModifyActivity extends AppCompatActivity {
         });
     }
 
-    private DialogProgress progress;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -245,14 +266,69 @@ public class ModifyActivity extends AppCompatActivity {
                             if (resultUri == null) {
                                 resultUri = Uri.parse(data.getAction());
                             }
-                            String path = FileUtils.getRealFilePath(this, resultUri);
-                            Log.e("path", path);
-                            Picasso.with(this).load(new File(path)).into(modifyHeadimg);
+                            headImgPath = FileUtils.getRealFilePath(this, resultUri);
+                            setHeadImag(headImgPath);
                         }
                         break;
                 }
                 break;
-
         }
+    }
+
+    private void setHeadImag(String headImgPath) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeFile(headImgPath, options);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] bytes = baos.toByteArray();
+        byte[] encode = Base64.encode(bytes, Base64.DEFAULT);
+        String encodeString = new String(encode);
+
+        String type = options.outMimeType;
+        if (TextUtils.isEmpty(type)) {
+            type = "未能识别的图片";
+        } else {
+            type = type.substring(6, type.length());
+        }
+
+
+        UserPostBean userPostBean = new UserPostBean();
+        userPostBean.setOpcode("UpdateUserImage");
+        userPostBean.setUseridx(userInfo.getUseridx());
+        userPostBean.setHeadImg(encodeString);
+        userPostBean.setType(type);
+
+        Gson gson = new Gson();
+        String jsonUser = gson.toJson(userPostBean);
+
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        RequestBody formBody = null;
+        try {
+            formBody = new FormBody.Builder()
+                    .add("user", CommonUtil.EncryptAsDoNet(jsonUser, Contact.KEY))
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Request request = new Request.Builder()
+                .url(Contact.USER_INFO)
+                .post(formBody)
+                .build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Message message = new Message();
+                message.obj = response.body().string();
+                message.what = 2;
+                handler.sendMessage(message);
+            }
+        });
     }
 }

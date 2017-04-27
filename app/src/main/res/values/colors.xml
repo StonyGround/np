@@ -34,4 +34,5 @@
     <color name="tv_personal_follow">#FF9F08</color>
     <color name="line">#ddd</color>
     <color name="text">#323232</color>
+    <color name="msg_notice_date">#D6D6D6</color>
 </resources>

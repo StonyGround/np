@@ -10,6 +10,17 @@ public class UserPostBean {
     private int useridx;
     private String name;
     private int chooseSelect;
+    private String type;
+
+    public String getHeadImg() {
+        return headImg;
+    }
+
+    public void setHeadImg(String headImg) {
+        this.headImg = headImg;
+    }
+
+    private String headImg;
 
     public String getName() {
         return name;
@@ -41,5 +52,13 @@ public class UserPostBean {
 
     public void setChooseSelect(int chooseSelect) {
         this.chooseSelect = chooseSelect;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

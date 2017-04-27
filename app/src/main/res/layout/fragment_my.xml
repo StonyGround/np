@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:background="@color/bg_my"
-                android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_my">
 
     <com.jhjj9158.niupaivideo.widget.ResizableImageView
         android:id="@+id/fragment_my_bg"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,15 +27,16 @@
             android:orientation="horizontal"
             android:paddingTop="10dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+            <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/profile_image"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
                 android:src="@drawable/me_user_admin"
                 app:civ_border_color="@color/btn_circle_login"
-                app:civ_border_width="2dp"/>
+                app:civ_border_width="2dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -57,14 +58,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:textSize="16sp"/>
+                        android:textSize="16sp" />
 
                     <ImageView
                         android:id="@+id/iv_gender"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
-                        android:src="@drawable/women"/>
+                        android:src="@drawable/women" />
 
                 </LinearLayout>
 
@@ -74,7 +75,7 @@
                     android:layout_height="0dp"
                     android:layout_margin="5dp"
                     android:layout_weight="1"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white" />
 
                 <TextView
                     android:id="@+id/tv_bio"
@@ -83,7 +84,7 @@
                     android:layout_margin="5dp"
                     android:layout_weight="1"
                     android:text="@string/home"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white" />
             </LinearLayout>
 
         </LinearLayout>
@@ -106,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
-                    android:text="@string/works_my"/>
+                    android:text="@string/works_my" />
 
                 <TextView
                     android:id="@+id/tv_works_num"
@@ -115,13 +116,13 @@
                     android:layout_below="@+id/tv_works"
                     android:layout_centerHorizontal="true"
                     android:text="28"
-                    android:textColor="@color/tv_black_my"/>
+                    android:textColor="@color/tv_black_my" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/line"/>
+                    android:src="@drawable/line" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -136,7 +137,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
-                    android:text="@string/favorite_my"/>
+                    android:text="@string/favorite_my" />
 
                 <TextView
                     android:id="@+id/tv_favorite_num"
@@ -145,13 +146,13 @@
                     android:layout_below="@+id/tv_favorite"
                     android:layout_centerHorizontal="true"
                     android:text="28"
-                    android:textColor="@color/tv_black_my"/>
+                    android:textColor="@color/tv_black_my" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/line"/>
+                    android:src="@drawable/line" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -166,7 +167,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
-                    android:text="@string/follow_my"/>
+                    android:text="@string/follow_my" />
 
                 <TextView
                     android:id="@+id/tv_follow_num"
@@ -175,13 +176,13 @@
                     android:layout_below="@+id/tv_follow"
                     android:layout_centerHorizontal="true"
                     android:text="28"
-                    android:textColor="@color/tv_black_my"/>
+                    android:textColor="@color/tv_black_my" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:src="@drawable/line"/>
+                    android:src="@drawable/line" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -196,7 +197,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
-                    android:text="@string/fans_my"/>
+                    android:text="@string/fans_my" />
 
                 <TextView
                     android:id="@+id/tv_fans_num"
@@ -205,14 +206,14 @@
                     android:layout_below="@+id/tv_fans"
                     android:layout_centerHorizontal="true"
                     android:text="28"
-                    android:textColor="@color/tv_black_my"/>
+                    android:textColor="@color/tv_black_my" />
             </RelativeLayout>
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:background="@color/bg_my"/>
+            android:background="@color/bg_my" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -227,14 +228,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/wallet_my"
                 android:textColor="@color/tv_black_my"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tv_make_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
-                android:text="@string/make_money"/>
+                android:text="@string/make_money" />
         </LinearLayout>
 
         <RelativeLayout
@@ -257,7 +258,7 @@
                     android:layout_height="wrap_content"
 
                     android:text="@string/rmb_sign"
-                    android:textColor="@color/button_login_click"/>
+                    android:textColor="@color/button_login_click" />
 
                 <TextView
                     android:id="@+id/tv_wallte"
@@ -265,7 +266,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/money_my"
                     android:textColor="@color/button_login_click"
-                    android:textSize="28sp"/>
+                    android:textSize="28sp" />
 
             </LinearLayout>
 
@@ -282,13 +283,13 @@
                 android:paddingRight="20dp"
                 android:paddingTop="3dp"
                 android:text="@string/withdraw"
-                android:textColor="@color/tv_black_my"/>
+                android:textColor="@color/tv_black_my" />
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_my"/>
+            android:background="@color/bg_my" />
 
         <RelativeLayout
             android:id="@+id/rl_daily_reward"
@@ -302,7 +303,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@drawable/daily_reward"/>
+                android:src="@drawable/daily_reward" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -312,7 +313,7 @@
                 android:layout_toRightOf="@id/icon_daily_reward"
                 android:text="@string/daily_redraw"
                 android:textColor="@color/tv_black_my"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -320,7 +321,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/maked_num"
                 android:text="@string/maked_today"
-                android:textSize="12sp"/>
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/maked_num"
@@ -330,7 +331,7 @@
                 android:layout_toLeftOf="@+id/tv_yuan"
                 android:text="12343"
                 android:textColor="@color/tv_maked_num"
-                android:textSize="12sp"/>
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tv_yuan"
@@ -339,7 +340,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@+id/iv_reward_more"
                 android:text="@string/yuan"
-                android:textSize="12sp"/>
+                android:textSize="12sp" />
 
             <ImageView
                 android:id="@+id/iv_reward_more"
@@ -347,13 +348,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/icon_more"/>
+                android:src="@drawable/icon_more" />
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            android:background="@color/bg_my"/>
+            android:background="@color/bg_my" />
 
         <RelativeLayout
             android:id="@+id/rl_msg"
@@ -367,7 +368,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@drawable/info"/>
+                android:src="@drawable/info" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -376,7 +377,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@id/icon_msg"
                 android:text="@string/tv_msg"
-                android:textColor="@color/tv_black_my"/>
+                android:textColor="@color/tv_black_my" />
 
             <TextView
                 android:id="@+id/tv_msg_num"
@@ -392,7 +393,7 @@
                 android:text="12"
                 android:textColor="@color/white"
                 android:textSize="10sp"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/iv_msg_more"
@@ -400,13 +401,13 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/icon_more"/>
+                android:src="@drawable/icon_more" />
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/bg_my"/>
+            android:background="@color/bg_my" />
 
         <RelativeLayout
             android:id="@+id/rl_setting"
@@ -420,7 +421,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:src="@drawable/setting"/>
+                android:src="@drawable/setting" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -429,7 +430,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@id/icon_setting"
                 android:text="@string/tv_setting"
-                android:textColor="@color/tv_black_my"/>
+                android:textColor="@color/tv_black_my" />
 
 
             <ImageView
@@ -438,7 +439,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:src="@drawable/icon_more"/>
+                android:src="@drawable/icon_more" />
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>
