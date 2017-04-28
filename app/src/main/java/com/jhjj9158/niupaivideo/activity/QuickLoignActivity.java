@@ -41,10 +41,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class QuickLoignActivity extends AppCompatActivity {
+public class QuickLoignActivity extends BaseActivity {
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.ll_login_wechat)
     LinearLayout llLoginWechat;
     @BindView(R.id.ll_login_qq)
@@ -94,8 +92,7 @@ public class QuickLoignActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_quick_loign);
-        ButterKnife.bind(this);
+        initTitle(this,"登录");
 
         regToWx();
 
@@ -104,18 +101,11 @@ public class QuickLoignActivity extends AppCompatActivity {
         config.setSinaAuthType(UMShareConfig.AUTH_TYPE_SSO);
         UMShareAPI.get(this).setShareConfig(config);
         mShareAPI = UMShareAPI.get(this);
+    }
 
-        toolbar.setTitle(R.string.login);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        toolbar.setNavigationIcon(R.drawable.ic_navigate_before);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        setSupportActionBar(toolbar);
-
+    @Override
+    protected View getChildView() {
+        return View.inflate(this, R.layout.activity_quick_loign, null);
     }
 
     @OnClick({R.id.ll_login_wechat, R.id.ll_login_qq, R.id.ll_login_sina, R.id.tv_login_crystal, R.id.tv_login_happy, R.id.tv_agressment})
@@ -247,7 +237,7 @@ public class QuickLoignActivity extends AppCompatActivity {
         super.onResume();
         String code = CacheUtils.getString(QuickLoignActivity.this, "code_weixin");
         if (!code.isEmpty()) {
-            CacheUtils.delString(QuickLoignActivity.this,"code_weixin");
+            CacheUtils.delString(QuickLoignActivity.this, "code_weixin");
             OkHttpClient mOkHttpClient = new OkHttpClient();
             Request.Builder requestBuilder = new Request.Builder().url(Contact.LOGIN_WEIXIN + "?platid=0&code=" + code);
             requestBuilder.method("GET", null);
@@ -270,7 +260,7 @@ public class QuickLoignActivity extends AppCompatActivity {
                 }
             });
         }
-        if(CacheUtils.getInt(QuickLoignActivity.this,"useridx")!=0){
+        if (CacheUtils.getInt(QuickLoignActivity.this, "useridx") != 0) {
             finish();
         }
     }

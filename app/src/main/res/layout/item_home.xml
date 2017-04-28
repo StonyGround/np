@@ -17,6 +17,7 @@
                 android:id="@+id/iv_video"
                 android:layout_width="match_parent"
                 android:layout_marginBottom="5dp"
+                android:src="@drawable/wartfullplacehold"
                 android:layout_height="wrap_content"/>
 
 
@@ -47,6 +48,7 @@
                 android:layout_marginLeft="10dp"
                 app:civ_border_color="@color/white"
                 app:civ_border_width="1dp"
+                android:src="@drawable/me_user_admin"
                 android:layout_alignBottom="@+id/tv_video_size"/>
 
             <TextView

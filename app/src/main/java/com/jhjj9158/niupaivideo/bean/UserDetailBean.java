@@ -82,7 +82,7 @@ public class UserDetailBean {
         private String signature;
         private String headphoto;
         private String bgphoto;
-        private int wallet;
+        private double wallet;
         private String province;
         private String city;
         private String phoneBrand;
@@ -100,8 +100,8 @@ public class UserDetailBean {
         private int zanNum;
         private int newtNum;
         private int tNum;
-        private int longitude;
-        private int latitude;
+        private double longitude;
+        private double latitude;
         private String userborn;
         private String alipay;
         private String alipayName;
@@ -181,7 +181,7 @@ public class UserDetailBean {
             this.bgphoto = bgphoto;
         }
 
-        public int getWallet() {
+        public double getWallet() {
             return wallet;
         }
 
@@ -325,7 +325,7 @@ public class UserDetailBean {
             this.tNum = tNum;
         }
 
-        public int getLongitude() {
+        public double getLongitude() {
             return longitude;
         }
 
@@ -333,7 +333,7 @@ public class UserDetailBean {
             this.longitude = longitude;
         }
 
-        public int getLatitude() {
+        public double getLatitude() {
             return latitude;
         }
 

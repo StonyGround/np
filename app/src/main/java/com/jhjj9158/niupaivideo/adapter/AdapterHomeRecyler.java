@@ -116,9 +116,9 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
                 e.printStackTrace();
             }
 
-            Picasso.with(context).load(videoPic).into(((Holder) viewHolder).iv_video);
+            Picasso.with(context).load(videoPic).placeholder(R.drawable.wartfullplacehold).into(((Holder) viewHolder).iv_video);
             if (!headImage.equals("")) {
-                Picasso.with(context).load(headImage).into(((Holder) viewHolder).iv_head);
+                Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).iv_head);
             }
             ((Holder) viewHolder).tv_video_ago.setText(createTime);
             ((Holder) viewHolder).tv_video_size.setText(videoSize);

@@ -120,7 +120,7 @@ public class OkHttpUtils {
 //    }
 
     //将消息发送到主线程
-    public void mainThread(final String result) {
+    public void  mainThread(final String result) {
         handler.post(new Runnable() {
             @Override
             public void run() {

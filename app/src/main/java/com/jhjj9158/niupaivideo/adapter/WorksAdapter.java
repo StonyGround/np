@@ -89,7 +89,7 @@ public class WorksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (viewHolder instanceof Holder) {
             String videoPicUrl = new String(Base64.decode(data.getVideoPicUrl().getBytes(),
                     Base64.DEFAULT));
-            Picasso.with(context).load(videoPicUrl).into(((Holder) viewHolder).imageView);
+            Picasso.with(context).load(videoPicUrl).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).imageView);
         }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

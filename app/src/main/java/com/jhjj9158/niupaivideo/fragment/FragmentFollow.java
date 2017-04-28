@@ -26,6 +26,7 @@ import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
+import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
 
 import java.io.IOException;
 import java.util.List;
@@ -98,7 +99,8 @@ public class FragmentFollow extends Fragment {
                 StaggeredGridLayoutManager.VERTICAL);
         recyclerview.setLayoutManager(layoutManager);
 
-        recyclerview.addItemDecoration(new GridSpacingItemDecoration(2,10,true));
+//        recyclerview.addItemDecoration(new GridSpacingItemDecoration(2,10,true));
+        recyclerview.addItemDecoration(new SpaceItemDecoration(5));
         recyclerview.setItemAnimator(new DefaultItemAnimator());
         recyclerview.setHasFixedSize(true);
 

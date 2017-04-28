@@ -89,6 +89,13 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
+        <activity
+            android:name="com.sina.weibo.sdk.component.WeiboSdkBrowser"
+            android:configChanges="keyboardHidden|orientation"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" >
+        </activity>
+
         <!-- Umeng社会化分享 End -->
 
         <meta-data
@@ -103,7 +110,8 @@
         <activity android:name=".activity.FansActivity" />
         <activity android:name=".activity.ModifyActivity" />
         <activity android:name=".activity.MessageActivity" />
-        <activity android:name=".activity.SettingActivity"></activity>
+        <activity android:name=".activity.SettingActivity" />
+        <activity android:name=".activity.FeedbackActivity"></activity>
     </application>
 
 </manifest>

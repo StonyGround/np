@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.bean.MsgCommentBean;
+import com.jhjj9158.niupaivideo.bean.Noticebean;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     long restTime = 0;
 
-    private List<MsgCommentBean.ResultBean> mDatas = new ArrayList<>();
+    private List<Noticebean.ResultBean> mDatas = new ArrayList<>();
 
     private View mHeaderView;
 
@@ -42,7 +43,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Context context;
 
-    public NoticeAdapter(Context context, List<MsgCommentBean.ResultBean> mDatas) {
+    public NoticeAdapter(Context context, List<Noticebean.ResultBean> mDatas) {
         this.context = context;
         this.mDatas = mDatas;
     }
@@ -60,7 +61,7 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return mHeaderView;
     }
 
-    public void addDatas(List<MsgCommentBean.ResultBean> datas) {
+    public void addDatas(List<Noticebean.ResultBean> datas) {
         mDatas.addAll(datas);
         notifyDataSetChanged();
     }
@@ -89,27 +90,29 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (getItemViewType(position) == TYPE_HEADER) return;
         this.position = position;
         final int pos = getRealPosition(viewHolder);
-        final MsgCommentBean.ResultBean data = mDatas.get(pos);
+        final Noticebean.ResultBean data = mDatas.get(pos);
         if (viewHolder instanceof Holder) {
-            String name = new String(Base64.decode(data.getNickName().getBytes(),
-                    Base64.DEFAULT));
-            String comment=new String(Base64.decode(data.getComment().getBytes(),
-                    Base64.DEFAULT));
-            String reply=new String(Base64.decode(data.getReplycomment().getBytes(),
-                    Base64.DEFAULT));
-            String headImage = new String(Base64.decode(data.getHeadphoto().getBytes(),
-                    Base64.DEFAULT));
-            if (!headImage.contains("http")) {
-                headImage = "http://" + headImage;
+            String comment = data.getInformcontent();
+            int isRead = data.getIsread();
+            int videoId = data.getVid();
+            int type = data.getType();
+            String url = data.getUrl();
+            String date = data.getTime();
+
+            ((Holder) viewHolder).notice_title.setText(comment);
+            ((Holder) viewHolder).notice_date.setText(date);
+            if (type == 2) {
+                ((Holder) viewHolder).notice_line.setVisibility(View.GONE);
+                ((Holder) viewHolder).notice_go.setVisibility(View.GONE);
             }
-            String videoPic = new String(Base64.decode(data.getVideoPicUrl().getBytes(),
-                    Base64.DEFAULT));
-            if (!videoPic.contains("http")) {
-                videoPic = "http://" + headImage;
-            }
-            Picasso.with(context).load(headImage).into(((Holder) viewHolder).notice_headimg);
-            ((Holder) viewHolder).notice_title.setText(name);
+
         }
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onItemClick(pos, data);
+            }
+        });
     }
 
     public int getRealPosition(RecyclerView.ViewHolder holder) {
@@ -120,8 +123,8 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-//        return mHeaderView == null ? mDatas.size() : mDatas.size() + 1;
-        return 5;
+        return mHeaderView == null ? mDatas.size() : mDatas.size() + 1;
+//        return 5;
     }
 
     class Holder extends RecyclerView.ViewHolder {
@@ -135,16 +138,16 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public Holder(View itemView) {
             super(itemView);
             if (itemView == mHeaderView) return;
-            notice_headimg= (CircleImageView) itemView.findViewById(R.id.notice_headimg);
-            notice_date= (TextView) itemView.findViewById(R.id.notice_date);
-            notice_title= (TextView) itemView.findViewById(R.id.notice_title);
-            notice_go= (TextView) itemView.findViewById(R.id.notice_go);
-            notice_line= itemView.findViewById(R.id.notice_line);
-            rl_notice_cotent= (RelativeLayout) itemView.findViewById(R.id.rl_notice_cotent);
+            notice_headimg = (CircleImageView) itemView.findViewById(R.id.notice_headimg);
+            notice_date = (TextView) itemView.findViewById(R.id.notice_date);
+            notice_title = (TextView) itemView.findViewById(R.id.notice_title);
+            notice_go = (TextView) itemView.findViewById(R.id.notice_go);
+            notice_line = itemView.findViewById(R.id.notice_line);
+            rl_notice_cotent = (RelativeLayout) itemView.findViewById(R.id.rl_notice_cotent);
         }
     }
 
     public interface OnItemClickListener {
-        void onItemClick(int position, MsgCommentBean.ResultBean data);
+        void onItemClick(int position, Noticebean.ResultBean data);
     }
 }

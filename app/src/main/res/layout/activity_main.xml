@@ -36,6 +36,8 @@
 
                 <LinearLayout
                     android:id="@+id/ll_home"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -70,6 +72,8 @@
                     android:id="@+id/ll_my"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:gravity="center"
                     android:orientation="vertical">
 

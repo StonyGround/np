@@ -36,6 +36,9 @@ public class Contact {
     public static final String GET_FANS = "user/getFansList";
     public static final String GET_COMMENT = "works/getCommentInfo_112";
     public static final String GET_NOTICE = "works/GetInform";
+    public static final String GET_MOMENTS = "works/getTrendsInfo_112";
+    public static final String GET_LIKE = "works/getPraiseInfo_112";
+    public static final String GET_REWARD = "works/GetRewardTrendsInfo";
 
     public static final int REQUEST_TAKE_PHOTO = 9;
     public static final int REQUEST_PHOTO_ZOOM = 10;

@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -16,13 +17,15 @@
             android:src="@drawable/me_user_admin" />
 
         <LinearLayout
-            android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/msg_comment_video"
             android:layout_toRightOf="@+id/msg_comment_headimg"
             android:orientation="vertical"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp">
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp">
 
             <TextView
                 android:id="@+id/msg_comment_name"
@@ -31,7 +34,7 @@
                 android:textSize="14sp" />
 
             <TextView
-                android:id="@+id/msg_comment_reply"
+                android:id="@+id/msg_comment_detail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
@@ -41,28 +44,36 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_marginRight="10dp"
+            android:id="@+id/msg_comment_date"
+            android:layout_toLeftOf="@+id/msg_comment_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"/>
+
         <ImageView
             android:id="@+id/msg_comment_video"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:scaleType="centerCrop"
             android:layout_alignParentRight="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/me_user_admin" />
     </RelativeLayout>
 
     <TextView
-        android:padding="10dp"
-        android:id="@+id/msg_comment_detail"
+        android:id="@+id/msg_comment_reply"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="60dp"
         android:layout_marginRight="10dp"
         android:background="@color/grey"
+        android:padding="10dp"
         android:textSize="12sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:background="@color/button_login" />
 </LinearLayout>

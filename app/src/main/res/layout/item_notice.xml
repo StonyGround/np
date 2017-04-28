@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/bg_my"
     android:orientation="vertical">
 
     <TextView
@@ -12,6 +11,7 @@
         android:paddingRight="5dp"
         android:textColor="@color/white"
         android:paddingTop="2dp"
+        android:textSize="12sp"
         android:paddingBottom="2dp"
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
@@ -21,15 +21,17 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:orientation="horizontal"
+        android:layout_marginBottom="10dp"
         android:layout_height="wrap_content">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/notice_headimg"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="20dp"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/me_user_admin"/>
+            android:layout_marginRight="10dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/niupai_logo"/>
 
         <!--<View-->
             <!--android:layout_width="20dp"-->

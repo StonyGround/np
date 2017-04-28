@@ -22,6 +22,7 @@ import com.jhjj9158.niupaivideo.activity.FavoriteActivity;
 import com.jhjj9158.niupaivideo.activity.FollowActivity;
 import com.jhjj9158.niupaivideo.activity.MessageActivity;
 import com.jhjj9158.niupaivideo.activity.ModifyActivity;
+import com.jhjj9158.niupaivideo.activity.SettingActivity;
 import com.jhjj9158.niupaivideo.activity.WorksActivity;
 import com.jhjj9158.niupaivideo.bean.UserDetailBean;
 import com.jhjj9158.niupaivideo.bean.UserInfoBean;
@@ -31,6 +32,7 @@ import com.jhjj9158.niupaivideo.utils.BlurBitmapUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.ResizableImageView;
 import com.squareup.picasso.Picasso;
 
@@ -160,18 +162,6 @@ public class FragmentMy extends Fragment {
         }
     }
 
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (CacheUtils.getInt(getActivity(), "useridx") == 0) {
-            return;
-        }
-        getUserInfo();
-        getUserDate();
-    }
-
     private void getUserDate() {
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
@@ -261,7 +251,7 @@ public class FragmentMy extends Fragment {
             } else {
                 tvBio.setText(R.string.bio_default);
             }
-            Picasso.with(getContext()).load(headImage).transform(new BlurBitmapUtil
+            Picasso.with(getContext()).load(headImage).placeholder(R.drawable.me_user_admin).transform(new BlurBitmapUtil
                     .BlurTransformation(getContext())).into(fragmentMyBg);
         }
     }
@@ -271,19 +261,37 @@ public class FragmentMy extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle
             savedInstanceState) {
+//        Log.e("FragmentMy","onCreateView");
         View view = inflater.inflate(R.layout.fragment_my, container, false);
         unbinder = ButterKnife.bind(this, view);
+
+        if (CacheUtils.getInt(getActivity(), "useridx") == 0) {
+            return null;
+        }
+        getUserInfo();
+        getUserDate();
+        getReward();
         return view;
+    }
+
+    private void getReward() {
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+//        Log.e("FragmentMy","onResume");
+        if(CacheUtils.getInt(getActivity(),"useridx")==0){
+            return;
+        }
         getUserInfo();
+        getUserDate();
     }
 
     @Override
     public void onDestroyView() {
+        Log.e("FragmentMy","onDestroyView");
         super.onDestroyView();
         unbinder.unbind();
     }
@@ -308,6 +316,7 @@ public class FragmentMy extends Fragment {
                 startActivity(new Intent(getActivity(), MessageActivity.class));
                 break;
             case R.id.rl_setting:
+                startActivity(new Intent(getActivity(), SettingActivity.class));
                 break;
             case R.id.rl_favorite:
                 startActivity(new Intent(getActivity(), FavoriteActivity.class));

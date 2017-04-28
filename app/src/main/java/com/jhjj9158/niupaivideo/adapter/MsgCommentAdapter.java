@@ -2,6 +2,7 @@ package com.jhjj9158.niupaivideo.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,11 +94,13 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         if (viewHolder instanceof Holder) {
             String name = new String(Base64.decode(data.getNickName().getBytes(),
                     Base64.DEFAULT));
-            String comment=new String(Base64.decode(data.getComment().getBytes(),
+            String comment = new String(Base64.decode(data.getComment().getBytes(),
                     Base64.DEFAULT));
-            String reply=new String(Base64.decode(data.getReplycomment().getBytes(),
+            String reply = new String(Base64.decode(data.getReplycomment().getBytes(),
                     Base64.DEFAULT));
             String headImage = new String(Base64.decode(data.getHeadphoto().getBytes(),
+                    Base64.DEFAULT));
+            String date = new String(Base64.decode(data.getCDate().getBytes(),
                     Base64.DEFAULT));
             if (!headImage.contains("http")) {
                 headImage = "http://" + headImage;
@@ -107,11 +110,16 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             if (!videoPic.contains("http")) {
                 videoPic = "http://" + headImage;
             }
-            Picasso.with(context).load(headImage).into(((MsgCommentAdapter.Holder) viewHolder).msgCommentHeadimg);
-            Picasso.with(context).load(videoPic).into(((Holder) viewHolder).msgCommentVideo);
+
+            if(TextUtils.isEmpty(reply)){
+                ((Holder) viewHolder).msgCommentReply.setVisibility(View.GONE);
+            }
+            Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(((MsgCommentAdapter.Holder) viewHolder).msgCommentHeadimg);
+            Picasso.with(context).load(videoPic).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).msgCommentVideo);
             ((Holder) viewHolder).msgCommentName.setText(name);
             ((Holder) viewHolder).msgCommentDetail.setText(comment);
             ((Holder) viewHolder).msgCommentReply.setText(reply);
+            ((Holder) viewHolder).msgCommentDate.setText(date);
         }
     }
 
@@ -123,8 +131,8 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-//        return mHeaderView == null ? mDatas.size() : mDatas.size() + 1;
-        return 5;
+        return mHeaderView == null ? mDatas.size() : mDatas.size() + 1;
+//        return 5;
     }
 
     class Holder extends RecyclerView.ViewHolder {
@@ -133,15 +141,17 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         TextView msgCommentReply;
         ImageView msgCommentVideo;
         TextView msgCommentDetail;
+        TextView msgCommentDate;
 
         public Holder(View itemView) {
             super(itemView);
             if (itemView == mHeaderView) return;
-            msgCommentHeadimg= (CircleImageView) itemView.findViewById(R.id.msg_comment_headimg);
-            msgCommentName= (TextView) itemView.findViewById(R.id.msg_comment_name);
-            msgCommentReply= (TextView) itemView.findViewById(R.id.msg_comment_reply);
-            msgCommentVideo= (ImageView) itemView.findViewById(R.id.msg_comment_video);
-            msgCommentDetail= (TextView) itemView.findViewById(R.id.msg_comment_detail);
+            msgCommentHeadimg = (CircleImageView) itemView.findViewById(R.id.msg_comment_headimg);
+            msgCommentName = (TextView) itemView.findViewById(R.id.msg_comment_name);
+            msgCommentReply = (TextView) itemView.findViewById(R.id.msg_comment_reply);
+            msgCommentVideo = (ImageView) itemView.findViewById(R.id.msg_comment_video);
+            msgCommentDetail = (TextView) itemView.findViewById(R.id.msg_comment_detail);
+            msgCommentDate = (TextView) itemView.findViewById(R.id.msg_comment_date);
         }
     }
 

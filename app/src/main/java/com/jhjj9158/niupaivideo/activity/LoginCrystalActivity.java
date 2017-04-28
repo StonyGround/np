@@ -37,10 +37,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class LoginCrystalActivity extends AppCompatActivity {
+public class LoginCrystalActivity extends BaseActivity {
 
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
     @BindView(R.id.name)
     AutoCompleteTextView name;
     @BindView(R.id.pwd)
@@ -72,19 +70,8 @@ public class LoginCrystalActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
 
-        toolbar.setTitle(R.string.title_activity_login);
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        toolbar.setNavigationIcon(R.drawable.ic_navigate_before);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-        setSupportActionBar(toolbar);
+        initTitle(this,"水晶登录");
 
         initAutoComplete("history", name);
 
@@ -123,6 +110,11 @@ public class LoginCrystalActivity extends AppCompatActivity {
                 userIsEmpty();
             }
         });
+    }
+
+    @Override
+    protected View getChildView() {
+        return View.inflate(this, R.layout.activity_login, null);
     }
 
     public void userIsEmpty() {
