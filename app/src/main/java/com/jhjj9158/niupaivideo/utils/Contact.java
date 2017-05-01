@@ -39,7 +39,18 @@ public class Contact {
     public static final String GET_MOMENTS = "works/getTrendsInfo_112";
     public static final String GET_LIKE = "works/getPraiseInfo_112";
     public static final String GET_REWARD = "works/GetRewardTrendsInfo";
+    public static final String GET_BANNER = "Profit/loadAdvertisement";
 
+
+    public static final int BANNER_START_ROLLING = 0;
+    public static final int BANNER_KEEP_ROLLING = 1;
+    public static final int BANNER_STOP_ROLLING = 2;
+    public static final int BANNER_CHANGE_ROLLING = 3;
+    public static final int GET_BANNER_DATA = 4;
+    public static final int GET_HOT_DATA = 5;
+    public static final int GET_NEW_DATA = 6;
+    public static final int GET_FOLLOW_DATA = 7;
+    public static final int GET_DYNAMIC_DATA = 8;
     public static final int REQUEST_TAKE_PHOTO = 9;
     public static final int REQUEST_PHOTO_ZOOM = 10;
     public static final int REQUEST_PHOTO_RESULT = 11;

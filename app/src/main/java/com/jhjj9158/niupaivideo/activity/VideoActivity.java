@@ -163,7 +163,6 @@ public class VideoActivity extends AppCompatActivity {
         }
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false) {
-
             @Override
             public boolean canScrollVertically() {
                 return false;

@@ -93,6 +93,7 @@ public class PersonalActivity extends FragmentActivity {
     private int buidx;
     private int uidx;
     private int isFollow;
+    private int fansNum;
 
     private List<Fragment> fragmentList = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
@@ -112,9 +113,13 @@ public class PersonalActivity extends FragmentActivity {
                         if (result.equals("关注成功")) {
                             isFollow = 1;
                             btnPersonalFollow.setText(R.string.unfollow);
+                            fansNum = fansNum + 1;
+                            personalFans.setText(" " + "粉丝" + fansNum);
                         } else {
                             isFollow = 0;
                             btnPersonalFollow.setText(R.string.tv_personal_follow);
+                            fansNum = fansNum - 1;
+                            personalFans.setText(" " + "粉丝" + fansNum);
                         }
                         CommonUtil.showTextToast(result, PersonalActivity
                                 .this);
@@ -138,7 +143,7 @@ public class PersonalActivity extends FragmentActivity {
             headImage = "http://" + headImage;
         }
         int followNum = resultBean.getFollowNum();
-        int fansNum = resultBean.getFansNum();
+        fansNum = resultBean.getFansNum();
         String signature = new String(Base64.decode(resultBean.getSignature().getBytes(),
                 Base64.DEFAULT));
         int showuidx = resultBean.getShowuidx();
@@ -178,7 +183,7 @@ public class PersonalActivity extends FragmentActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.argb(99,00,00,00));
+            getWindow().setStatusBarColor(Color.argb(99, 00, 00, 00));
         }
 
 

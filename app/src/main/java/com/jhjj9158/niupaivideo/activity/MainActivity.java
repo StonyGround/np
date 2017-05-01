@@ -47,29 +47,29 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-//        CacheUtils.setInt(this,"useridx",1628007796);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.argb(100, 00, 00, 00));
-        }
-
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-
-        ivHome.setBackgroundResource(R.drawable.icon_home_selected);
-
-        fragmentHome = new FragmentHome();
-        fragmentMy = new FragmentMy();
-        fragmentManager = getSupportFragmentManager();
-
         if (savedInstanceState == null) {
+            CacheUtils.setInt(this, "useridx", 1628007796);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                        | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                getWindow().setStatusBarColor(Color.argb(100, 00, 00, 00));
+            }
+
+            setContentView(R.layout.activity_main);
+            ButterKnife.bind(this);
+
+            ivHome.setBackgroundResource(R.drawable.icon_home_selected);
+
+            fragmentHome = new FragmentHome();
+            fragmentMy = new FragmentMy();
+            fragmentManager = getSupportFragmentManager();
+
+
             FragmentTransaction transaction = fragmentManager.beginTransaction();
             transaction.add(R.id.fg_main, fragmentMy).hide(fragmentMy).add(R.id.fg_main,
                     fragmentHome);
@@ -90,7 +90,6 @@ public class MainActivity extends FragmentActivity {
                 ivMy.setBackgroundResource(R.drawable.icon_my_selected);
                 switchFragment(fragmentHome, fragmentMy);
                 if (CacheUtils.getInt(MainActivity.this, "useridx") == 0) {
-                    Log.e("useridx", String.valueOf(CacheUtils.getInt(MainActivity.this, "useridx")));
                     startActivity(new Intent(MainActivity.this, QuickLoignActivity.class));
                 }
                 break;

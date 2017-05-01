@@ -228,7 +228,7 @@ public class ModifyActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 Message message = new Message();
                 message.obj = response.body().string();
-                message.what = 1;
+                message.what = 2;
                 handler.sendMessage(message);
             }
         });
@@ -326,7 +326,7 @@ public class ModifyActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
                 Message message = new Message();
                 message.obj = response.body().string();
-                message.what = 2;
+                message.what = 1;
                 handler.sendMessage(message);
             }
         });

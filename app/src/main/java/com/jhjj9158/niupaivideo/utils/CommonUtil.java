@@ -1,5 +1,6 @@
 package com.jhjj9158.niupaivideo.utils;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -7,6 +8,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import java.io.File;
@@ -95,5 +97,11 @@ public class CommonUtil {
         String id = UUID.randomUUID().toString();
         out.write(id.getBytes());
         out.close();
+    }
+
+    public static int getScreenHeight(Context context) {
+        DisplayMetrics display = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(display);
+        return display.heightPixels;
     }
 }

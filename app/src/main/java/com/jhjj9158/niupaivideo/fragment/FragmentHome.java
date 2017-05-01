@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
@@ -20,8 +21,6 @@ import com.jhjj9158.niupaivideo.bean.TabTitleBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -79,7 +78,7 @@ public class FragmentHome extends Fragment {
                     }
                     TabFragmentAdapter tabFragmentAdapter = new TabFragmentAdapter
                             (getFragmentManager(),
-                            fragmentList, titles);
+                                    fragmentList, titles);
                     viewpager.setAdapter(tabFragmentAdapter);
                     tabLayout.setupWithViewPager(viewpager);
                     break;
@@ -92,6 +91,23 @@ public class FragmentHome extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle
+            savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+        unbinder = ButterKnife.bind(this, view);
+
+
+//        tabLayout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                setIndicator(tabLayout,10,10);
+//            }
+//        });
         titles.add("热门");
         titles.add("最新");
         titles.add("关注");
@@ -121,24 +137,12 @@ public class FragmentHome extends Fragment {
                 handler.sendMessage(message);
             }
         });
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle
-            savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        unbinder = ButterKnife.bind(this, view);
-
-//        tabLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                setIndicator(tabLayout,10,10);
-//            }
-//        });
 
         return view;
     }
+
+
+
 //
 //    public void setIndicator (TabLayout tabs,int leftDip,int rightDip) {
 //        Class<?> tabLayout = tabs.getClass();
