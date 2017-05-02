@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.jhjj9158.niupaivideo.MyApplication;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.bean.LoginResultBean;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
@@ -60,13 +61,7 @@ public class QuickLoignActivity extends BaseActivity {
 
     private UMShareAPI mShareAPI = null;
 
-    private static final String APP_ID = "wx17181f643ff9a6c8";
-    private IWXAPI api;
 
-    private void regToWx() {
-        api = WXAPIFactory.createWXAPI(this, APP_ID, true);
-        api.registerApp(APP_ID);
-    }
 
     private Handler handler = new Handler() {
         @Override
@@ -74,7 +69,6 @@ public class QuickLoignActivity extends BaseActivity {
             switch (msg.what) {
                 case 1:
                     String jsonLogin = msg.obj.toString();
-                    Log.e("login", jsonLogin);
                     Gson gson = new Gson();
                     LoginResultBean loginResult = gson.fromJson(jsonLogin, LoginResultBean.class);
                     CommonUtil.showTextToast(loginResult.getMsg(), QuickLoignActivity.this);
@@ -92,9 +86,8 @@ public class QuickLoignActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initTitle(this,"登录");
+        initTitle(this, "登录");
 
-        regToWx();
 
         UMShareConfig config = new UMShareConfig();
         config.isNeedAuthOnGetUserInfo(true);
@@ -110,15 +103,17 @@ public class QuickLoignActivity extends BaseActivity {
 
     @OnClick({R.id.ll_login_wechat, R.id.ll_login_qq, R.id.ll_login_sina, R.id.tv_login_crystal, R.id.tv_login_happy, R.id.tv_agressment})
     public void onViewClicked(View view) {
-
         SHARE_MEDIA platform = null;
         switch (view.getId()) {
             case R.id.ll_login_wechat:
-                //此处不能通过友盟sdk,否则无法获取code
+                if (!MyApplication.api.isWXAppInstalled()) {
+                    CommonUtil.showTextToast("未安装微信客户端",QuickLoignActivity.this);
+                    return;
+                }
                 final SendAuth.Req req = new SendAuth.Req();
                 req.scope = "snsapi_userinfo";
                 req.state = "4146c1c15c8887a3d9916ef8fbcedcd7";
-                api.sendReq(req);
+                MyApplication.api.sendReq(req);
                 break;
             case R.id.ll_login_qq:
                 platform = SHARE_MEDIA.QQ;
@@ -129,9 +124,14 @@ public class QuickLoignActivity extends BaseActivity {
                 mShareAPI.doOauthVerify(QuickLoignActivity.this, platform, umAuthListener);
                 break;
             case R.id.tv_login_crystal:
-                startActivity(new Intent(QuickLoignActivity.this, LoginCrystalActivity.class));
+                Intent intentCrystal = new Intent(QuickLoignActivity.this, LoginCrystalActivity.class);
+                intentCrystal.putExtra("platform", 11);
+                startActivity(intentCrystal);
                 break;
             case R.id.tv_login_happy:
+                Intent intentHappy = new Intent(QuickLoignActivity.this, LoginCrystalActivity.class);
+                intentHappy.putExtra("platform", 3);
+                startActivity(intentHappy);
                 break;
             case R.id.tv_agressment:
                 break;

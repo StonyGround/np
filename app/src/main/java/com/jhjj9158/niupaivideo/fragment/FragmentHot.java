@@ -130,10 +130,17 @@ public class FragmentHot extends Fragment {
         recyclerview.setAdapter(adapterHomeRecyler);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.e("FragmentHot","onCreate");
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
+        Log.e("FragmentHot","onDestroyView");
         View view = inflater.inflate(R.layout.tab_hot, container, false);
         unbinder = ButterKnife.bind(this, view);
 
@@ -295,7 +302,14 @@ public class FragmentHot extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        Log.e("FragmentHot","onResume");
+        super.onResume();
+    }
+
+    @Override
     public void onDestroyView() {
+        Log.e("FragmentHot","onCreate");
 //        swipeRefresh.setRefreshing(false);
         super.onDestroyView();
         unbinder.unbind();

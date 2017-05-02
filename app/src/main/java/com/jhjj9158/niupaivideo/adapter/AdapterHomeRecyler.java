@@ -14,7 +14,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.squareup.picasso.Picasso;

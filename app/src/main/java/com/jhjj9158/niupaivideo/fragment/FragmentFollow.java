@@ -102,7 +102,7 @@ public class FragmentFollow extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.e("FragmentFollow","onCreate");
 
     }
 
@@ -110,6 +110,7 @@ public class FragmentFollow extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
+        Log.e("FragmentFollow","onCreateView");
         View view = inflater.inflate(R.layout.tab_hot, container, false);
         unbinder = ButterKnife.bind(this, view);
 
@@ -272,7 +273,14 @@ public class FragmentFollow extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        Log.e("FragmentFollow","onResume");
+        super.onResume();
+    }
+
+    @Override
     public void onDestroyView() {
+        Log.e("FragmentFollow","onDestroyView");
         super.onDestroyView();
         unbinder.unbind();
     }

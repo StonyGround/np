@@ -28,6 +28,7 @@ import com.jhjj9158.niupaivideo.bean.BannerBean;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.AdaptiveHeightlViewPager;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
 import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
@@ -87,22 +88,47 @@ public class FragmentNew extends Fragment {
         Gson gson = new Gson();
         List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
-        AdapterHomeRecyler adapterHomeRecyler = new AdapterHomeRecyler(getActivity(), resultBeanList);
+        AdapterHomeRecyler adapterHomeRecyler = new AdapterHomeRecyler(getActivity(),
+                resultBeanList);
         adapterHomeRecyler.setOnItemClickListener(new AdapterHomeRecyler.OnItemClickListener() {
             @Override
             public void onItemClick(int position, IndexBean.ResultBean data) {
-                Intent intent=new Intent(getActivity(), VideoActivity.class);
-                intent.putExtra("video",data);
+                Intent intent = new Intent(getActivity(), VideoActivity.class);
+                intent.putExtra("video", data);
                 startActivity(intent);
             }
         });
         recyclerview.setAdapter(adapterHomeRecyler);
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.e("FragmentNew","onCreate");
+//        getNewData();
+    }
+
+    private void getNewData() {
+        OkHttpUtils.getOkHttpUtils().get(Contact.HOST + Contact.INDEX +
+                "?type=2&uidx=1&begin=1&num=10&vid=0", new OkHttpUtils.MCallBack() {
+            @Override
+            public void onResponse(String json) {
+
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+        });
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
+
+        Log.e("FragmentNew","onCreateView");
         View view = inflater.inflate(R.layout.tab_hot, container, false);
         unbinder = ButterKnife.bind(this, view);
 
@@ -221,7 +247,8 @@ public class FragmentNew extends Fragment {
 
 //        viewpager_banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 //            @Override
-//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//            public void onPageScrolled(int position, float positionOffset, int
+// positionOffsetPixels) {
 //
 //            }
 //
@@ -265,11 +292,13 @@ public class FragmentNew extends Fragment {
 
     @Override
     public void onResume() {
+        Log.e("FragmentNew","onResume");
         super.onResume();
     }
 
     @Override
     public void onDestroyView() {
+        Log.e("FragmentNew","onDestroyView");
         super.onDestroyView();
         unbinder.unbind();
     }

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.MyApplication;
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.bean.UserDetailBean;
 import com.jhjj9158.niupaivideo.bean.UserInfoBean;
 import com.jhjj9158.niupaivideo.bean.UserPostBean;
 import com.jhjj9158.niupaivideo.dialog.DialogPicSelector;
@@ -78,7 +79,7 @@ public class ModifyActivity extends AppCompatActivity {
     @BindView(R.id.modify_gender)
     TextView modifyGender;
 
-    private UserInfoBean.DataBean userInfo;
+    private UserDetailBean.ResultBean userInfo;
     String headImgPath;
     private DialogProgress progress;
 
@@ -93,7 +94,6 @@ public class ModifyActivity extends AppCompatActivity {
                         if (jsonObject.getInt("code") == 100) {
                             CommonUtil.showTextToast("修改成功", ModifyActivity.this);
                             Picasso.with(ModifyActivity.this).load(new File(headImgPath)).into(modifyHeadimg);
-                            finish();
                         } else {
                             CommonUtil.showTextToast(jsonObject.getString("msg"), ModifyActivity
                                     .this);
@@ -146,22 +146,28 @@ public class ModifyActivity extends AppCompatActivity {
 
     }
 
+    private String name;
+    private String signature;
+
     private void initView() {
-        String headImage = userInfo.getHeadimg();
-        String name = userInfo.getNickName();
-        String signature = userInfo.getUserTrueName();
+        String headImage = new String(Base64.decode(userInfo.getHeadphoto().getBytes(),
+                Base64.DEFAULT));
+        name = new String(Base64.decode(userInfo.getNickName().getBytes(),
+                Base64.DEFAULT));
+        signature = new String(Base64.decode(userInfo.getSignature().getBytes(),
+                Base64.DEFAULT));
         if (!headImage.contains("http")) {
             headImage = "http://" + headImage;
         }
-        Picasso.with(this).load(headImage).into(modifyHeadimg);
+        Picasso.with(this).load(headImage).placeholder(R.drawable.me_user_admin).into(modifyHeadimg);
         modifyName.setText(name);
         modifyName.setSelection(name.length());
         modifySignature.setText(signature);
         modifySignature.setSelection(signature.length());
         modifySignature.setSingleLine(false);
-        if (userInfo.getUserSex().equals("1")) {
+        if (userInfo.getGender() == 1) {
             modifyGender.setText("男");
-        } else if (userInfo.getUserSex().equals("0")) {
+        } else if (userInfo.getGender() == 0) {
             modifyGender.setText("女");
         } else {
             modifyGender.setText("未知");
@@ -175,11 +181,15 @@ public class ModifyActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.modify_save:
-                String name = modifyName.getText().toString();
-                String signature = modifySignature.getText().toString();
-                if (!userInfo.getNickName().equals(name)) {
+                String et_name = modifyName.getText().toString();
+                String et_signature = modifySignature.getText().toString();
+                if(TextUtils.isEmpty(et_name)){
+                    CommonUtil.showTextToast("名称不能为空",this);
+                    return;
+                }
+                if (!et_name.equals(name)) {
                     saveInfo(1, name);
-                } else if (!userInfo.getUserTrueName().equals(signature)) {
+                } else if (!et_signature.equals(signature)) {
                     saveInfo(2, signature);
                 } else {
                     finish();
@@ -196,7 +206,7 @@ public class ModifyActivity extends AppCompatActivity {
     private void saveInfo(int chooseSelect, String modifyString) {
         UserPostBean userPostBean = new UserPostBean();
         userPostBean.setOpcode("UpdateUserInfor");
-        userPostBean.setUseridx(userInfo.getUseridx());
+        userPostBean.setUseridx(userInfo.getUidx());
         userPostBean.setName(modifyString);
         userPostBean.setChooseSelect(chooseSelect);
 
@@ -294,8 +304,7 @@ public class ModifyActivity extends AppCompatActivity {
 
         UserPostBean userPostBean = new UserPostBean();
         userPostBean.setOpcode("UpdateUserImage");
-        userPostBean.setUseridx(userInfo.getUseridx());
-        userPostBean.setHeadImg(encodeString);
+        userPostBean.setUseridx(userInfo.getUidx());
         userPostBean.setType(type);
 
         Gson gson = new Gson();
@@ -306,6 +315,7 @@ public class ModifyActivity extends AppCompatActivity {
         try {
             formBody = new FormBody.Builder()
                     .add("user", CommonUtil.EncryptAsDoNet(jsonUser, Contact.KEY))
+                    .add("base64", encodeString)
                     .build();
         } catch (Exception e) {
             e.printStackTrace();

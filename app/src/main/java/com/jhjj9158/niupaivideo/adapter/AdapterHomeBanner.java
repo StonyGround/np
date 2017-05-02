@@ -45,12 +45,12 @@ public class AdapterHomeBanner extends PagerAdapter {
 
 
 
-        ResizableImageView imageView = new ResizableImageView(context);
-//        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        ImageView imageView = new ImageView(context);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         final int diff = (Integer.MAX_VALUE / 2) % (bannerList.size());
         String imageUrl = new String(Base64.decode(bannerList.get((position - diff) % bannerList.size()).getAdvImg().getBytes(), Base64.DEFAULT));
         final String link = new String(Base64.decode(bannerList.get((position - diff) % bannerList.size()).getLinkUrl().getBytes(), Base64.DEFAULT));
-        Picasso.with(context).load(imageUrl).placeholder(R.drawable.wartfullplacehold).into(imageView);
+        Picasso.with(context).load(imageUrl).into(imageView);
 
 //        imageView.setOnClickListener(new View.OnClickListener() {
 //            @Override

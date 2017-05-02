@@ -52,6 +52,7 @@ public class FansActivity extends BaseActivity {
                 List<FollowBean.ResultBean> resultBean = gson.fromJson(result, FollowBean
                         .class).getResult();
                 if (resultBean.size() == 0) {
+                    worksNothing.setText("你还没有粉丝");
                     worksNothing.setVisibility(View.VISIBLE);
                     return;
                 }

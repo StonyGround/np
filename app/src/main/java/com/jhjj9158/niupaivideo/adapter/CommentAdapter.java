@@ -127,8 +127,8 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-//        return mHeaderView == null ? mDatas.size() : mDatas.size() + 1;
-        return 10;
+        return mHeaderView == null ? mDatas.size() : mDatas.size() + 1;
+//        return 10;
     }
 
     class Holder extends RecyclerView.ViewHolder {

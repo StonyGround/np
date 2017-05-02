@@ -74,6 +74,8 @@
     <string name="cache_clear">清除缓存</string>
     <string name="quit">退出登录</string>
 
+    <string name="cache_size">%1$s</string>
+
 
     <!--Ijkplayer Start-->
     <string name="N_A">N/A</string>

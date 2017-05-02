@@ -12,16 +12,6 @@ public class UserPostBean {
     private int chooseSelect;
     private String type;
 
-    public String getHeadImg() {
-        return headImg;
-    }
-
-    public void setHeadImg(String headImg) {
-        this.headImg = headImg;
-    }
-
-    private String headImg;
-
     public String getName() {
         return name;
     }

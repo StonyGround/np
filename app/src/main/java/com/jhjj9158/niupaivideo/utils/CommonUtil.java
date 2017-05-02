@@ -3,13 +3,22 @@ package com.jhjj9158.niupaivideo.utils;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
+
+import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.SettingActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -103,5 +112,36 @@ public class CommonUtil {
         DisplayMetrics display = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(display);
         return display.heightPixels;
+    }
+
+    public static boolean checkPermission(Fragment fragment, final Activity activity, String permission,
+                                          String hint, int requestCode) {
+        //检查权限
+        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+                //显示我们自定义的一个窗口引导用户开启权限
+                new AlertDialog.Builder(activity).setMessage("")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
+            } else {
+                //申请权限
+                if (fragment == null) {
+                    ActivityCompat.requestPermissions(activity,
+                            new String[]{permission},
+                            requestCode);
+                } else {
+                    fragment.requestPermissions(
+                            new String[]{permission},
+                            requestCode);
+                }
+            }
+            return false;
+        } else {  //已经拥有权限
+            return true;
+        }
     }
 }

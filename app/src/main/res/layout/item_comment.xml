@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:orientation="horizontal"
               android:paddingLeft="10dp"
+              android:paddingRight="10dp"
               android:paddingTop="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -13,6 +13,7 @@
         android:layout_height="40dp"/>
 
     <LinearLayout
+        android:layout_toRightOf="@+id/comment_headimg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -25,17 +26,16 @@
 
             <TextView
                 android:id="@+id/comment_name"
-                android:text="111"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"/>
+                android:textSize="12sp"/>
 
             <TextView
                 android:id="@+id/comment_distance_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:textSize="10sp"/>
+                android:textSize="12sp"/>
         </RelativeLayout>
 
         <TextView
@@ -47,9 +47,12 @@
             android:layout_marginTop="10dp"
             android:textSize="12sp"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/button_login"/>
     </LinearLayout>
-</LinearLayout>
+
+    <View
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/comment_headimg"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/button_login"/>
+</RelativeLayout>

@@ -46,6 +46,7 @@ public class LoginCrystalActivity extends BaseActivity {
     @BindView(R.id.btn_login)
     Button btnLogin;
 
+    private int platform;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -71,7 +72,13 @@ public class LoginCrystalActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initTitle(this,"水晶登录");
+        platform = getIntent().getIntExtra("platform", 0);
+
+        if(platform==3){
+            initTitle(this, "欢乐直播登录");
+        }else{
+            initTitle(this,"水晶直播登录");
+        }
 
         initAutoComplete("history", name);
 
@@ -134,7 +141,7 @@ public class LoginCrystalActivity extends BaseActivity {
         userBean.setOpcode("UserLogin");
         userBean.setUseridx(name.getText().toString());
         userBean.setPassword(pwd.getText().toString());
-        userBean.setPlatformtype(0);
+        userBean.setPlatformtype(platform);
 
         Gson gson = new Gson();
         String jsonUser = gson.toJson(userBean);

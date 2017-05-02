@@ -152,8 +152,10 @@ public class PersonalActivity extends FragmentActivity {
         int favoriteNum = resultBean.getZanNum();
 
         personalName.setText(name);
-        if (resultBean.getGender() == 0) {
+        if (resultBean.getGender() == 2) {
             personalGender.setImageResource(R.drawable.women);
+        } else if (resultBean.getGender() == 0) {
+            personalGender.setVisibility(View.GONE);
         }
         Picasso.with(this).load(headImage).into(personalHeadimg);
         personalFollow.setText("关注" + followNum + " |");

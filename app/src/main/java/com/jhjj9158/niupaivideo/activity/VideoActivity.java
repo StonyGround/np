@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
@@ -32,6 +33,7 @@ import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.LocationUtil;
+import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.AndroidMediaController;
 import com.jhjj9158.niupaivideo.widget.IjkVideoView;
 import com.jhjj9158.niupaivideo.widget.MyDrawLayout;
@@ -112,7 +114,7 @@ public class VideoActivity extends AppCompatActivity {
     private VideoIsFollowBean isFollowBean;
     private int vid;
     private int videoUserId;
-    private int uidx = CacheUtils.getInt(this, "useridx");
+    private int uidx;
     private boolean isShowComment = true;
 
     private Handler handler = new Handler() {
@@ -120,59 +122,28 @@ public class VideoActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             String json = msg.obj.toString();
             switch (msg.what) {
-                case VIDEO_INFO:
-                    setVideoData(AESUtil.decode(json));
+                case COMMENT:
+                    setComment(AESUtil.decode(json));
                     break;
                 case IS_FOLLOW:
                     setIsFollow(AESUtil.decode(json));
                     break;
-                case VIDEO_FOLLOW:
-                    setFollowVideo(json);
+                case VIDEO_INFO:
+                    setVideoData(AESUtil.decode(json));
                     break;
-                case COMMENT:
-                    setComment(AESUtil.decode(json));
+                case VIDEO_FOLLOW:
+                    setFollowVideo(AESUtil.decode(json));
                     break;
                 case ADD_COMMENT:
-                    String j = AESUtil.decode(json);
-                    int result = 0;
-                    try {
-                        JSONObject object = new JSONObject(j);
-                        result = object.getInt("result");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (result == 1) {
-                        CommonUtil.showTextToast("评论成功", VideoActivity.this);
-                        videoHeart.setImageResource(R.drawable.heart1);
-                    } else {
-                        CommonUtil.showTextToast("评论失败", VideoActivity.this);
-                    }
+                    setAddComment(AESUtil.decode(json));
+                default:
                     break;
             }
             super.handleMessage(msg);
         }
     };
 
-    private void setComment(String json) {
-        Gson gson = new Gson();
-        List<CommentBean.ResultBean> resultBeanList = gson.fromJson(json, CommentBean.class)
-                .getResult();
-        if (resultBeanList.size() == 0) {
-            commentNothing.setVisibility(View.VISIBLE);
-            return;
-        }
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-        rvComment.setLayoutManager(mLinearLayoutManager);
-        rvComment.setAdapter(new CommentAdapter(this, resultBeanList));
-    }
-
-    private void setFollowVideo(String json) {
+    private void setAddComment(String json) {
         int result = 0;
         try {
             JSONObject object = new JSONObject(json);
@@ -181,38 +152,10 @@ public class VideoActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         if (result == 1) {
-            CommonUtil.showTextToast("收藏成功", this);
-            videoHeart.setImageResource(R.drawable.heart1);
+            CommonUtil.showTextToast("评论成功", VideoActivity.this);
+            getComment();
         } else {
-            CommonUtil.showTextToast("收藏失败", this);
-        }
-    }
-
-    private void setIsFollow(String json) {
-        Log.e("setIsFollow", json);
-        Gson gson = new Gson();
-        isFollowBean = gson.fromJson(json, VideoIsFollowBean.class);
-        if (isFollowBean.getResult().get(0).getIsfollow() == 1) {
-            videoHeart.setImageResource(R.drawable.heart1);
-        }
-    }
-
-    private void setVideoData(String json) {
-        Gson gson = new Gson();
-        VideoDetailBean videoDetailBean = gson.fromJson(json, VideoDetailBean.class);
-        if (videoDetailBean.getErrorcode().equals("00000:ok")) {
-            VideoDetailBean.ResultBean resultBean = videoDetailBean.getResult();
-            if (resultBean.getIsFollow() == 1) {
-                videoHeart.setImageResource(R.drawable.heart);
-            }
-            String headImage = new String(Base64.decode(resultBean.getHeadphoto().getBytes(),
-                    Base64.DEFAULT));
-            if (!headImage.contains("http")) {
-                headImage = "http://" + headImage;
-            }
-            Picasso.with(this).load(headImage).into(ivHeadImage);
-            videoFollowNum.setText(resultBean.getGoodNum() + "赞");
-            videoCommentNum.setText(resultBean.getCNum() + "评论");
+            CommonUtil.showTextToast("评论失败", VideoActivity.this);
         }
     }
 
@@ -222,6 +165,7 @@ public class VideoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
 //        setTitle(this, "播放");
+        uidx = CacheUtils.getInt(this, "useridx");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
@@ -230,7 +174,7 @@ public class VideoActivity extends AppCompatActivity {
 
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.argb(99,00,00,00));
+            getWindow().setStatusBarColor(Color.argb(99, 00, 00, 00));
         }
 
         IndexBean.ResultBean resultBean = getIntent().getParcelableExtra("video");
@@ -245,7 +189,8 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void getComment() {
-        String url = Contact.HOST + Contact.VIDEO_COMMETN + "?vid=" + vid + "&cid=1&num=100";
+        String url = Contact.HOST + Contact.VIDEO_COMMETN + "?vid=" + vid + "&cid=0&num=100";
+
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(url);
         requestBuilder.method("GET", null);
@@ -302,8 +247,10 @@ public class VideoActivity extends AppCompatActivity {
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
+
             @Override
             public void onFailure(Call call, IOException e) {
+
             }
 
             @Override
@@ -355,12 +302,12 @@ public class VideoActivity extends AppCompatActivity {
                 videoView.start();
             }
         });
-        videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(IMediaPlayer iMediaPlayer) {
-                videoView.start();
-            }
-        });
+//        videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(IMediaPlayer iMediaPlayer) {
+//                videoView.start();
+//            }
+//        });
     }
 
     private String getDistance(double longitude, double latitude) {
@@ -408,16 +355,21 @@ public class VideoActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.video_heart:
-                if (uidx != 0) {
+                if (uidx == 0) {
                     startActivity(new Intent(this, QuickLoignActivity.class));
+                    return;
                 }
                 if (isFollowBean.getResult().get(0).getIsfollow() == 0) {
-                    setFollowVideo();
+                    followVideo();
                 }
                 break;
             case R.id.video_share:
                 break;
             case R.id.tv_input:
+                if (uidx == 0) {
+                    startActivity(new Intent(this, QuickLoignActivity.class));
+                    return;
+                }
                 if (isShowComment) {
                     isShowComment = false;
                     rlComment.setVisibility(View.VISIBLE);
@@ -432,7 +384,7 @@ public class VideoActivity extends AppCompatActivity {
                 sendComment();
                 break;
             case R.id.video_user_name:
-                Intent intent = new Intent(this,PersonalActivity.class);
+                Intent intent = new Intent(this, PersonalActivity.class);
                 intent.putExtra("buidx", videoUserId);
                 startActivity(intent);
                 break;
@@ -449,9 +401,9 @@ public class VideoActivity extends AppCompatActivity {
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);
         call.enqueue(new Callback() {
-
             @Override
             public void onFailure(Call call, IOException e) {
+
 
             }
 
@@ -465,7 +417,7 @@ public class VideoActivity extends AppCompatActivity {
         });
     }
 
-    private void setFollowVideo() {
+    private void followVideo() {
 
         String device_id = CommonUtil.getDeviceID(this);
 
@@ -491,5 +443,69 @@ public class VideoActivity extends AppCompatActivity {
                 handler.sendMessage(message);
             }
         });
+    }
+
+    private CommentAdapter commentAdapter;
+
+    private void setComment(String json) {
+        Gson gson = new Gson();
+        List<CommentBean.ResultBean> resultBeanList = gson.fromJson(json, CommentBean.class)
+                .getResult();
+        if (resultBeanList.size() == 0) {
+            commentNothing.setVisibility(View.VISIBLE);
+            return;
+        }
+        commentNothing.setVisibility(View.GONE);
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
+        rvComment.setLayoutManager(mLinearLayoutManager);
+        commentAdapter = new CommentAdapter(this, resultBeanList);
+        rvComment.setAdapter(commentAdapter);
+    }
+
+    private void setFollowVideo(String json) {
+//        CommonUtil.showTextToast(json, this);
+        int result = 0;
+        try {
+            JSONObject object = new JSONObject(json);
+            result = object.getInt("result");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (result == 1) {
+            videoHeart.setImageResource(R.drawable.heart1);
+        }
+    }
+
+    private void setIsFollow(String json) {
+        Gson gson = new Gson();
+        isFollowBean = gson.fromJson(json, VideoIsFollowBean.class);
+        if (isFollowBean.getResult().get(0).getIsfollow() == 1) {
+            videoHeart.setImageResource(R.drawable.heart1);
+        }
+    }
+
+    private void setVideoData(String json) {
+        Gson gson = new Gson();
+        VideoDetailBean videoDetailBean = gson.fromJson(json, VideoDetailBean.class);
+        if (videoDetailBean.getErrorcode().equals("00000:ok")) {
+            VideoDetailBean.ResultBean resultBean = videoDetailBean.getResult();
+            if (resultBean.getIsFollow() == 1) {
+                videoHeart.setImageResource(R.drawable.heart);
+            }
+            String headImage = new String(Base64.decode(resultBean.getHeadphoto().getBytes(),
+                    Base64.DEFAULT));
+            if (!headImage.contains("http")) {
+                headImage = "http://" + headImage;
+            }
+            Picasso.with(this).load(headImage).into(ivHeadImage);
+            videoFollowNum.setText(resultBean.getGoodNum() + "赞");
+            videoCommentNum.setText(resultBean.getCNum() + "评论");
+        }
     }
 }

@@ -1,12 +1,16 @@
 package com.jhjj9158.niupaivideo.activity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
+import com.jhjj9158.niupaivideo.utils.CommonUtil;
+import com.jhjj9158.niupaivideo.utils.DataCleanUtil;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -19,11 +23,22 @@ public class SettingActivity extends BaseActivity {
     RelativeLayout settingClear;
     @BindView(R.id.setting_quit)
     TextView settingQuit;
+    @BindView(R.id.setting_clear_size)
+    TextView settingClearSize;
+    private AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initTitle(this, "设置");
+        try {
+            settingClearSize.setText(getString(R.string.cache_size, DataCleanUtil
+                    .getTotalCacheSize(SettingActivity.this)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        builder = new AlertDialog.Builder(this);
     }
 
     @Override
@@ -37,10 +52,37 @@ public class SettingActivity extends BaseActivity {
             case R.id.setting_feedback:
                 break;
             case R.id.setting_clear:
+                builder.setMessage("确定清除缓存吗？")
+                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DataCleanUtil.cleanApplicationData(SettingActivity.this);
+                                CommonUtil.showTextToast("清除成功", SettingActivity.this);
+                                settingClearSize.setText(getString(R.string.cache_size, "0M"));
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                 break;
             case R.id.setting_quit:
-                CacheUtils.setInt(this, "useridx", 0);
-                finish();
+                builder.setMessage("确定退出当前帐号吗？")
+                        .setPositiveButton("退出", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                CacheUtils.setInt(SettingActivity.this, "useridx", 0);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).show();
                 break;
         }
     }

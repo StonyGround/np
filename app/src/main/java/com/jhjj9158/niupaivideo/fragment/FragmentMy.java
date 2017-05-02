@@ -146,9 +146,11 @@ public class FragmentMy extends Fragment {
         }
     };
 
+    private UserDetailBean.ResultBean resultBean;
+
     private void setUserData(String json) {
         Gson gson = new Gson();
-        UserDetailBean.ResultBean resultBean = gson.fromJson(json, UserDetailBean.class)
+        resultBean = gson.fromJson(json, UserDetailBean.class)
                 .getResult();
         tvId.setText("ID:" + resultBean.getShowuidx());
         tvWallte.setText(String.valueOf(resultBean.getWallet()));
@@ -230,18 +232,16 @@ public class FragmentMy extends Fragment {
         });
     }
 
-    private UserInfoBean.DataBean userInfo;
-
     private void setUserInfo(String json) {
         Gson gson = new Gson();
         UserInfoBean userInfoBean = gson.fromJson(json, UserInfoBean.class);
-        userInfo = userInfoBean.getData().get(0);
+        UserInfoBean.DataBean userInfo = userInfoBean.getData().get(0);
         if (userInfoBean.getCode() == 100) {
             String headImage = userInfo.getHeadimg();
             if (!headImage.contains("http")) {
                 headImage = "http://" + headImage;
             }
-            Picasso.with(getContext()).load(headImage).into(profileImage);
+            Picasso.with(getContext()).load(headImage).placeholder(R.drawable.me_user_admin).into(profileImage);
             tvName.setText(userInfo.getNickName());
             if (userInfo.getUserSex().equals("1")) {
                 ivGender.setBackgroundResource(R.drawable.man);
@@ -329,7 +329,7 @@ public class FragmentMy extends Fragment {
                 break;
             case R.id.ll_my_info:
                 Intent intent=new Intent(getActivity(), ModifyActivity.class);
-                intent.putExtra("userInfo", userInfo);
+                intent.putExtra("userInfo", resultBean);
                 startActivity(intent);
                 break;
         }
