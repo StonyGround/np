@@ -1,286 +1,294 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:background="@color/white"
-                android:paddingTop="@dimen/toolbar_padding_top"
-                android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
-    <ScrollView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingBottom="40dp">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:overScrollMode="never"
+            android:paddingBottom="40dp"
+            android:scrollbars="none">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:background="@color/black"/>
-
-            <com.jhjj9158.niupaivideo.widget.MyDrawLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/drawer_layout"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/black">
+                android:orientation="vertical">
 
-                <com.jhjj9158.niupaivideo.widget.IjkVideoView
-                    android:id="@+id/video_view"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/black"/>
+
+                <com.jhjj9158.niupaivideo.widget.MyDrawLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/drawer_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/black">
+
+                    <com.jhjj9158.niupaivideo.widget.IjkVideoView
+                        android:id="@+id/video_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </com.jhjj9158.niupaivideo.widget.IjkVideoView>
+
+                </com.jhjj9158.niupaivideo.widget.MyDrawLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/user"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/video_user_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="12sp"/>
+
+                        <TextView
+                            android:id="@+id/video_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/play"/>
+
+                    <TextView
+                        android:id="@+id/video_playnum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="12sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/icon_heart"/>
+
+                    <TextView
+                        android:id="@+id/video_follow_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="12sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:src="@drawable/comment"/>
+
+                    <TextView
+                        android:id="@+id/video_comment_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:textSize="12sp"/>
+
+                </LinearLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/tv_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_toLeftOf="@+id/tv_distance"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_distance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:textSize="12sp"/>
+
+                </RelativeLayout>
+
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                </com.jhjj9158.niupaivideo.widget.IjkVideoView>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/button_login"/>
 
-            </com.jhjj9158.niupaivideo.widget.MyDrawLayout>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rv_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/user"/>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/video_user_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="12sp"/>
-
-                    <TextView
-                        android:id="@+id/video_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12sp"/>
-                </LinearLayout>
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/play"/>
+                </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/video_playnum"
+                    android:id="@+id/comment_nothing"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="12sp"/>
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/tv_nothing"
+                    android:visibility="gone"/>
 
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/icon_heart"/>
-
-                <TextView
-                    android:id="@+id/video_follow_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="12sp"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:src="@drawable/comment"/>
-
-                <TextView
-                    android:id="@+id/video_comment_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:textSize="12sp"/>
-
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/tv_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:layout_toLeftOf="@+id/tv_distance"
-                    android:textSize="12sp"/>
-
-                <TextView
-                    android:id="@+id/tv_distance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:textSize="12sp"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/button_login"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_comment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </RelativeLayout>
-
-            <TextView
-                android:visibility="gone"
-                android:id="@+id/comment_nothing"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
-                android:text="@string/tv_nothing"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                android:layout_height="wrap_content"/>
-
-        </LinearLayout>
-    </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@android:color/background_light">
-
-        <ImageView
-            android:id="@+id/video_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/back_b"/>
-
-
-        <ImageView
-            android:id="@+id/video_heart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@+id/video_back"
-            android:src="@drawable/heart"/>
-
-        <ImageView
-            android:id="@+id/video_share"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:layout_toRightOf="@+id/video_heart"
-            android:src="@drawable/share"/>
-
-        <TextView
-            android:id="@+id/tv_input"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="20dp"
-            android:text="@string/input_comment"
-            android:textColor="@color/home_tab"
-            android:textSize="12sp"/>
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/transparent">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="9dp"
-            android:background="@color/button_login"/>
+        </ScrollView>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_alignParentBottom="true"
-            android:background="@color/bg_video_bottom">
+            android:background="@android:color/background_light">
 
-            <TextView
+            <ImageView
+                android:id="@+id/video_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="70dp"
-                android:text="@string/video_bottom"/>
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/back_b"/>
 
-            <TextView
-                android:id="@+id/btn_video_bottom"
+
+            <ImageView
+                android:id="@+id/video_heart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/video_back"
+                android:src="@drawable/heart"/>
+
+            <ImageView
+                android:id="@+id/video_share"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/video_heart"
+                android:src="@drawable/share"/>
+
+            <TextView
+                android:id="@+id/tv_input"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:background="@drawable/btn_video_bottom"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="5dp"
-                android:text="@string/tv_video_btn"
-                android:textColor="@color/white"
+                android:layout_marginRight="20dp"
+                android:gravity="center"
+                android:text="@string/input_comment"
+                android:textColor="@color/home_tab"
                 android:textSize="12sp"/>
         </RelativeLayout>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_headImage"
-            android:layout_width="50dp"
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
-            app:civ_border_color="@color/white"
-            app:civ_border_width="1dp"/>
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/transparent">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="9dp"
+                android:background="@color/button_login"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/bg_video_bottom">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="70dp"
+                    android:text="@string/video_bottom"/>
+
+                <TextView
+                    android:id="@+id/btn_video_bottom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/btn_video_bottom"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:paddingTop="5dp"
+                    android:text="@string/tv_video_btn"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"/>
+            </RelativeLayout>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_headImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                app:civ_border_color="@color/white"
+                app:civ_border_width="1dp"/>
+        </RelativeLayout>
     </RelativeLayout>
 
     <RelativeLayout
@@ -288,8 +296,8 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:visibility="gone">
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        android:background="@color/white">
 
         <EditText
             android:id="@+id/et_comment"
@@ -314,6 +322,6 @@
             android:text="@string/tv_send_comment"
             android:textColor="@color/white"
             android:textSize="12sp"/>
-
     </RelativeLayout>
-</RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

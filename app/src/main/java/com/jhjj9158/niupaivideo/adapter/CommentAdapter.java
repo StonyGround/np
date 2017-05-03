@@ -110,11 +110,13 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 distance_date = (int) (distance * 1000) + "m | " + data;
             } else if (distance > 1 && distance < 1000) {
                 distance_date = (int) distance + "km | " + data;
+            } else {
+                distance_date = "1000km外";
             }
 
             Picasso.with(context).load(headImage).into(((Holder) viewHolder).comment_headimg);
             ((Holder) viewHolder).comment_name.setText(name);
-            ((Holder) viewHolder).comment_distance_date.setText(distance_date);
+//            ((Holder) viewHolder).comment_distance_date.setText(distance_date);
             ((Holder) viewHolder).comment_detail.setText(comment);
         }
     }

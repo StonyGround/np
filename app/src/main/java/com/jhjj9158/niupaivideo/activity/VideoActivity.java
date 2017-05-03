@@ -1,5 +1,6 @@
 package com.jhjj9158.niupaivideo.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -7,18 +8,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
@@ -33,7 +35,6 @@ import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.LocationUtil;
-import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.AndroidMediaController;
 import com.jhjj9158.niupaivideo.widget.IjkVideoView;
 import com.jhjj9158.niupaivideo.widget.MyDrawLayout;
@@ -154,10 +155,15 @@ public class VideoActivity extends AppCompatActivity {
         if (result == 1) {
             CommonUtil.showTextToast("评论成功", VideoActivity.this);
             getComment();
+            etComment.setText("");
+            imm.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
         } else {
             CommonUtil.showTextToast("评论失败", VideoActivity.this);
         }
     }
+
+    private BottomSheetBehavior behavior;
+    private InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,15 +173,19 @@ public class VideoActivity extends AppCompatActivity {
 //        setTitle(this, "播放");
         uidx = CacheUtils.getInt(this, "useridx");
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        behavior = BottomSheetBehavior.from(rlComment);
 
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.argb(99, 00, 00, 00));
-        }
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+//                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+//            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+//
+//                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//            getWindow().setStatusBarColor(Color.argb(99, 00, 00, 00));
+//        }
 
         IndexBean.ResultBean resultBean = getIntent().getParcelableExtra("video");
 
@@ -370,13 +380,23 @@ public class VideoActivity extends AppCompatActivity {
                     startActivity(new Intent(this, QuickLoignActivity.class));
                     return;
                 }
-                if (isShowComment) {
-                    isShowComment = false;
-                    rlComment.setVisibility(View.VISIBLE);
+
+                if (behavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+//                    imm.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+                    behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 } else {
-                    isShowComment = true;
-                    rlComment.setVisibility(View.GONE);
+                    behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                    etComment.setFocusable(true);
+//                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                 }
+
+//                if (isShowComment) {
+//                    isShowComment = false;
+//                    rlComment.setVisibility(View.VISIBLE);
+//                } else {
+//                    isShowComment = true;
+//                    rlComment.setVisibility(View.GONE);
+//                }
                 break;
             case R.id.btn_video_bottom:
                 break;
