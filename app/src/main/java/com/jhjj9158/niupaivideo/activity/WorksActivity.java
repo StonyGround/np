@@ -34,7 +34,6 @@ public class WorksActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initTitle(this, "作品");
 
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         rvWorks.setLayoutManager(gridLayoutManager);
@@ -50,12 +49,13 @@ public class WorksActivity extends BaseActivity {
                 String result = AESUtil.decode(json);
                 Log.e("work", result);
                 Gson gson = new Gson();
-                List<IndexBean.ResultBean> resultBean = gson.fromJson(result, IndexBean
+                final List<IndexBean.ResultBean> resultBean = gson.fromJson(result, IndexBean
                         .class).getResult();
                 if (resultBean.size() == 0) {
                     worksNothing.setVisibility(View.VISIBLE);
                     return;
                 }
+                initTitle(WorksActivity.this, "作品" + resultBean.size());
 
                 WorksAdapter adapter = new WorksAdapter(WorksActivity.this, resultBean);
                 adapter.setOnItemClickListener(new WorksAdapter.OnItemClickListener() {
@@ -66,7 +66,7 @@ public class WorksActivity extends BaseActivity {
                         startActivity(intent);
                     }
                 });
-                rvWorks.setAdapter(new WorksAdapter(WorksActivity.this, resultBean));
+                rvWorks.setAdapter(adapter);
             }
 
             @Override

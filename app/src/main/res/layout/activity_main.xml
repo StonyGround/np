@@ -6,8 +6,7 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  android:orientation="vertical"
-        >
+                  android:orientation="vertical">
 
         <FrameLayout
             android:id="@+id/fg_main"
@@ -23,7 +22,15 @@
             android:background="@color/button_login"/>
 
 
+        <android.support.v4.app.FragmentTabHost
+            android:id="@+id/tab_host"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">

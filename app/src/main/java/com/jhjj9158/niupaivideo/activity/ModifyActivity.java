@@ -188,9 +188,9 @@ public class ModifyActivity extends AppCompatActivity {
                     return;
                 }
                 if (!et_name.equals(name)) {
-                    saveInfo(1, name);
+                    saveInfo(1, et_name);
                 } else if (!et_signature.equals(signature)) {
-                    saveInfo(2, signature);
+                    saveInfo(2, et_signature);
                 } else {
                     finish();
                 }

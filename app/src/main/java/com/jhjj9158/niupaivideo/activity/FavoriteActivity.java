@@ -35,8 +35,6 @@ public class FavoriteActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initTitle(this, "喜欢");
-
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         rvWorks.setLayoutManager(gridLayoutManager);
         rvWorks.addItemDecoration(new SpaceItemDecoration(2));
@@ -56,7 +54,7 @@ public class FavoriteActivity extends BaseActivity {
                     worksNothing.setVisibility(View.VISIBLE);
                     return;
                 }
-
+                initTitle(FavoriteActivity.this, "喜欢" + resultBean.size());
                 WorksAdapter adapter = new WorksAdapter(FavoriteActivity.this, resultBean);
                 adapter.setOnItemClickListener(new WorksAdapter.OnItemClickListener() {
                     @Override
@@ -66,7 +64,7 @@ public class FavoriteActivity extends BaseActivity {
                         startActivity(intent);
                     }
                 });
-                rvWorks.setAdapter(new WorksAdapter(FavoriteActivity.this, resultBean));
+                rvWorks.setAdapter(adapter);
             }
 
             @Override

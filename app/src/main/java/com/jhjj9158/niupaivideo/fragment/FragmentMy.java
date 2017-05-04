@@ -37,12 +37,14 @@ import com.jhjj9158.niupaivideo.widget.ResizableImageView;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import de.hdodenhof.circleimageview.CircleImageView;
+import okhttp3.CacheControl;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -155,7 +157,7 @@ public class FragmentMy extends Fragment {
         tvId.setText("ID:" + resultBean.getShowuidx());
         tvWallte.setText(String.valueOf(resultBean.getWallet()));
         tvWorksNum.setText(String.valueOf(resultBean.getVNum()));
-        tvFavoriteNum.setText(String.valueOf(resultBean.getZanNum()));
+        tvFavoriteNum.setText(String.valueOf(resultBean.getLove()));
         tvFollowNum.setText(String.valueOf(resultBean.getFollowNum()));
         tvFansNum.setText(String.valueOf(resultBean.getFansNum()));
         tvMsgNum.setText(String.valueOf(resultBean.getNewmessage()));
@@ -168,8 +170,9 @@ public class FragmentMy extends Fragment {
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
         int uid = CacheUtils.getInt(getContext(), "useridx");
-        Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .GET_USER_INFO + "?uidx=" + uid + "&password=1");
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(Contact.HOST + Contact
+                        .GET_USER_INFO + "?uidx=" + uid + "&password=1");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);
@@ -183,7 +186,6 @@ public class FragmentMy extends Fragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Message message = new Message();
-
                 message.obj = response.body().string();
                 message.what = 2;
                 handler.sendMessage(message);
@@ -241,7 +243,8 @@ public class FragmentMy extends Fragment {
             if (!headImage.contains("http")) {
                 headImage = "http://" + headImage;
             }
-            Picasso.with(getContext()).load(headImage).placeholder(R.drawable.me_user_admin).into(profileImage);
+            Picasso.with(getContext()).load(headImage).placeholder(R.drawable.me_user_admin).into
+                    (profileImage);
             tvName.setText(userInfo.getNickName());
             if (userInfo.getUserSex().equals("1")) {
                 ivGender.setBackgroundResource(R.drawable.man);
@@ -251,27 +254,41 @@ public class FragmentMy extends Fragment {
             } else {
                 tvBio.setText(R.string.bio_default);
             }
-            Picasso.with(getContext()).load(headImage).placeholder(R.drawable.me_user_admin).transform(new BlurBitmapUtil
-                    .BlurTransformation(getContext())).into(fragmentMyBg);
+            Picasso.with(getContext()).load(headImage).placeholder(R.drawable.me_user_admin)
+                    .transform(new BlurBitmapUtil
+                            .BlurTransformation(getContext())).into(fragmentMyBg);
         }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.e("FragmentMy", "onCreate");
+    }
+
+    private View rootView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle
             savedInstanceState) {
-//        Log.e("FragmentMy","onCreateView");
-        View view = inflater.inflate(R.layout.fragment_my, container, false);
-        unbinder = ButterKnife.bind(this, view);
-
-        if (CacheUtils.getInt(getActivity(), "useridx") == 0) {
-            return null;
+        Log.e("FragmentMy", "onCreateView");
+        if (rootView == null) {
+            rootView = inflater.inflate(R.layout.fragment_my, container, false);
         }
-        getUserInfo();
-        getUserDate();
-        getReward();
-        return view;
+        ViewGroup parent = (ViewGroup) rootView.getParent();
+        if (parent != null) {
+            parent.removeView(rootView);
+        }
+        unbinder = ButterKnife.bind(this, rootView);
+
+        if (CacheUtils.getInt(getActivity(), "useridx") != 0) {
+            getUserInfo();
+            getUserDate();
+            getReward();
+        }
+
+        return rootView;
     }
 
     private void getReward() {
@@ -281,17 +298,16 @@ public class FragmentMy extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        Log.e("FragmentMy","onResume");
-        if(CacheUtils.getInt(getActivity(),"useridx")==0){
-            return;
+        Log.e("FragmentMy", "onResume");
+        if (CacheUtils.getInt(getActivity(), "useridx") != 0) {
+            getUserDate();
+            getUserInfo();
         }
-        getUserInfo();
-        getUserDate();
     }
 
     @Override
     public void onDestroyView() {
-        Log.e("FragmentMy","onDestroyView");
+        Log.e("FragmentMy", "onDestroyView");
         super.onDestroyView();
         unbinder.unbind();
     }
@@ -328,7 +344,7 @@ public class FragmentMy extends Fragment {
                 startActivity(new Intent(getActivity(), FansActivity.class));
                 break;
             case R.id.ll_my_info:
-                Intent intent=new Intent(getActivity(), ModifyActivity.class);
+                Intent intent = new Intent(getActivity(), ModifyActivity.class);
                 intent.putExtra("userInfo", resultBean);
                 startActivity(intent);
                 break;

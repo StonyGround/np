@@ -90,13 +90,15 @@ public class WorksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             String videoPicUrl = new String(Base64.decode(data.getVideoPicUrl().getBytes(),
                     Base64.DEFAULT));
             Picasso.with(context).load(videoPicUrl).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).imageView);
+
+            if (mListener == null) return;
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onItemClick(pos, data);
+                }
+            });
         }
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onItemClick(pos, data);
-            }
-        });
     }
 
     public int getRealPosition(RecyclerView.ViewHolder holder) {

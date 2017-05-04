@@ -75,6 +75,9 @@
     <string name="quit">退出登录</string>
 
     <string name="cache_size">%1$s</string>
+    <string name="play_num">%1$d次播放</string>
+    <string name="follow_num">%1$d赞</string>
+    <string name="comment_num">%1$d评论</string>
 
 
     <!--Ijkplayer Start-->

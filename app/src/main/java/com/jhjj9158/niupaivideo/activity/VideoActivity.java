@@ -13,6 +13,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.View;
 import android.view.WindowManager;
@@ -21,6 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
@@ -117,6 +119,8 @@ public class VideoActivity extends AppCompatActivity {
     private int videoUserId;
     private int uidx;
     private boolean isShowComment = true;
+    private int followNum;
+    private int commentNum;
 
     private Handler handler = new Handler() {
         @Override
@@ -154,9 +158,12 @@ public class VideoActivity extends AppCompatActivity {
         }
         if (result == 1) {
             CommonUtil.showTextToast("评论成功", VideoActivity.this);
+            commentNum = commentNum + 1;
+            videoCommentNum.setText(getString(R.string.comment_num, commentNum));
             getComment();
             etComment.setText("");
             imm.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } else {
             CommonUtil.showTextToast("评论失败", VideoActivity.this);
         }
@@ -294,7 +301,7 @@ public class VideoActivity extends AppCompatActivity {
 
         videoUserName.setText(name + "：");
         videoDesc.setText(desc);
-        videoPlaynum.setText(resultBean.getPlayNum() + "次播放");
+        videoPlaynum.setText(getString(R.string.play_num, resultBean.getPlayNum()));
         tvDate.setText("发布于:" + date);
         tvDistance.setText(getDistance(longitude, latitude));
 
@@ -383,6 +390,7 @@ public class VideoActivity extends AppCompatActivity {
 
                 if (behavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
 //                    imm.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
+//                    etComment.setFocusable(false);
                     behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 } else {
                     behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
@@ -412,8 +420,12 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void sendComment() {
+        String comment = etComment.getText().toString();
+        if (TextUtils.isEmpty(comment)) {
+            CommonUtil.showTextToast("评论内容不能为空", this);
+        }
         String url = Contact.HOST + Contact.ADD_COMMENT + "?vid=" + vid + "&uidx=" + uidx +
-                "&buidx=" + videoUserId + "&comment=" + etComment.getText().toString() +
+                "&buidx=" + videoUserId + "&comment=" + comment +
                 "&identify=0&replyCid=0";
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(url);
@@ -442,7 +454,8 @@ public class VideoActivity extends AppCompatActivity {
         String device_id = CommonUtil.getDeviceID(this);
 
         String url = Contact.HOST + Contact.VIDEO_FOLLOW + "?vid=" + vid + "&uidx=" + uidx +
-                "&unique=" + device_id + "&password=1";
+                "&unique=" + new String(Base64.encode(device_id.getBytes(), Base64.DEFAULT)) +
+                "&password=1";
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(url);
         requestBuilder.method("GET", null);
@@ -489,7 +502,6 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void setFollowVideo(String json) {
-//        CommonUtil.showTextToast(json, this);
         int result = 0;
         try {
             JSONObject object = new JSONObject(json);
@@ -499,6 +511,12 @@ public class VideoActivity extends AppCompatActivity {
         }
         if (result == 1) {
             videoHeart.setImageResource(R.drawable.heart1);
+            followNum = followNum + 1;
+            videoFollowNum.setText(getString(R.string.follow_num, followNum));
+        } else if (result == 2) {
+            CommonUtil.showTextToast("今日点赞已满10次，请明天再来哟~", this);
+        } else {
+            CommonUtil.showTextToast("点赞失败", this);
         }
     }
 
@@ -524,8 +542,10 @@ public class VideoActivity extends AppCompatActivity {
                 headImage = "http://" + headImage;
             }
             Picasso.with(this).load(headImage).into(ivHeadImage);
-            videoFollowNum.setText(resultBean.getGoodNum() + "赞");
-            videoCommentNum.setText(resultBean.getCNum() + "评论");
+            followNum = resultBean.getGoodNum();
+            commentNum = resultBean.getCNum();
+            videoFollowNum.setText(getString(R.string.follow_num, followNum));
+            videoCommentNum.setText(getString(R.string.comment_num, commentNum));
         }
     }
 }

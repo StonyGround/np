@@ -103,7 +103,8 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             String createTime = new String(Base64.decode(data.getCreateTime().getBytes(),
                     Base64.DEFAULT));
-            String videoSize = data.getVideoSize();
+            String videoSize = new String(Base64.decode(data.getVideoSize().getBytes(),
+                    Base64.DEFAULT));
             if (videoSize.length() > 3) {
                 videoSize = videoSize.substring(0, 4) + "M";
             }

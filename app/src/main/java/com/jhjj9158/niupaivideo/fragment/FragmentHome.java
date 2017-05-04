@@ -62,7 +62,8 @@ public class FragmentHome extends Fragment {
             switch (msg.what) {
                 case 1:
                     Gson gson = new Gson();
-                    resultBeanList = gson.fromJson(AESUtil.decode(json), TabTitleBean.class).getResult();
+                    resultBeanList = gson.fromJson(AESUtil.decode(json), TabTitleBean.class)
+                            .getResult();
                     for (int i = 0; i < resultBeanList.size(); i++) {
                         titles.add(new String(Base64.decode(resultBeanList.get(0).getVrname()
                                 .getBytes(), Base64.DEFAULT)));
@@ -77,8 +78,7 @@ public class FragmentHome extends Fragment {
                         fragmentList.add(fragmentDynamic);
                     }
                     TabFragmentAdapter tabFragmentAdapter = new TabFragmentAdapter
-                            (getFragmentManager(),
-                                    fragmentList, titles);
+                            (getFragmentManager(), fragmentList, titles);
                     viewpager.setAdapter(tabFragmentAdapter);
                     tabLayout.setupWithViewPager(viewpager);
                     break;
@@ -91,29 +91,13 @@ public class FragmentHome extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle
-            savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_home, container, false);
-        unbinder = ButterKnife.bind(this, view);
-
-
-//        tabLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                setIndicator(tabLayout,10,10);
-//            }
-//        });
         titles.add("热门");
         titles.add("最新");
         titles.add("关注");
         fragmentList.add(new FragmentHot());
         fragmentList.add(new FragmentNew());
         fragmentList.add(new FragmentFollow());
+
 
 
         OkHttpClient mOkHttpClient = new OkHttpClient();
@@ -137,10 +121,33 @@ public class FragmentHome extends Fragment {
                 handler.sendMessage(message);
             }
         });
-
-        return view;
     }
 
+    private View rootView;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle
+            savedInstanceState) {
+        if (rootView == null) {
+            rootView = inflater.inflate(R.layout.fragment_home, container, false);
+        }
+        ViewGroup parent = (ViewGroup) rootView.getParent();
+        if (parent != null) {
+            parent.removeView(rootView);
+        }
+        unbinder = ButterKnife.bind(this, rootView);
+
+        return rootView;
+
+
+//        tabLayout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                setIndicator(tabLayout,10,10);
+//            }
+//        });
+    }
 
 
 //
