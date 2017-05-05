@@ -53,11 +53,11 @@
 
     <com.jhjj9158.niupaivideo.widget.AutoFitSizeTextView
         android:id="@+id/cancle"
-        android:textColor="@color/white"
+        android:textColor="@color/text"
         android:gravity="center"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:background="@drawable/button_rec_bottom_cornor"
+        android:background="@drawable/button_rec_black_four"
         android:clickable="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
