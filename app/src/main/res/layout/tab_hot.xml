@@ -1,60 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/swipe_refresh"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+                                              xmlns:app="http://schemas.android.com/apk/res-auto"
+                                              android:id="@+id/swipe_refresh"
+                                              android:layout_width="match_parent"
+                                              android:layout_height="match_parent">
 
     <!--<android.support.design.widget.CoordinatorLayout -->
-        <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
-        <!--xmlns:tools="http://schemas.android.com/tools"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent">-->
-
-        <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_height="match_parent">
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
 
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="3dp"
-                    android:orientation="vertical">
+    </android.support.v7.widget.RecyclerView>
 
 
-                    <com.jhjj9158.niupaivideo.widget.AdaptiveHeightlViewPager
-                        android:id="@+id/viewpager_banner"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-
-                    <LinearLayout
-                        android:id="@+id/ll_point_group"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/viewpager_banner"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginBottom="10dp"
-                        android:orientation="horizontal" />
-
-                </RelativeLayout>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerview"
-                    android:layout_width="match_parent"
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    android:layout_height="wrap_content">
-
-                </android.support.v7.widget.RecyclerView>
-            </LinearLayout>
-
-
-        </android.support.v4.widget.NestedScrollView>
     <!--</android.support.design.widget.CoordinatorLayout>-->
 </android.support.v4.widget.SwipeRefreshLayout>

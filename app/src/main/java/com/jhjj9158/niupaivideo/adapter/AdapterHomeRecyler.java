@@ -4,7 +4,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -68,6 +70,13 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
         notifyDataSetChanged();
     }
 
+    public void addRefreshDatas(List<IndexBean.ResultBean> datas) {
+        mDatas.clear();
+        mDatas.addAll(datas);
+        notifyDataSetChanged();
+    }
+
+
     public void removeDatas() {
         mDatas.removeAll(mDatas);
     }
@@ -77,6 +86,17 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (mHeaderView == null) return TYPE_NORMAL;
         if (position == 0) return TYPE_HEADER;
         return TYPE_NORMAL;
+    }
+
+    @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+        if (lp != null && lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+            StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams)
+                    lp;
+            p.setFullSpan(holder.getLayoutPosition() == 0);
+        }
     }
 
     @Override
@@ -116,9 +136,11 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
                 e.printStackTrace();
             }
 
-            Picasso.with(context).load(videoPic).placeholder(R.drawable.wartfullplacehold).into(((Holder) viewHolder).iv_video);
+            Picasso.with(context).load(videoPic).placeholder(R.drawable.wartfullplacehold).into((
+                    (Holder) viewHolder).iv_video);
             if (!headImage.equals("")) {
-                Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).iv_head);
+                Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(
+                        ((Holder) viewHolder).iv_head);
             }
             ((Holder) viewHolder).tv_video_ago.setText(createTime);
             ((Holder) viewHolder).tv_video_size.setText(videoSize);
@@ -135,8 +157,7 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public int getRealPosition(RecyclerView.ViewHolder holder) {
-//        int position = holder.getLayoutPosition();
-        int position = holder.getPosition();
+        int position = holder.getLayoutPosition();
         return mHeaderView == null ? position : position - 1;
     }
 

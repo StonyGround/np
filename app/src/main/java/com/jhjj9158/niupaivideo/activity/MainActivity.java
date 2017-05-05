@@ -61,7 +61,7 @@ public class MainActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             setContentView(R.layout.activity_main);
             ButterKnife.bind(this);
-            CacheUtils.setInt(this, "useridx", 1628007796);
+//            CacheUtils.setInt(this, "useridx", 1628007796);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS

@@ -19,6 +19,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.adapter.TabFragmentAdapter;
 import com.jhjj9158.niupaivideo.bean.TabTitleBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
+import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
 
@@ -67,7 +68,6 @@ public class FragmentHome extends Fragment {
                     for (int i = 0; i < resultBeanList.size(); i++) {
                         titles.add(new String(Base64.decode(resultBeanList.get(0).getVrname()
                                 .getBytes(), Base64.DEFAULT)));
-
                         fragmentDynamic = new FragmentDynamic();
                         transaction = getFragmentManager().beginTransaction();
                         Bundle bundle = new Bundle();

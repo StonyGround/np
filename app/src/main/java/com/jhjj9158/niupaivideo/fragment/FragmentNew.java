@@ -27,6 +27,7 @@ import com.jhjj9158.niupaivideo.adapter.AdapterHomeRecyler;
 import com.jhjj9158.niupaivideo.bean.BannerBean;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
+import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.AdaptiveHeightlViewPager;
@@ -35,6 +36,8 @@ import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -46,11 +49,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static android.support.v7.widget.RecyclerView.SCROLL_STATE_IDLE;
+
 /**
  * Created by pc on 17-4-17.
  */
 
-public class FragmentNew extends Fragment {
+public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     Unbinder unbinder;
     @BindView(R.id.recyclerview)
@@ -58,15 +63,19 @@ public class FragmentNew extends Fragment {
     @BindView(R.id.swipe_refresh)
     SwipeRefreshLayout swipeRefresh;
 
-    @BindView(R.id.viewpager_banner)
     AdaptiveHeightlViewPager viewpager_banner;
-    @BindView(R.id.ll_point_group)
     LinearLayout ll_point_group;
 
     private int currentItem = Integer.MAX_VALUE / 2;
 
     private List<BannerBean.ResultBean> bannerList = new ArrayList<>();
     private int preSelectPositon = 0;
+
+    private StaggeredGridLayoutManager layoutManager;
+    private AdapterHomeRecyler adapterHomeRecyler;
+    private boolean isRefresh = false;
+    private View topView;
+    private boolean isLoadMore = false;
 
     private Handler handler = new Handler() {
         @Override
@@ -88,7 +97,22 @@ public class FragmentNew extends Fragment {
         Gson gson = new Gson();
         List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
-        AdapterHomeRecyler adapterHomeRecyler = new AdapterHomeRecyler(getActivity(),
+
+        if (isRefresh) {
+            isRefresh = false;
+            adapterHomeRecyler.addRefreshDatas(resultBeanList);
+            swipeRefresh.setRefreshing(false);
+            return;
+        }
+
+        if (isLoadMore) {
+            isLoadMore = false;
+            adapterHomeRecyler.addDatas(resultBeanList);
+            swipeRefresh.setRefreshing(false);
+            return;
+        }
+
+        adapterHomeRecyler = new AdapterHomeRecyler(getActivity(),
                 resultBeanList);
         adapterHomeRecyler.setOnItemClickListener(new AdapterHomeRecyler.OnItemClickListener() {
             @Override
@@ -98,62 +122,24 @@ public class FragmentNew extends Fragment {
                 startActivity(intent);
             }
         });
-        recyclerview.setAdapter(adapterHomeRecyler);
+        getBannerData();
+        swipeRefresh.setRefreshing(false);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("FragmentNew","onCreate");
-//        getNewData();
+        Log.e("FragmentNew", "onCreate");
+        getNewData(0);
     }
 
-    private void getNewData() {
-        OkHttpUtils.getOkHttpUtils().get(Contact.HOST + Contact.INDEX +
-                "?type=2&uidx=1&begin=1&num=10&vid=0", new OkHttpUtils.MCallBack() {
-            @Override
-            public void onResponse(String json) {
+    private int index;
 
-            }
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-        });
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
-            Bundle savedInstanceState) {
-
-        Log.e("FragmentNew","onCreateView");
-        View view = inflater.inflate(R.layout.tab_hot, container, false);
-        unbinder = ButterKnife.bind(this, view);
-
-        getBannerData();
-
-        RecyclerView.LayoutManager layoutManager = new StaggeredGridLayoutManager(2,
-                StaggeredGridLayoutManager.VERTICAL);
-        layoutManager.setAutoMeasureEnabled(true);
-        recyclerview.setLayoutManager(layoutManager);
-
-//      recyclerview.addItemDecoration(new GridSpacingItemDecoration(2,10,true));
-        recyclerview.addItemDecoration(new SpaceItemDecoration(5));
-        recyclerview.setItemAnimator(new DefaultItemAnimator());
-        recyclerview.setHasFixedSize(true);
-        recyclerview.setNestedScrollingEnabled(false);
-
-        swipeRefresh.setEnabled(false);
-        swipeRefresh.setColorSchemeResources(R.color.button_login_click);
-        swipeRefresh.setProgressViewOffset(false, 0, (int) TypedValue
-                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getActivity().getResources()
-                        .getDisplayMetrics()));
-
+    private void getNewData(int begin) {
+        index = begin + 8;
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .INDEX + "?type=2&uidx=1&begin=1&num=10&vid=0");
+                .INDEX + "?type=2&uidx=1&begin=" + begin + "&num=" + index + "&vid=0");
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);
@@ -172,6 +158,57 @@ public class FragmentNew extends Fragment {
                 handler.sendMessage(message);
             }
         });
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
+            Bundle savedInstanceState) {
+
+        Log.e("FragmentNew", "onCreateView");
+        View view = inflater.inflate(R.layout.tab_hot, container, false);
+        unbinder = ButterKnife.bind(this, view);
+
+        layoutManager = new StaggeredGridLayoutManager(2,
+                StaggeredGridLayoutManager.VERTICAL);
+        layoutManager.setAutoMeasureEnabled(true);
+        recyclerview.setLayoutManager(layoutManager);
+
+        topView = LayoutInflater.from(getActivity()).inflate(R.layout.home_top, recyclerview,
+                false);
+//        recyclerview.addItemDecoration(new GridSpacingItemDecoration(2, 5, true));
+//        recyclerview.addItemDecoration(new SpaceItemDecoration(5));
+        recyclerview.setItemAnimator(new DefaultItemAnimator());
+        recyclerview.setHasFixedSize(true);
+        recyclerview.setNestedScrollingEnabled(false);
+
+        recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == SCROLL_STATE_IDLE) {
+                    Log.d("FragmentHot", "---");
+                    int[] lastPositions = new int[layoutManager.getSpanCount()];
+                    layoutManager.findLastVisibleItemPositions(lastPositions);
+
+                    Integer[] obj = new Integer[lastPositions.length];
+                    for (int i = 0; i < lastPositions.length; i++) {
+                        obj[i] = lastPositions[i];
+                    }
+                    int lastPosition = Collections.max(Arrays.asList(obj));
+
+                    if (lastPosition == recyclerView.getLayoutManager().getItemCount() - 1) {
+                        isLoadMore = true;
+                        getNewData(index);
+                    }
+                }
+            }
+        });
+
+        swipeRefresh.setColorSchemeResources(R.color.button_login_click);
+        swipeRefresh.setProgressViewOffset(false, 0, (int) TypedValue
+                .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getActivity().getResources()
+                        .getDisplayMetrics()));
+        swipeRefresh.setOnRefreshListener(this);
 
         return view;
     }
@@ -204,8 +241,10 @@ public class FragmentNew extends Fragment {
 
         Gson gson = new Gson();
         bannerList = gson.fromJson(json, BannerBean.class).getResult();
-        viewpager_banner.setAdapter(new AdapterHomeBanner(getActivity(), bannerList));
 
+        viewpager_banner = (AdaptiveHeightlViewPager) topView.findViewById(R.id.viewpager_banner);
+        ll_point_group = (LinearLayout) topView.findViewById(R.id.ll_point_group);
+        viewpager_banner.setAdapter(new AdapterHomeBanner(getActivity(), bannerList));
         viewpager_banner.setCurrentItem(currentItem);
 
 //        viewpager_banner.setOnTouchListener(new View.OnTouchListener() {
@@ -288,18 +327,27 @@ public class FragmentNew extends Fragment {
 //                }
 //            }
 //        });
+        adapterHomeRecyler.setHeaderView(topView);
+        recyclerview.setAdapter(adapterHomeRecyler);
     }
 
     @Override
     public void onResume() {
-        Log.e("FragmentNew","onResume");
+        Log.e("FragmentNew", "onResume");
         super.onResume();
     }
 
     @Override
     public void onDestroyView() {
-        Log.e("FragmentNew","onDestroyView");
+        Log.e("FragmentNew", "onDestroyView");
+        swipeRefresh.removeAllViews();
         super.onDestroyView();
         unbinder.unbind();
+    }
+
+    @Override
+    public void onRefresh() {
+        isRefresh = true;
+        getNewData(0);
     }
 }
