@@ -19,6 +19,7 @@ import com.jhjj9158.niupaivideo.bean.LoginResultBean;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.MD5Util;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
@@ -28,6 +29,8 @@ import com.umeng.socialize.UMShareConfig;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -62,7 +65,6 @@ public class QuickLoignActivity extends BaseActivity {
     private UMShareAPI mShareAPI = null;
 
 
-
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -75,6 +77,16 @@ public class QuickLoignActivity extends BaseActivity {
                     if (loginResult.getCode() == 100) {
                         CacheUtils.setInt(QuickLoignActivity.this, "useridx", loginResult
                                 .getData().get(0).getUseridx());
+                        CacheUtils.setInt(QuickLoignActivity.this, "oldidx", loginResult
+                                .getData().get(0).getOldidx());
+                        CacheUtils.setString(QuickLoignActivity.this, "oldid", loginResult
+                                .getData().get(0).getOldid());
+                        String pwd = loginResult.getData().get(0).getPassword();
+                        try {
+                            CacheUtils.setString(QuickLoignActivity.this, "password", MD5Util.getMD5(pwd));
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        }
                         finish();
                     }
                     break;
@@ -107,13 +119,15 @@ public class QuickLoignActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.ll_login_wechat:
                 if (!MyApplication.api.isWXAppInstalled()) {
-                    CommonUtil.showTextToast("未安装微信客户端",QuickLoignActivity.this);
+                    CommonUtil.showTextToast("未安装微信客户端", QuickLoignActivity.this);
                     return;
                 }
-                final SendAuth.Req req = new SendAuth.Req();
-                req.scope = "snsapi_userinfo";
-                req.state = "4146c1c15c8887a3d9916ef8fbcedcd7";
-                MyApplication.api.sendReq(req);
+//                final SendAuth.Req req = new SendAuth.Req();
+//                req.scope = "snsapi_userinfo";
+//                req.state = "4146c1c15c8887a3d9916ef8fbcedcd7";
+//                MyApplication.api.sendReq(req);
+                platform = SHARE_MEDIA.WEIXIN;
+                mShareAPI.doOauthVerify(QuickLoignActivity.this, platform, umAuthListener);
                 break;
             case R.id.ll_login_qq:
                 platform = SHARE_MEDIA.QQ;
@@ -269,5 +283,11 @@ public class QuickLoignActivity extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        UMShareAPI.get(this).release();
     }
 }

@@ -1,12 +1,10 @@
 package com.jhjj9158.niupaivideo.wxapi;
 
-
-//import com.umeng.weixin.callback.WXCallbackActivity;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -23,12 +21,13 @@ import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.umeng.socialize.weixin.view.WXCallbackActivity;
 
 import java.io.IOException;
 
 import okhttp3.Call;
 
-public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
+public class WXEntryActivity extends WXCallbackActivity implements IWXAPIEventHandler {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +42,17 @@ public class WXEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onResp(BaseResp resp) {
-        String code = ((SendAuth.Resp) resp).code;
-        CacheUtils.setString(this, "code_weixin", code);
-        finish();
+        switch (resp.getType()) {
+            case 1://1为第三方登录,2为分享
+                String code = ((SendAuth.Resp) resp).code;
+                if (!TextUtils.isEmpty(code)) {
+                    CacheUtils.setString(this, "code_weixin", code);
+                }
+                finish();
+                break;
+            default:
+                finish();
+                break;
+        }
     }
 }

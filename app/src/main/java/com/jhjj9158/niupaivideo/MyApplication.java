@@ -33,6 +33,7 @@ public class MyApplication extends Application {
         super.onCreate();
         Config.DEBUG = true;
         UMShareAPI.get(this);
+        Config.isJumptoAppStore = true;
         regToWx();
     }
 

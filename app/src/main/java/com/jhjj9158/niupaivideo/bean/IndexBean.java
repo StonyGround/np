@@ -95,6 +95,7 @@ public class IndexBean {
         private String videoSize;
         private String imgScale;
         private int fromtype;
+        private int loginplant;
 
         public int getVid() {
             return vid;
@@ -294,6 +295,14 @@ public class IndexBean {
 
         public void setFromtype(int fromtype) {
             this.fromtype = fromtype;
+        }
+
+        public int getLoginplant() {
+            return loginplant;
+        }
+
+        public void setLoginplant(int loginplant) {
+            this.loginplant = loginplant;
         }
 
         public ResultBean() {

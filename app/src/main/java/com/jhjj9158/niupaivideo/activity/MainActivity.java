@@ -23,6 +23,7 @@ import com.jhjj9158.niupaivideo.fragment.FragmentHome;
 import com.jhjj9158.niupaivideo.fragment.FragmentMy;
 import com.jhjj9158.niupaivideo.fragment.TestFragment;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
+import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,16 +36,8 @@ public class MainActivity extends FragmentActivity {
 
     @BindView(R.id.fg_main)
     FrameLayout fgMain;
-    @BindView(R.id.ll_home)
-    LinearLayout llHome;
-    @BindView(R.id.ll_my)
-    LinearLayout llMy;
     @BindView(R.id.iv_screen)
     ImageView ivScreen;
-    @BindView(R.id.iv_home)
-    ImageView ivHome;
-    @BindView(R.id.iv_my)
-    ImageView ivMy;
     @BindView(R.id.tab_host)
     FragmentTabHost tabHost;
 
@@ -71,7 +64,7 @@ public class MainActivity extends FragmentActivity {
 
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                getWindow().setStatusBarColor(Color.argb(100, 00, 00, 00));
+                getWindow().setStatusBarColor(Color.argb(50, 00, 00, 00));
             }
 
             inflater = LayoutInflater.from(this);
@@ -137,5 +130,6 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        UMShareAPI.get(this).release();
     }
 }

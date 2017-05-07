@@ -246,6 +246,7 @@ public class FragmentMy extends Fragment {
             Picasso.with(getContext()).load(headImage).placeholder(R.drawable.me_user_admin).into
                     (profileImage);
             tvName.setText(userInfo.getNickName());
+            CacheUtils.setString(getActivity(), "userName", "");
             if (userInfo.getUserSex().equals("1")) {
                 ivGender.setBackgroundResource(R.drawable.man);
             }

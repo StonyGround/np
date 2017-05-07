@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.CAMERA"/>
 
-
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -40,6 +39,15 @@
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:scheme="niupai" />
             </intent-filter>
         </activity>
         <activity
@@ -147,6 +155,8 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.TestActivity">
+        </activity>
+        <activity android:name=".activity.WebViewActivity">
         </activity>
     </application>
 
