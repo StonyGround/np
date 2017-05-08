@@ -35,7 +35,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="30dp"
                     android:layout_toRightOf="@+id/video_back"
                     android:src="@drawable/heart"/>
 
@@ -44,9 +44,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="30dp"
                     android:layout_toRightOf="@+id/video_heart"
                     android:src="@drawable/share"/>
+
+                <ImageView
+                    android:visibility="gone"
+                    android:id="@+id/video_follow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="30dp"
+                    android:layout_toRightOf="@+id/video_share"
+                    android:src="@drawable/follow"/>
 
                 <TextView
                     android:id="@+id/tv_input"
@@ -217,7 +227,7 @@
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
-                            android:background="@color/button_login"/>
+                            android:background="@color/bg_my"/>
 
                         <android.support.v7.widget.RecyclerView
                             android:id="@+id/rv_comment"

@@ -41,6 +41,8 @@ public class Contact {
     public static final String GET_REWARD = "works/GetRewardTrendsInfo";
     public static final String GET_BANNER = "Profit/loadAdvertisement";
 
+    public static final String IS_START_MAIN = "is_start_main";
+
 
     public static final int BANNER_START_ROLLING = 0;
     public static final int BANNER_KEEP_ROLLING = 1;

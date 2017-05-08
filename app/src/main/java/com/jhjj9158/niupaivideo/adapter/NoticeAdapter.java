@@ -105,14 +105,13 @@ public class NoticeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 ((Holder) viewHolder).notice_line.setVisibility(View.GONE);
                 ((Holder) viewHolder).notice_go.setVisibility(View.GONE);
             }
-
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onItemClick(pos, data);
+                }
+            });
         }
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onItemClick(pos, data);
-            }
-        });
     }
 
     public int getRealPosition(RecyclerView.ViewHolder holder) {

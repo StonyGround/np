@@ -27,6 +27,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.Settings;
 import com.jhjj9158.niupaivideo.adapter.CommentAdapter;
 import com.jhjj9158.niupaivideo.bean.CommentBean;
+import com.jhjj9158.niupaivideo.bean.FollowPostBean;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.bean.VideoDetailBean;
 import com.jhjj9158.niupaivideo.bean.VideoIsFollowBean;
@@ -61,8 +62,10 @@ import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
@@ -74,6 +77,7 @@ public class VideoActivity extends AppCompatActivity {
     private static final int VIDEO_FOLLOW = 3;
     private static final int COMMENT = 4;
     private static final int ADD_COMMENT = 5;
+    private static final int FOLLOW = 6;
 
     @BindView(R.id.video_view)
     IjkVideoView videoView;
@@ -119,6 +123,8 @@ public class VideoActivity extends AppCompatActivity {
     TextView videoFromType;
     @BindView(R.id.video_rl_bottom)
     RelativeLayout videoRlBottom;
+    @BindView(R.id.video_follow)
+    ImageView videoFollow;
 
     private Settings mSettings;
     private AndroidMediaController mMediaController;
@@ -150,12 +156,22 @@ public class VideoActivity extends AppCompatActivity {
                     break;
                 case ADD_COMMENT:
                     setAddComment(AESUtil.decode(json));
+                case FOLLOW:
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        String result = jsonObject.getString("msg");
+                        CommonUtil.showTextToast(result, VideoActivity.this);
+                        videoFollow.setVisibility(View.GONE);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 default:
                     break;
             }
             super.handleMessage(msg);
         }
     };
+
 
     private void setAddComment(String json) {
         int result = 0;
@@ -310,7 +326,12 @@ public class VideoActivity extends AppCompatActivity {
         double latitude = indexResultBean.getLatitude();
         int fromType = indexResultBean.getFromtype();
         int loginplant = indexResultBean.getLoginplant();
+        int isFollow = indexResultBean.getIsFollow();
 
+        if (isFollow == 0) {
+            videoFollow.setVisibility(View.VISIBLE);
+
+        }
         videoUserName.setText(name + "：");
         videoDesc.setText(desc);
         videoPlaynum.setText(getString(R.string.play_num, indexResultBean.getPlayNum()));
@@ -344,12 +365,12 @@ public class VideoActivity extends AppCompatActivity {
                 videoView.start();
             }
         });
-//        videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(IMediaPlayer iMediaPlayer) {
-//                videoView.start();
-//            }
-//        });
+        videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(IMediaPlayer iMediaPlayer) {
+                videoView.start();
+            }
+        });
     }
 
     private String getDistance(double longitude, double latitude) {
@@ -390,7 +411,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     @OnClick({R.id.video_back, R.id.video_heart, R.id.video_share, R.id.tv_input, R.id
-            .btn_video_bottom, R.id.tv_send_comment, R.id.video_user_name, R.id.iv_headImage})
+            .btn_video_bottom, R.id.tv_send_comment, R.id.video_user_name, R.id.iv_headImage, R.id.video_follow})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.video_back:
@@ -459,7 +480,51 @@ public class VideoActivity extends AppCompatActivity {
                 intentHead.putExtra("buidx", videoUserId);
                 startActivity(intentHead);
                 break;
+            case R.id.video_follow:
+                setFollow(1);
+                break;
         }
+    }
+
+    private void setFollow(int index) {
+        FollowPostBean followPostBean = new FollowPostBean();
+        followPostBean.setOpcode("FocusonOrDeletecurd_friends");
+        followPostBean.setUseridx(uidx);
+        followPostBean.setFriendidx(videoUserId);
+        followPostBean.setIndex(index);
+
+        Gson gson = new Gson();
+        String json = gson.toJson(followPostBean);
+
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        RequestBody formBody = null;
+        try {
+            formBody = new FormBody.Builder()
+                    .add("user", CommonUtil.EncryptAsDoNet(json, Contact.KEY))
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Request request = new Request.Builder()
+                .url(Contact.USER_INFO)
+                .post(formBody)
+                .build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Message message = new Message();
+                message.obj = response.body().string();
+                message.what = FOLLOW;
+                handler.sendMessage(message);
+            }
+        });
     }
 
     private void shareDialog() {

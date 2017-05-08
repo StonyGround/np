@@ -122,12 +122,12 @@ public class QuickLoignActivity extends BaseActivity {
                     CommonUtil.showTextToast("未安装微信客户端", QuickLoignActivity.this);
                     return;
                 }
-//                final SendAuth.Req req = new SendAuth.Req();
-//                req.scope = "snsapi_userinfo";
-//                req.state = "4146c1c15c8887a3d9916ef8fbcedcd7";
-//                MyApplication.api.sendReq(req);
-                platform = SHARE_MEDIA.WEIXIN;
-                mShareAPI.doOauthVerify(QuickLoignActivity.this, platform, umAuthListener);
+                final SendAuth.Req req = new SendAuth.Req();
+                req.scope = "snsapi_userinfo";
+                req.state = "4146c1c15c8887a3d9916ef8fbcedcd7";
+                MyApplication.api.sendReq(req);
+//                platform = SHARE_MEDIA.WEIXIN;
+//                mShareAPI.doOauthVerify(QuickLoignActivity.this, platform, umAuthListener);
                 break;
             case R.id.ll_login_qq:
                 platform = SHARE_MEDIA.QQ;

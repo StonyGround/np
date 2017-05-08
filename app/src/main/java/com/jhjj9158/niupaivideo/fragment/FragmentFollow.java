@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -69,7 +71,7 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
 
     private List<BannerBean.ResultBean> bannerList = new ArrayList<>();
     private int preSelectPositon = 0;
-
+    private int minVid = 0;
     private StaggeredGridLayoutManager layoutManager;
     private AdapterHomeRecyler adapterHomeRecyler;
     private boolean isRefresh = false;
@@ -80,25 +82,39 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            String json = msg.obj.toString();
+
             switch (msg.what) {
                 case Contact.GET_FOLLOW_DATA:
-                    setHotData(AESUtil.decode(json));
+                    String jsonFollow = msg.obj.toString();
+                    setFollowData(AESUtil.decode(jsonFollow));
                     break;
                 case Contact.GET_BANNER_DATA:
-                    setBannerData(AESUtil.decode(json));
+                    String jsonBanner = msg.obj.toString();
+                    setBannerData(AESUtil.decode(jsonBanner));
+                    break;
+                case Contact.BANNER_START_ROLLING:
+                    currentItem++;
+                    viewpager_banner.setCurrentItem(currentItem);
+                    if (handler.hasMessages(Contact.BANNER_START_ROLLING)) {
+                        handler.removeMessages(Contact.BANNER_START_ROLLING);
+                    }
+                    handler.postDelayed(new InternalRunnable(), 4000);
+                    break;
+                case Contact.BANNER_CHANGE_ROLLING:
+                    currentItem = msg.arg1;
+                    handler.postDelayed(new InternalRunnable(), 4000);
                     break;
             }
             super.handleMessage(msg);
         }
     };
 
-    private void setHotData(String json) {
+    private void setFollowData(String json) {
         Gson gson = new Gson();
         List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
-
-        if(resultBeanList.size()==0){
+        minVid = CommonUtil.getMinVid(resultBeanList);
+        if (resultBeanList.size() == 0) {
             return;
         }
 
@@ -109,8 +125,8 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
             return;
         }
 
-        if(isLoadMore){
-            isLoadMore=false;
+        if (isLoadMore) {
+            isLoadMore = false;
             adapterHomeRecyler.addDatas(resultBeanList);
             swipeRefresh.setRefreshing(false);
             return;
@@ -135,8 +151,16 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
         super.onCreate(savedInstanceState);
 
         Log.e("FragmentFollow", "onCreate");
-//        getBannerData();
         getFollowData(0);
+    }
+
+    private class InternalRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            handler.sendEmptyMessage(Contact.BANNER_START_ROLLING);
+        }
+
     }
 
     @Nullable
@@ -174,7 +198,7 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
                     int lastPosition = Collections.max(Arrays.asList(obj));
 
                     if (lastPosition == recyclerView.getLayoutManager().getItemCount() - 1) {
-                        if (CacheUtils.getInt(getActivity(),"useridx")==0){
+                        if (CacheUtils.getInt(getActivity(), "useridx") == 0) {
                             return;
                         }
                         isLoadMore = true;
@@ -184,7 +208,6 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
             }
         });
 
-        swipeRefresh.setEnabled(false);
         swipeRefresh.setColorSchemeResources(R.color.button_login_click);
         swipeRefresh.setProgressViewOffset(false, 0, (int) TypedValue
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getActivity().getResources()
@@ -199,7 +222,7 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
                 .INDEX + "?type=3&uidx=" + CacheUtils.getInt(getActivity(), "useridx") +
-                "&begin=" + begin + "&num=" + index + "&vid=0");
+                "&begin=" + begin + "&num=" + index + "&vid=" + minVid);
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);
@@ -254,86 +277,88 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
         viewpager_banner.setAdapter(new AdapterHomeBanner(getActivity(), bannerList));
         viewpager_banner.setCurrentItem(currentItem);
 
-//        viewpager_banner.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
+        viewpager_banner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        break;
+                }
+                return false;
+            }
+        });
 
         ll_point_group.removeAllViews();
-        for (int i = 0; i < bannerList.size(); i++) {
-            ImageView point = new ImageView(getActivity());
-            point.setBackgroundResource(R.drawable.point_selector);
+        if (bannerList.size() > 1) {
+            for (int i = 0; i < bannerList.size(); i++) {
+                ImageView point = new ImageView(getActivity());
+                point.setBackgroundResource(R.drawable.point_selector);
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    20, 20);
-            point.setLayoutParams(params);
-            if (i == 0) {
-                point.setEnabled(true);
-            } else {
-                point.setEnabled(false);
-                params.leftMargin = 20;
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        20, 20);
+                point.setLayoutParams(params);
+                if (i == 0) {
+                    point.setEnabled(true);
+                } else {
+                    point.setEnabled(false);
+                    params.leftMargin = 20;
+                }
+
+                // 把点添加到LinearLayout中
+                ll_point_group.addView(point);
             }
-
-            // 把点添加到LinearLayout中
-            ll_point_group.addView(point);
         }
 
-//        if (handler.hasMessages(Contact.BANNER_START_ROLLING)) {
-//            handler.removeMessages(Contact.BANNER_START_ROLLING);
-//        }
-//        handler.postDelayed(new InternalRunnable(), 4000);
+        if (handler.hasMessages(Contact.BANNER_START_ROLLING)) {
+            handler.removeMessages(Contact.BANNER_START_ROLLING);
+        }
+        handler.postDelayed(new InternalRunnable(), 4000);
 
-//        viewpager_banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-//            @Override
-//            public void onPageScrolled(int position, float positionOffset, int
-// positionOffsetPixels) {
+        viewpager_banner.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int
+                    positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                if (handler.hasMessages(Contact.BANNER_START_ROLLING)) {
+                    handler.removeMessages(Contact.BANNER_START_ROLLING);
+                }
+                Message message = new Message();
+                message.arg1 = position;
+                message.what = Contact.BANNER_CHANGE_ROLLING;
+                handler.sendMessage(message);
+
+                int diff = (Integer.MAX_VALUE / 2) % (bannerList.size());
+                ll_point_group.getChildAt(preSelectPositon).setEnabled(false);
+                ll_point_group.getChildAt((position - diff) % bannerList.size()).setEnabled(true);
 //
-//            }
-//
-//            @Override
-//            public void onPageSelected(int position) {
-//
-//                if (handler.hasMessages(Contact.BANNER_START_ROLLING)) {
-//                    handler.removeMessages(Contact.BANNER_START_ROLLING);
-//                }
-//                Message message = new Message();
-//                message.arg1 = position;
-//                message.what = Contact.BANNER_CHANGE_ROLLING;
-//                handler.sendMessage(message);
-//
-//                int diff = (Integer.MAX_VALUE / 2) % (bannerList.size());
-//                ll_point_group.getChildAt(preSelectPositon).setEnabled(false);
-//                ll_point_group.getChildAt((position - diff) % bannerList.size()).setEnabled(true);
-////
-//                preSelectPositon = (position - diff) % bannerList.size();
-//            }
-//
-//            @Override
-//            public void onPageScrollStateChanged(int state) {
-//                switch (state) {
-//                    case ViewPager.SCROLL_STATE_DRAGGING:
-////                        home_swipe.setEnabled(false);
-//                        if (handler.hasMessages(Contact.BANNER_START_ROLLING)) {
-//                            handler.removeMessages(Contact.BANNER_START_ROLLING);
-//                        }
-//                        break;
-//                    case ViewPager.SCROLL_STATE_IDLE:
-////                        home_swipe.setEnabled(true);
-//                        handler.postDelayed(new InternalRunnable(), 4000);
-//                        break;
-//                    default:
-//                        break;
-//                }
-//            }
-//        });
+                preSelectPositon = (position - diff) % bannerList.size();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                switch (state) {
+                    case ViewPager.SCROLL_STATE_DRAGGING:
+                        swipeRefresh.setEnabled(false);
+                        if (handler.hasMessages(Contact.BANNER_START_ROLLING)) {
+                            handler.removeMessages(Contact.BANNER_START_ROLLING);
+                        }
+                        break;
+                    case ViewPager.SCROLL_STATE_IDLE:
+                        swipeRefresh.setEnabled(true);
+                        handler.postDelayed(new InternalRunnable(), 4000);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        });
         adapterHomeRecyler.setHeaderView(topView);
         recyclerview.setAdapter(adapterHomeRecyler);
     }
@@ -348,12 +373,17 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
     public void onDestroyView() {
         Log.e("FragmentFollow", "onDestroyView");
         swipeRefresh.removeAllViews();
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }
         super.onDestroyView();
         unbinder.unbind();
     }
 
     @Override
     public void onRefresh() {
+        minVid = 0;
         isRefresh = true;
         getFollowData(0);
     }

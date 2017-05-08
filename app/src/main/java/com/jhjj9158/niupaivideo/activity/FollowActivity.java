@@ -45,6 +45,8 @@ public class FollowActivity extends BaseActivity {
         int uidx = CacheUtils.getInt(this, "useridx");
         if (buidx == 0) {
             buidx = uidx;
+        } else {
+            uidx = buidx;
         }
         String worksUrl = Contact.HOST + Contact.GET_FOLLOW + "?uidx=" + uidx + "&buidx=" + buidx
                 + "&begin=1&num=100";
@@ -66,7 +68,7 @@ public class FollowActivity extends BaseActivity {
                 adapter.setOnItemClickListener(new FollowAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position, FollowBean.ResultBean data) {
-                        Intent intent = new Intent(FollowActivity.this,PersonalActivity.class);
+                        Intent intent = new Intent(FollowActivity.this, PersonalActivity.class);
                         intent.putExtra("buidx", data.getUidx());
                         startActivity(intent);
                     }

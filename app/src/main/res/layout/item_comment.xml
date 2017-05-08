@@ -54,5 +54,5 @@
         android:layout_below="@+id/comment_headimg"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/button_login"/>
+        android:background="@color/bg_my"/>
 </RelativeLayout>

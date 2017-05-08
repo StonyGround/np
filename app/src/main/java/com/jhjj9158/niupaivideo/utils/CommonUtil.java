@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -19,11 +20,14 @@ import android.widget.Toast;
 
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.activity.SettingActivity;
+import com.jhjj9158.niupaivideo.bean.IndexBean;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.UUID;
 
 import javax.crypto.Cipher;
@@ -114,34 +118,38 @@ public class CommonUtil {
         return display.heightPixels;
     }
 
-    public static boolean checkPermission(Fragment fragment, final Activity activity, String permission,
-                                          String hint, int requestCode) {
-        //检查权限
-        if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
-                //显示我们自定义的一个窗口引导用户开启权限
-                new AlertDialog.Builder(activity).setMessage("")
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-            } else {
-                //申请权限
-                if (fragment == null) {
-                    ActivityCompat.requestPermissions(activity,
-                            new String[]{permission},
-                            requestCode);
+    public static boolean checkPermission(Context context, String permission) {
+        boolean result = false;
+        if (Build.VERSION.SDK_INT >= 23) {
+            try {
+                Class clazz = Class.forName("android.content.Context");
+                Method method = clazz.getMethod("checkSelfPermission", String.class);
+                int rest = (Integer) method.invoke(context, permission);
+                if (rest == PackageManager.PERMISSION_GRANTED) {
+                    result = true;
                 } else {
-                    fragment.requestPermissions(
-                            new String[]{permission},
-                            requestCode);
+                    result = false;
                 }
+            } catch (Exception e) {
+                result = false;
             }
-            return false;
-        } else {  //已经拥有权限
-            return true;
+        } else {
+            PackageManager pm = context.getPackageManager();
+            if (pm.checkPermission(permission, context.getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+                result = true;
+            }
         }
+        return result;
     }
+
+    public static int getMinVid(List<IndexBean.ResultBean> resultBeanList) {
+        int min = resultBeanList.get(0).getVid();
+        for (int i = 0; i < resultBeanList.size(); i++) {
+            if (min > resultBeanList.get(i).getVid()) {
+                min = resultBeanList.get(i).getVid();
+            }
+        }
+        return min;
+    }
+
 }

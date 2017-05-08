@@ -21,11 +21,6 @@
 
         </android.support.design.widget.TabLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/home_tab"/>
-
         <com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager
             android:id="@+id/msg_viewpager"
             android:layout_width="match_parent"

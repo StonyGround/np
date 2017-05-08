@@ -1,6 +1,8 @@
 package com.jhjj9158.niupaivideo.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +28,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by oneki on 2017/4/27.
@@ -33,11 +39,39 @@ import okhttp3.Call;
 
 public class FragmentMoments extends Fragment {
 
+    private static final int SET_MOMENTS = 0;
+
     @BindView(R.id.works_nothing)
     TextView worksNothing;
     @BindView(R.id.rv_works)
     RecyclerView rvWorks;
     Unbinder unbinder;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            String json = msg.obj.toString();
+            switch (msg.what) {
+                case SET_MOMENTS:
+                    setMomentsData(AESUtil.decode(json));
+                default:
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+
+    private void setMomentsData(String json) {
+        Gson gson = new Gson();
+        List<LikeBean.ResultBean> resultBean = gson.fromJson(json, LikeBean
+                .class).getResult();
+        if (resultBean.size() == 0) {
+            worksNothing.setVisibility(View.VISIBLE);
+            return;
+        }
+        LikeAdapter adapter = new LikeAdapter(getActivity(), resultBean);
+        rvWorks.setAdapter(adapter);
+    }
 
     @Nullable
     @Override
@@ -48,31 +82,33 @@ public class FragmentMoments extends Fragment {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         rvWorks.setLayoutManager(linearLayoutManager);
+        getMomentsData();
+        return view;
+    }
 
+    private void getMomentsData() {
         int uidx = CacheUtils.getInt(getActivity(), "useridx");
         String worksUrl = Contact.HOST + Contact.GET_MOMENTS + "?uidx=" + uidx + "&begin=1&num=100";
-        OkHttpUtils.getOkHttpUtils().get(worksUrl, new OkHttpUtils.MCallBack() {
-            @Override
-            public void onResponse(String json) {
-                String result = AESUtil.decode(json);
-                Gson gson = new Gson();
-                List<LikeBean.ResultBean> resultBean = gson.fromJson(result, LikeBean
-                        .class).getResult();
-                if (resultBean.size() == 0) {
-                    worksNothing.setVisibility(View.VISIBLE);
-                    return;
-                }
-                LikeAdapter adapter = new LikeAdapter(getActivity(), resultBean);
-                rvWorks.setAdapter(adapter);
-            }
-
+        OkHttpClient mOkHttpClient = new OkHttpClient();
+        Request.Builder requestBuilder = new Request.Builder().url(worksUrl);
+        requestBuilder.method("GET", null);
+        Request request = requestBuilder.build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Message message = new Message();
+                message.obj = response.body().string();
+                message.what = SET_MOMENTS;
+                handler.sendMessage(message);
             }
         });
-
-        return view;
     }
 
     @Override

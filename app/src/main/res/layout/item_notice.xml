@@ -60,7 +60,7 @@
                 android:layout_marginBottom="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/home_tab"/>
+                android:background="@color/bg_my"/>
 
             <TextView
                 android:id="@+id/notice_go"
@@ -68,6 +68,7 @@
                 android:layout_below="@+id/notice_line"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="12sp"
                 android:layout_alignParentRight="true"
                 android:text="@string/click_go"/>
         </RelativeLayout>

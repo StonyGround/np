@@ -115,13 +115,16 @@ public class LikeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ((Holder) viewHolder).like_date.setText(date);
             Picasso.with(context).load(video).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).like_video);
 
+
+            if (mListener == null) return;
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onItemClick(pos, data);
+                }
+            });
         }
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onItemClick(pos, data);
-            }
-        });
+
     }
 
     public int getRealPosition(RecyclerView.ViewHolder holder) {
