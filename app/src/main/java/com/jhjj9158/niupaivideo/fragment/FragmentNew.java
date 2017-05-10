@@ -35,6 +35,7 @@ import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.AdaptiveHeightlViewPager;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
 import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -285,23 +286,25 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
             }
         });
 
-        ll_point_group.removeAllViews();
-        for (int i = 0; i < bannerList.size(); i++) {
-            ImageView point = new ImageView(getActivity());
-            point.setBackgroundResource(R.drawable.point_selector);
+        if(bannerList.size()>1) {
+            ll_point_group.removeAllViews();
+            for (int i = 0; i < bannerList.size(); i++) {
+                ImageView point = new ImageView(getActivity());
+                point.setBackgroundResource(R.drawable.point_selector);
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    20, 20);
-            point.setLayoutParams(params);
-            if (i == 0) {
-                point.setEnabled(true);
-            } else {
-                point.setEnabled(false);
-                params.leftMargin = 20;
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        20, 20);
+                point.setLayoutParams(params);
+                if (i == 0) {
+                    point.setEnabled(true);
+                } else {
+                    point.setEnabled(false);
+                    params.leftMargin = 20;
+                }
+
+                // 把点添加到LinearLayout中
+                ll_point_group.addView(point);
             }
-
-            // 把点添加到LinearLayout中
-            ll_point_group.addView(point);
         }
 
         if (handler.hasMessages(Contact.BANNER_START_ROLLING)) {
@@ -312,7 +315,7 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
         viewpager_banner.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int
- positionOffsetPixels) {
+                    positionOffsetPixels) {
 
             }
 
@@ -358,8 +361,13 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
 
     @Override
     public void onResume() {
-        Log.e("FragmentNew", "onResume");
         super.onResume();
+        MobclickAgent.onPageStart("FragmentNew");
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("FragmentNew");
     }
 
     @Override

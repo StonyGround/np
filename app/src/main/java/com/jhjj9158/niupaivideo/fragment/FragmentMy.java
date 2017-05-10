@@ -35,6 +35,7 @@ import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.ResizableImageView;
 import com.squareup.picasso.Picasso;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -304,6 +305,13 @@ public class FragmentMy extends Fragment {
             getUserDate();
             getUserInfo();
         }
+        MobclickAgent.onPageStart("FragmentMy");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("FragmentMy");
     }
 
     @Override

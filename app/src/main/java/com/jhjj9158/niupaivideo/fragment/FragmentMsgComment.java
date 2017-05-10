@@ -28,6 +28,7 @@ import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.List;
@@ -78,6 +79,11 @@ public class FragmentMsgComment extends Fragment {
             return;
         }
         MsgCommentAdapter adapter = new MsgCommentAdapter(getActivity(), resultBean);
+//        adapter.setOnItemClickListener(new MsgCommentAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(int position, MsgCommentBean.ResultBean data) {
+//            }
+//        });
         rvWorks.setAdapter(adapter);
     }
 
@@ -119,6 +125,18 @@ public class FragmentMsgComment extends Fragment {
                 handler.sendMessage(message);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("FragmentMsgComment");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("FragmentMsgComment");
     }
 
     @Override

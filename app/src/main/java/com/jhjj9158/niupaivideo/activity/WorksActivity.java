@@ -19,6 +19,7 @@ import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.List;
@@ -115,5 +116,19 @@ public class WorksActivity extends BaseActivity {
     @Override
     protected View getChildView() {
         return View.inflate(this, R.layout.fragment_works, null);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("WorksActivity");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("WorksActivity");
+        MobclickAgent.onPause(this);
     }
 }

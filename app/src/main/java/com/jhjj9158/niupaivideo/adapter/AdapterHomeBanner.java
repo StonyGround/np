@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.WebViewActivity;
 import com.jhjj9158.niupaivideo.bean.BannerBean;
 import com.jhjj9158.niupaivideo.widget.ResizableImageView;
 import com.squareup.picasso.Picasso;
@@ -43,24 +44,26 @@ public class AdapterHomeBanner extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
 
-
-
         ImageView imageView = new ImageView(context);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         final int diff = (Integer.MAX_VALUE / 2) % (bannerList.size());
-        String imageUrl = new String(Base64.decode(bannerList.get((position - diff) % bannerList.size()).getAdvImg().getBytes(), Base64.DEFAULT));
-        final String link = new String(Base64.decode(bannerList.get((position - diff) % bannerList.size()).getLinkUrl().getBytes(), Base64.DEFAULT));
+        String imageUrl = new String(Base64.decode(bannerList.get((position - diff) % bannerList.size()).getAdvImg().getBytes(),
+                Base64.DEFAULT));
+        final String link = new String(Base64.decode(bannerList.get((position - diff) % bannerList.size()).getLinkUrl().getBytes(),
+                Base64.DEFAULT));
+        final String title = new String(Base64.decode(bannerList.get((position - diff) % bannerList.size()).getTags().getBytes(),
+                Base64.DEFAULT));
         Picasso.with(context).load(imageUrl).into(imageView);
 
-//        imageView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent();
-//                intent.putExtra("url", link);
-//                intent.setClass(context, WebActivity.class);
-//                context.startActivity(intent);
-//            }
-//        });
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.putExtra("url", link);
+                intent.setClass(context, WebViewActivity.class);
+                context.startActivity(intent);
+            }
+        });
 
         container.addView(imageView);
 

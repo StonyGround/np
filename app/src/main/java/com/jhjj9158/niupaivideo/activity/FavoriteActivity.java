@@ -19,6 +19,7 @@ import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.List;
@@ -108,6 +109,21 @@ public class FavoriteActivity extends BaseActivity {
                 handler.sendMessage(message);
             }
         });
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+        MobclickAgent.onPageEnd("FavoriteActivity");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        MobclickAgent.onPageStart("FavoriteActivity");
     }
 
     @Override

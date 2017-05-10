@@ -23,6 +23,7 @@ import com.jhjj9158.niupaivideo.bean.UserBean;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 
@@ -216,5 +217,19 @@ public class LoginCrystalActivity extends BaseActivity {
             sp.edit().putString("history", sb.toString()).apply();
         }
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+        MobclickAgent.onPageEnd("LoginCrystalActivity");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        MobclickAgent.onPageStart("LoginCrystalActivity");
     }
 }

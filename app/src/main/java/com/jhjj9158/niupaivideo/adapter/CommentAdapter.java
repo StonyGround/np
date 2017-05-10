@@ -114,7 +114,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 distance_date = "1000km外";
             }
 
-            Picasso.with(context).load(headImage).into(((Holder) viewHolder).comment_headimg);
+            Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).comment_headimg);
             ((Holder) viewHolder).comment_name.setText(name);
 //            ((Holder) viewHolder).comment_distance_date.setText(distance_date);
             ((Holder) viewHolder).comment_detail.setText(comment);

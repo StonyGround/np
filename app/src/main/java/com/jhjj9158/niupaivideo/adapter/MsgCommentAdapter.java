@@ -120,6 +120,14 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             ((Holder) viewHolder).msgCommentDetail.setText(comment);
             ((Holder) viewHolder).msgCommentReply.setText(reply);
             ((Holder) viewHolder).msgCommentDate.setText(date);
+
+            if (mListener == null) return;
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onItemClick(pos, data);
+                }
+            });
         }
     }
 

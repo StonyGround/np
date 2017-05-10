@@ -16,6 +16,7 @@ import com.jhjj9158.niupaivideo.fragment.FragmentMoments;
 import com.jhjj9158.niupaivideo.fragment.FragmentMsgComment;
 import com.jhjj9158.niupaivideo.fragment.FragmentNotice;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,5 +62,19 @@ public class MessageActivity extends AppCompatActivity {
         msgViewpager.setAdapter(tabFragmentAdapter);
         msgTab.setTabMode(TabLayout.MODE_FIXED);
         msgTab.setupWithViewPager(msgViewpager);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+        MobclickAgent.onPageEnd("MessageActivity");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        MobclickAgent.onPageStart("MessageActivity");
     }
 }

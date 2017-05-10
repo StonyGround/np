@@ -67,15 +67,6 @@ public class DialogPicSelector extends Dialog implements View.OnClickListener {
                 DialogPicSelector.this.dismiss();
                 break;
             case R.id.local:
-                if (ActivityCompat.checkSelfPermission(context, Manifest.permission
-                        .WRITE_EXTERNAL_STORAGE) !=
-                        PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
-                        (context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager
-                        .PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest
-                            .permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
-                            .READ_EXTERNAL_STORAGE}, 1);
-                }
                 Intent intentLocal;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     intentLocal = new Intent(Intent.ACTION_OPEN_DOCUMENT);

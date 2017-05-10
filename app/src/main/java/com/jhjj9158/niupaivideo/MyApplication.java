@@ -2,6 +2,7 @@ package com.jhjj9158.niupaivideo;
 
 import android.app.Application;
 
+import com.jhjj9158.niupaivideo.utils.CrashHandler;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.umeng.socialize.Config;
@@ -35,6 +36,8 @@ public class MyApplication extends Application {
         UMShareAPI.get(this);
         Config.isJumptoAppStore = true;
         regToWx();
+//        CrashHandler crashHandler = CrashHandler.getInstance();
+//        crashHandler.init(getApplicationContext());
     }
 
 }

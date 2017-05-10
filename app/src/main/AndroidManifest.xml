@@ -40,16 +40,22 @@
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.BROWSABLE" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
 
-                <data android:scheme="niupai" />
+                <data android:scheme="niupai"/>
             </intent-filter>
         </activity>
+
+        <receiver android:name=".utils.NetWorkChangeBroadcastReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
         <activity
             android:name=".activity.LoginCrystalActivity"
             android:configChanges="keyboardHidden|orientation"
@@ -113,6 +119,9 @@
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="58eb71334ad1566c47001e16"/>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="${UMENG_CHANNEL_VALUE}"/>
 
         <activity
             android:name=".activity.FollowActivity"
@@ -161,6 +170,8 @@
         <activity android:name=".activity.TestActivity">
         </activity>
         <activity android:name=".activity.WebViewActivity">
+        </activity>
+        <activity android:name=".activity.NetWorkErrorActivity">
         </activity>
     </application>
 

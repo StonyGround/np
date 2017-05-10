@@ -35,6 +35,7 @@ import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.AdaptiveHeightlViewPager;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
 import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -113,10 +114,11 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
         Gson gson = new Gson();
         List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
-        minVid = CommonUtil.getMinVid(resultBeanList);
+
         if (resultBeanList.size() == 0) {
             return;
         }
+        minVid = CommonUtil.getMinVid(resultBeanList);
 
         if (isRefresh) {
             isRefresh = false;
@@ -365,8 +367,14 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override
     public void onResume() {
-        Log.e("FragmentFollow", "onResume");
         super.onResume();
+        MobclickAgent.onPageStart("FragmentFollow");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("FragmentFollow");
     }
 
     @Override

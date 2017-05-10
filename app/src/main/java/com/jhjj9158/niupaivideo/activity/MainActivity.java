@@ -4,27 +4,23 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.fragment.FragmentHome;
 import com.jhjj9158.niupaivideo.fragment.FragmentMy;
-import com.jhjj9158.niupaivideo.fragment.TestFragment;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
+import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.ArrayList;
@@ -56,7 +52,7 @@ public class MainActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             setContentView(R.layout.activity_main);
             ButterKnife.bind(this);
-            CacheUtils.setInt(this, "useridx", 1628007796);
+//            CacheUtils.setInt(this, "useridx", 1628007796);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
@@ -73,9 +69,10 @@ public class MainActivity extends FragmentActivity {
         }
         boolean isStartMain = CacheUtils.getBoolean(this,
                 Contact.IS_START_MAIN);
-        if(!isStartMain){
-            startActivity(new Intent(this,GuideActivity.class));
+        if (!isStartMain) {
+            startActivity(new Intent(this, GuideActivity.class));
         }
+        MobclickAgent.openActivityDurationTrack(false);
     }
 
     private List<View> getTabViewList(int len) {
@@ -129,11 +126,23 @@ public class MainActivity extends FragmentActivity {
         if (CacheUtils.getInt(MainActivity.this, "useridx") == 0) {
             tabHost.setCurrentTab(0);
         }
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         UMShareAPI.get(this).release();
+    }
+
+    @OnClick(R.id.iv_screen)
+    public void onViewClicked() {
+        CommonUtil.showTextToast("敬请期待", this);
     }
 }

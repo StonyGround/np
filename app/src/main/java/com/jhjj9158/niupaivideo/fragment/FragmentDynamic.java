@@ -36,6 +36,7 @@ import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.AdaptiveHeightlViewPager;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
 import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -386,5 +387,15 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
     public void onRefresh() {
         isRefresh = true;
         getDynamicData(0);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("FragmentDynamic");
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("FragmentDynamic");
     }
 }

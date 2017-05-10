@@ -20,6 +20,7 @@ import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.List;
@@ -109,6 +110,16 @@ public class FragmentMoments extends Fragment {
                 handler.sendMessage(message);
             }
         });
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("FragmentMoments");
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("FragmentMoments");
     }
 
     @Override

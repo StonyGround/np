@@ -22,6 +22,7 @@ import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -184,7 +185,17 @@ public class FragmentHome extends Fragment {
 //            child.invalidate();
 //        }
 //    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("FragmentHome");
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("FragmentHome");
+    }
 
     @Override
     public void onDestroyView() {

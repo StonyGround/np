@@ -1,26 +1,38 @@
 package com.jhjj9158.niupaivideo.activity;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
@@ -31,15 +43,17 @@ import com.jhjj9158.niupaivideo.bean.FollowPostBean;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.bean.VideoDetailBean;
 import com.jhjj9158.niupaivideo.bean.VideoIsFollowBean;
+import com.jhjj9158.niupaivideo.dialog.DialogComment;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.InitiView;
 import com.jhjj9158.niupaivideo.utils.LocationUtil;
 import com.jhjj9158.niupaivideo.widget.AndroidMediaController;
 import com.jhjj9158.niupaivideo.widget.IjkVideoView;
-import com.jhjj9158.niupaivideo.widget.MyDrawLayout;
 import com.squareup.picasso.Picasso;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.ShareAction;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -67,8 +81,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import tv.danmaku.ijk.media.player.IMediaPlayer;
-import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
 public class VideoActivity extends AppCompatActivity {
 
@@ -80,7 +92,7 @@ public class VideoActivity extends AppCompatActivity {
     private static final int FOLLOW = 6;
 
     @BindView(R.id.video_view)
-    IjkVideoView videoView;
+    VideoView videoView;
     @BindView(R.id.video_back)
     ImageView videoBack;
     @BindView(R.id.video_heart)
@@ -93,14 +105,6 @@ public class VideoActivity extends AppCompatActivity {
     CircleImageView ivHeadImage;
     @BindView(R.id.btn_video_bottom)
     TextView btnVideoBottom;
-    @BindView(R.id.tv_send_comment)
-    TextView tvSendComment;
-    @BindView(R.id.rl_comment)
-    RelativeLayout rlComment;
-    @BindView(R.id.et_comment)
-    EditText etComment;
-    @BindView(R.id.drawer_layout)
-    MyDrawLayout drawerLayout;
     @BindView(R.id.video_user_name)
     TextView videoUserName;
     @BindView(R.id.video_desc)
@@ -186,16 +190,12 @@ public class VideoActivity extends AppCompatActivity {
             commentNum = commentNum + 1;
             videoCommentNum.setText(getString(R.string.comment_num, commentNum));
             getComment();
-            etComment.setText("");
-            imm.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
-            behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
         } else {
             CommonUtil.showTextToast("评论失败", VideoActivity.this);
         }
     }
 
-    private BottomSheetBehavior behavior;
-    private InputMethodManager imm;
     private IndexBean.ResultBean indexResultBean;
 
     @Override
@@ -203,12 +203,17 @@ public class VideoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
         ButterKnife.bind(this);
+
+        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        };
+        rvComment.setLayoutManager(mLinearLayoutManager);
 //        setTitle(this, "播放");
         uidx = CacheUtils.getInt(this, "useridx");
-
-        behavior = BottomSheetBehavior.from(rlComment);
-
-        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
@@ -221,12 +226,14 @@ public class VideoActivity extends AppCompatActivity {
         }
 
         indexResultBean = getIntent().getParcelableExtra("video");
+        vid = indexResultBean.getVid();
+        videoUserId = indexResultBean.getUidx();
 
         initVideoView();
         getVideoInfo(vid);
 
         if (CacheUtils.getInt(this, "useridx") != 0) {
-            initIsFollow(vid, videoUserId);
+            initIsFollow();
         }
         getComment();
     }
@@ -256,7 +263,7 @@ public class VideoActivity extends AppCompatActivity {
         });
     }
 
-    private void initIsFollow(int vid, int videoUserId) {
+    private void initIsFollow() {
         String url = "http://service.quliao.com/works/getGCSByVId?vid=" + vid + "&uidx=" +
                 uidx + "&buidx=" + videoUserId;
         OkHttpClient mOkHttpClient = new OkHttpClient();
@@ -307,8 +314,8 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void initVideoView() {
-        vid = indexResultBean.getVid();
-        videoUserId = indexResultBean.getUidx();
+
+
         String videoUrl = new String(Base64.decode(indexResultBean.getVideoUrl()
                 .getBytes(), Base64.DEFAULT));
         String name = new String(Base64.decode(indexResultBean.getNickname()
@@ -322,21 +329,27 @@ public class VideoActivity extends AppCompatActivity {
         }
         String date = new String(Base64.decode(indexResultBean.getCreateTime()
                 .getBytes(), Base64.DEFAULT));
-        double longitude = indexResultBean.getLongitude();
-        double latitude = indexResultBean.getLatitude();
+        String imageScale = new String(Base64.decode(indexResultBean.getImgScale()
+                .getBytes(), Base64.DEFAULT));
         int fromType = indexResultBean.getFromtype();
         int loginplant = indexResultBean.getLoginplant();
-        int isFollow = indexResultBean.getIsFollow();
 
-        if (isFollow == 0) {
-            videoFollow.setVisibility(View.VISIBLE);
-
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                    .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, Contact.CHECK_PERMISSION);
+        } else {
+            double longitude = indexResultBean.getLongitude();
+            double latitude = indexResultBean.getLatitude();
+            tvDistance.setText(getDistance(longitude, latitude));
         }
+
         videoUserName.setText(name + "：");
         videoDesc.setText(desc);
         videoPlaynum.setText(getString(R.string.play_num, indexResultBean.getPlayNum()));
         tvDate.setText("发布于:" + date);
-        tvDistance.setText(getDistance(longitude, latitude));
+
         if (fromType == 11) {
             videoFromType.setText("主播在水晶直播等你哟~");
         } else if (fromType == 3) {
@@ -351,26 +364,67 @@ public class VideoActivity extends AppCompatActivity {
             }
         }
 
-        mSettings = new Settings(this);
-        mMediaController = new AndroidMediaController(this, false);
-        IjkMediaPlayer.loadLibrariesOnce(null);
-        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
+//        mSettings = new Settings(this);
+//        mMediaController = new AndroidMediaController(this, false);
+//        IjkMediaPlayer.loadLibrariesOnce(null);
+//        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
 
-        videoView.setVideoURI(Uri.parse(videoUrl));
+
 //        videoView.setMediaController(mMediaController);
 //        videoView.setHudView(hudView);
-        videoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
+        int width = CommonUtil.getScreenWidth(this);
+        double heigh = width / (Double.parseDouble(imageScale));
+        videoView.setLayoutParams(new LinearLayout.LayoutParams(width, (int) heigh));
+        videoView.setVideoURI(Uri.parse(videoUrl));
+        videoView.start();
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
-            public void onPrepared(IMediaPlayer mp) {
+            public void onCompletion(MediaPlayer mp) {
                 videoView.start();
             }
         });
-        videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
-            public void onCompletion(IMediaPlayer iMediaPlayer) {
-                videoView.start();
+            public void onPrepared(MediaPlayer mp) {
+
             }
         });
+//        videoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
+//            @Override
+//            public void onPrepared(IMediaPlayer mp) {
+//                videoView.start();
+//            }
+//        });
+//        videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(IMediaPlayer iMediaPlayer) {
+//                videoView.start();
+//            }
+//        });
+    }
+
+    private IjkVideoView ijkVideoView;
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case Contact.CHECK_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    double longitude = indexResultBean.getLongitude();
+                    double latitude = indexResultBean.getLatitude();
+                    tvDistance.setText(getDistance(longitude, latitude));
+                } else {
+//                    new AlertDialog.Builder(this).setMessage("请允许牛拍获取您的相机、相册权限，否则无法更换新的头像。")
+//                            .setPositiveButton("我知道了", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.dismiss();
+//                                }
+//                            }).show();
+                }
+        }
     }
 
     private String getDistance(double longitude, double latitude) {
@@ -395,14 +449,24 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        if (mBackPressed || !videoView.isBackgroundPlayEnabled()) {
-            videoView.stopPlayback();
-            videoView.release(true);
-            videoView.stopBackgroundPlay();
-        } else {
-            videoView.enterBackground();
-        }
-        IjkMediaPlayer.native_profileEnd();
+        videoView.stopPlayback();
+//        if (mBackPressed || !videoView.isBackgroundPlayEnabled()) {
+//            videoView.stopPlayback();
+//            videoView.release(true);
+//            videoView.stopBackgroundPlay();
+//        } else {
+//            videoView.enterBackground();
+//        }
+//        IjkMediaPlayer.native_profileEnd();
+
+//        if (mBackPressed || !ijkVideoView.isBackgroundPlayEnabled()) {
+//            ijkVideoView.stopPlayback();
+//            ijkVideoView.release(true);
+//            ijkVideoView.stopBackgroundPlay();
+//        } else {
+//            ijkVideoView.enterBackground();
+//        }
+//        IjkMediaPlayer.native_profileEnd();
     }
 
     @Override
@@ -411,7 +475,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     @OnClick({R.id.video_back, R.id.video_heart, R.id.video_share, R.id.tv_input, R.id
-            .btn_video_bottom, R.id.tv_send_comment, R.id.video_user_name, R.id.iv_headImage, R.id.video_follow})
+            .btn_video_bottom, R.id.video_user_name, R.id.iv_headImage, R.id.video_follow})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.video_back:
@@ -435,23 +499,17 @@ public class VideoActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (behavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-//                    imm.hideSoftInputFromWindow(etComment.getWindowToken(), 0);
-//                    etComment.setFocusable(false);
-                    behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                } else {
-                    behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                    etComment.setFocusable(true);
-//                    imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                }
+                DialogComment dialogComment = new DialogComment(this);
+                dialogComment.setNoticeDialogListerner(new DialogComment.NoticeDialogListener() {
 
-//                if (isShowComment) {
-//                    isShowComment = false;
-//                    rlComment.setVisibility(View.VISIBLE);
-//                } else {
-//                    isShowComment = true;
-//                    rlComment.setVisibility(View.GONE);
-//                }
+                    @Override
+                    public void onClick(String comment) {
+                        sendComment(comment);
+                    }
+                });
+                InitiView.initiBottomDialog(dialogComment);
+                InitiView.setDialogMatchParent(dialogComment);
+                dialogComment.show();
                 break;
             case R.id.btn_video_bottom:
                 if (uidx == 0) {
@@ -467,9 +525,6 @@ public class VideoActivity extends AppCompatActivity {
                 }
                 startActivity(webIntent);
                 break;
-            case R.id.tv_send_comment:
-                sendComment();
-                break;
             case R.id.video_user_name:
                 Intent intent = new Intent(this, PersonalActivity.class);
                 intent.putExtra("buidx", videoUserId);
@@ -481,6 +536,10 @@ public class VideoActivity extends AppCompatActivity {
                 startActivity(intentHead);
                 break;
             case R.id.video_follow:
+                if (uidx == 0) {
+                    startActivity(new Intent(this, QuickLoignActivity.class));
+                    return;
+                }
                 setFollow(1);
                 break;
         }
@@ -598,10 +657,10 @@ public class VideoActivity extends AppCompatActivity {
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
-    private void sendComment() {
-        String comment = etComment.getText().toString();
+    private void sendComment(String comment) {
         if (TextUtils.isEmpty(comment)) {
             CommonUtil.showTextToast("评论内容不能为空", this);
+            return;
         }
         String url = Contact.HOST + Contact.ADD_COMMENT + "?vid=" + vid + "&uidx=" + uidx +
                 "&buidx=" + videoUserId + "&comment=" + comment +
@@ -668,17 +727,12 @@ public class VideoActivity extends AppCompatActivity {
             return;
         }
         commentNothing.setVisibility(View.GONE);
-        LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false) {
-            @Override
-            public boolean canScrollVertically() {
-                return false;
-            }
-        };
-        rvComment.setLayoutManager(mLinearLayoutManager);
+
         commentAdapter = new CommentAdapter(this, resultBeanList);
+//        initVideo();
         rvComment.setAdapter(commentAdapter);
     }
+
 
     private void setFollowVideo(String json) {
         int result = 0;
@@ -703,7 +757,7 @@ public class VideoActivity extends AppCompatActivity {
         Gson gson = new Gson();
         isFollowBean = gson.fromJson(json, VideoIsFollowBean.class);
         if (isFollowBean.getResult().get(0).getIsfollow() == 1) {
-            videoHeart.setImageResource(R.drawable.heart1);
+            videoFollow.setVisibility(View.GONE);
         }
     }
 
@@ -726,5 +780,20 @@ public class VideoActivity extends AppCompatActivity {
             videoFollowNum.setText(getString(R.string.follow_num, followNum));
             videoCommentNum.setText(getString(R.string.comment_num, commentNum));
         }
+    }
+
+    @Override
+    public void onResume() {
+//        initVideoView();
+        super.onResume();
+        MobclickAgent.onPageStart("VideoActivity");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("VideoActivity");
+        MobclickAgent.onPause(this);
     }
 }

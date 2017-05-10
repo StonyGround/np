@@ -56,5 +56,5 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="10dp"
-        android:background="@color/button_login" />
+        android:background="@color/bg_my" />
 </LinearLayout>

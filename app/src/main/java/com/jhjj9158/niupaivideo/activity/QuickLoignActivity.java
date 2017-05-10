@@ -23,6 +23,7 @@ import com.jhjj9158.niupaivideo.utils.MD5Util;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
+import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
 import com.umeng.socialize.UMShareConfig;
@@ -277,12 +278,21 @@ public class QuickLoignActivity extends BaseActivity {
         if (CacheUtils.getInt(QuickLoignActivity.this, "useridx") != 0) {
             finish();
         }
+        MobclickAgent.onPageStart("QuickLoginActivity");
+        MobclickAgent.onResume(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("QuickLoginActivity");
+        MobclickAgent.onResume(this);
     }
 
     @Override

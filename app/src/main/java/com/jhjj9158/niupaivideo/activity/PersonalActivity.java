@@ -37,6 +37,7 @@ import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -310,5 +311,19 @@ public class PersonalActivity extends FragmentActivity {
                 handler.sendMessage(message);
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+        MobclickAgent.onPageEnd("PersonalActivity");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        MobclickAgent.onPageStart("PersonalActivity");
     }
 }

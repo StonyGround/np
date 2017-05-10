@@ -11,6 +11,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.DataCleanUtil;
+import com.umeng.analytics.MobclickAgent;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -85,5 +86,20 @@ public class SettingActivity extends BaseActivity {
                         }).show();
                 break;
         }
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("SettingActivity");
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("SettingActivity");
+        MobclickAgent.onPause(this);
     }
 }

@@ -34,6 +34,7 @@ import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.AdaptiveHeightlViewPager;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
 import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -366,11 +367,15 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
         adapterHomeRecyler.setHeaderView(topView);
         recyclerview.setAdapter(adapterHomeRecyler);
     }
-
     @Override
     public void onResume() {
-        Log.e("FragmentHot", "onResume");
         super.onResume();
+        MobclickAgent.onPageStart("FragmentHot");
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("FragmentHot");
     }
 
     @Override

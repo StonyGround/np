@@ -1,6 +1,10 @@
 package com.jhjj9158.niupaivideo.activity;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,7 +16,10 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -40,6 +47,7 @@ import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.FileUtils;
 import com.jhjj9158.niupaivideo.utils.InitiView;
 import com.squareup.picasso.Picasso;
+import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -183,8 +191,8 @@ public class ModifyActivity extends AppCompatActivity {
             case R.id.modify_save:
                 String et_name = modifyName.getText().toString();
                 String et_signature = modifySignature.getText().toString();
-                if(TextUtils.isEmpty(et_name)){
-                    CommonUtil.showTextToast("名称不能为空",this);
+                if (TextUtils.isEmpty(et_name)) {
+                    CommonUtil.showTextToast("名称不能为空", this);
                     return;
                 }
                 if (!et_name.equals(name)) {
@@ -196,9 +204,19 @@ public class ModifyActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.modify_headimg:
-                DialogPicSelector dialogPicSelector = new DialogPicSelector(this);
-                InitiView.initiBottomDialog(dialogPicSelector);
-                dialogPicSelector.show();
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission
+                        .WRITE_EXTERNAL_STORAGE) !=
+                        PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                        (this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager
+                        .PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest
+                            .permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+                            .READ_EXTERNAL_STORAGE}, Contact.CHECK_PERMISSION);
+                }else {
+                    DialogPicSelector dialogPicSelector = new DialogPicSelector(this);
+                    InitiView.initiBottomDialog(dialogPicSelector);
+                    dialogPicSelector.show();
+                }
                 break;
         }
     }
@@ -285,6 +303,27 @@ public class ModifyActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case Contact.CHECK_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    DialogPicSelector dialogPicSelector = new DialogPicSelector(this);
+                    InitiView.initiBottomDialog(dialogPicSelector);
+                    dialogPicSelector.show();
+                } else {
+                    new AlertDialog.Builder(this).setMessage("请允许牛拍获取您的相机、相册权限，以确保您能更换新的头像！")
+                            .setPositiveButton("我知道了", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
+                }
+        }
+    }
+
     private void setHeadImag(String headImgPath) {
         BitmapFactory.Options options = new BitmapFactory.Options();
         Bitmap bitmap = BitmapFactory.decodeFile(headImgPath, options);
@@ -340,5 +379,19 @@ public class ModifyActivity extends AppCompatActivity {
                 handler.sendMessage(message);
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+        MobclickAgent.onPageEnd("ModifyActivity");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+        MobclickAgent.onPageStart("ModifyActivity");
     }
 }

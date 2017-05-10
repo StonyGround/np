@@ -112,10 +112,10 @@ public class CommonUtil {
         out.close();
     }
 
-    public static int getScreenHeight(Context context) {
+    public static int getScreenWidth(Context context) {
         DisplayMetrics display = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(display);
-        return display.heightPixels;
+        return display.widthPixels;
     }
 
     public static boolean checkPermission(Context context, String permission) {

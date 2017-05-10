@@ -56,4 +56,5 @@ public class Contact {
     public static final int REQUEST_TAKE_PHOTO = 9;
     public static final int REQUEST_PHOTO_ZOOM = 10;
     public static final int REQUEST_PHOTO_RESULT = 11;
+    public static final int CHECK_PERMISSION = 12;
 }
