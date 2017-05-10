@@ -46,6 +46,10 @@ import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.FileUtils;
 import com.jhjj9158.niupaivideo.utils.InitiView;
+import com.lzy.imagepicker.ImagePicker;
+import com.lzy.imagepicker.bean.ImageItem;
+import com.lzy.imagepicker.loader.ImageLoader;
+import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.squareup.picasso.Picasso;
 import com.umeng.analytics.MobclickAgent;
 
@@ -55,6 +59,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -204,19 +209,22 @@ public class ModifyActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.modify_headimg:
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission
-                        .WRITE_EXTERNAL_STORAGE) !=
-                        PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
-                        (this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager
-                        .PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest
-                            .permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
-                            .READ_EXTERNAL_STORAGE}, Contact.CHECK_PERMISSION);
-                }else {
-                    DialogPicSelector dialogPicSelector = new DialogPicSelector(this);
-                    InitiView.initiBottomDialog(dialogPicSelector);
-                    dialogPicSelector.show();
-                }
+//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission
+//                        .WRITE_EXTERNAL_STORAGE) !=
+//                        PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+//                        (this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager
+//                        .PERMISSION_GRANTED) {
+//                    ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest
+//                            .permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+//                            .READ_EXTERNAL_STORAGE}, Contact.CHECK_PERMISSION);
+//                } else {
+////                    DialogPicSelector dialogPicSelector = new DialogPicSelector(this);
+////                    InitiView.initiBottomDialog(dialogPicSelector);
+////                    dialogPicSelector.show();
+//
+//                }
+                Intent intent = new Intent(this, ImageGridActivity.class);
+                startActivityForResult(intent, Contact.IMAGE_PICKER);
                 break;
         }
     }
@@ -298,6 +306,15 @@ public class ModifyActivity extends AppCompatActivity {
                             setHeadImag(headImgPath);
                         }
                         break;
+                }
+                break;
+            case ImagePicker.RESULT_CODE_ITEMS:
+                if (data != null && requestCode == Contact.IMAGE_PICKER) {
+                    ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                    CommonUtil.showTextToast(images.get(0).path, ModifyActivity.this);
+                    setHeadImag(images.get(0).path);
+                } else {
+                    Toast.makeText(this, "没有数据", Toast.LENGTH_SHORT).show();
                 }
                 break;
         }
@@ -394,4 +411,5 @@ public class ModifyActivity extends AppCompatActivity {
         MobclickAgent.onResume(this);
         MobclickAgent.onPageStart("ModifyActivity");
     }
+
 }

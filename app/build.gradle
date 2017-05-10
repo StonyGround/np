@@ -90,4 +90,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.qiniu.pili:pili-android-qos:0.8.+'
+    compile 'com.lzy.widget:imagepicker:0.5.5'
 }

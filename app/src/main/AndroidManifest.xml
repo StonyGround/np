@@ -167,12 +167,17 @@
             android:name=".activity.FeedbackActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"/>
+
+
         <activity android:name=".activity.TestActivity">
         </activity>
         <activity android:name=".activity.WebViewActivity">
         </activity>
         <activity android:name=".activity.NetWorkErrorActivity">
         </activity>
+        <activity
+            android:name="com.lzy.imagepicker.ui.ImagePreviewDelActivity"
+            android:theme="@style/ImagePickerThemeFullScreen"/>
     </application>
 
 </manifest>
