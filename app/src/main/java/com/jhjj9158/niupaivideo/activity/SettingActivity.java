@@ -11,6 +11,7 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.DataCleanUtil;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.BindView;
@@ -31,6 +32,7 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         initTitle(this, "设置");
         try {
             settingClearSize.setText(getString(R.string.cache_size, DataCleanUtil
@@ -58,7 +60,7 @@ public class SettingActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 DataCleanUtil.cleanApplicationData(SettingActivity.this);
-                                CommonUtil.showTextToast("清除成功", SettingActivity.this);
+                                CommonUtil.showTextToast(SettingActivity.this,"清除成功");
                                 settingClearSize.setText(getString(R.string.cache_size, "0M"));
                             }
                         })

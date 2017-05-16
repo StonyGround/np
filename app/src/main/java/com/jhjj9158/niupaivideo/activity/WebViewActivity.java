@@ -8,6 +8,7 @@ import android.webkit.WebView;
 
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.BindView;
@@ -20,7 +21,7 @@ public class WebViewActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         Intent intent = getIntent();
         int fromType = intent.getIntExtra("fromType", 0);
         int fuidx = intent.getIntExtra("fuidx", 0);

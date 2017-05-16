@@ -1,6 +1,7 @@
 package com.jhjj9158.niupaivideo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -10,8 +11,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.PersonalActivity;
+import com.jhjj9158.niupaivideo.activity.QuickLoignActivity;
 import com.jhjj9158.niupaivideo.bean.CommentBean;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
+import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.LocationUtil;
 import com.squareup.picasso.Picasso;
 
@@ -113,11 +117,54 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             } else {
                 distance_date = "1000km外";
             }
+            String replyName = new String(Base64.decode(data.getBnickName().getBytes(),
+                    Base64.DEFAULT));
+            int identify = data.getIdentify();
 
+            if (identify == 1) {
+                ((Holder) viewHolder).video_reply_name.setVisibility(View.VISIBLE);
+                ((Holder) viewHolder).video_reply_name.setText("@" + replyName + "：");
+            }
             Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).comment_headimg);
             ((Holder) viewHolder).comment_name.setText(name);
 //            ((Holder) viewHolder).comment_distance_date.setText(distance_date);
             ((Holder) viewHolder).comment_detail.setText(comment);
+
+            ((Holder) viewHolder).video_reply_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (CacheUtils.getInt(context,"useridx") == 0) {
+                        context.startActivity(new Intent(context, QuickLoignActivity.class));
+                        return;
+                    }
+
+                    Intent intent = new Intent(context, PersonalActivity.class);
+                    intent.putExtra("buidx", data.getBuidx());
+                    context.startActivity(intent);
+                }
+            });
+
+            ((Holder) viewHolder).comment_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (CacheUtils.getInt(context,"useridx") == 0) {
+                        context.startActivity(new Intent(context, QuickLoignActivity.class));
+                        return;
+                    }
+
+                    Intent intent = new Intent(context, PersonalActivity.class);
+                    intent.putExtra("buidx", data.getUidx());
+                    context.startActivity(intent);
+                }
+            });
+
+            if (mListener == null) return;
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onItemClick(pos, data);
+                }
+            });
         }
     }
 
@@ -139,6 +186,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         TextView comment_name;
         TextView comment_distance_date;
         TextView comment_detail;
+        TextView video_reply_name;
 
         public Holder(View itemView) {
             super(itemView);
@@ -147,6 +195,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             comment_name = (TextView) itemView.findViewById(R.id.comment_name);
             comment_distance_date = (TextView) itemView.findViewById(R.id.comment_distance_date);
             comment_detail = (TextView) itemView.findViewById(R.id.comment_detail);
+            video_reply_name = (TextView) itemView.findViewById(R.id.video_reply_name);
         }
     }
 

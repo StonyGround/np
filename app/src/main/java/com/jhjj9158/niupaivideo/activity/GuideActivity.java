@@ -1,6 +1,5 @@
 package com.jhjj9158.niupaivideo.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -23,9 +22,9 @@ import android.widget.TextView;
 
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
-import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.DensityUtil;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
@@ -55,6 +54,7 @@ public class GuideActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_guide);
 

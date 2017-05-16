@@ -1,15 +1,16 @@
 package com.jhjj9158.niupaivideo.activity;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import com.jhjj9158.niupaivideo.fragment.FragmentMy;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMShareAPI;
 
@@ -32,8 +34,6 @@ import butterknife.OnClick;
 
 public class MainActivity extends FragmentActivity {
 
-    @BindView(R.id.fg_main)
-    FrameLayout fgMain;
     @BindView(R.id.iv_screen)
     ImageView ivScreen;
     @BindView(R.id.tab_host)
@@ -49,29 +49,34 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            setContentView(R.layout.activity_main);
-            ButterKnife.bind(this);
-            CacheUtils.setInt(this, "useridx", 1628007796);
+        setContentView(R.layout.activity_main);
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
+        ButterKnife.bind(this);
+//            CacheUtils.setInt(this, "useridx", 1628007796);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                        | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-                getWindow().getDecorView().setSystemUiVisibility(View
-                        .SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                getWindow().setStatusBarColor(Color.argb(50, 00, 00, 00));
-            }
-
-            inflater = LayoutInflater.from(this);
-            tabList = getTabViewList(tabTitles.length);
-            initiTabHost();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                    | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            getWindow().getDecorView().setSystemUiVisibility(View
+                    .SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            getWindow().setStatusBarColor(Color.argb(50, 00, 00, 00));
         }
+
         boolean isStartMain = CacheUtils.getBoolean(this,
                 Contact.IS_START_MAIN);
         if (!isStartMain) {
             startActivity(new Intent(this, GuideActivity.class));
         }
+
+        if (!CommonUtil.checkPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE})) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Contact.CHECK_PERMISSION);
+        }
+
+        inflater = LayoutInflater.from(this);
+        tabList = getTabViewList(tabTitles.length);
+        initiTabHost();
+
         MobclickAgent.openActivityDurationTrack(false);
     }
 
@@ -143,6 +148,6 @@ public class MainActivity extends FragmentActivity {
 
     @OnClick(R.id.iv_screen)
     public void onViewClicked() {
-        CommonUtil.showTextToast("敬请期待", this);
+        CommonUtil.showTextToast(this,"敬请期待");
     }
 }

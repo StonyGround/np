@@ -1,9 +1,7 @@
 package com.jhjj9158.niupaivideo.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,10 +10,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -34,9 +30,9 @@ import com.jhjj9158.niupaivideo.utils.BlurBitmapUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 import com.umeng.analytics.MobclickAgent;
 
 import org.json.JSONException;
@@ -123,8 +119,8 @@ public class PersonalActivity extends FragmentActivity {
                             fansNum = fansNum - 1;
                             personalFans.setText(" " + "粉丝" + fansNum);
                         }
-                        CommonUtil.showTextToast(result, PersonalActivity
-                                .this);
+                        CommonUtil.showTextToast(PersonalActivity
+                                .this,result);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -159,7 +155,7 @@ public class PersonalActivity extends FragmentActivity {
         } else if (resultBean.getGender() == 0) {
             personalGender.setVisibility(View.GONE);
         }
-        Picasso.with(this).load(headImage).into(personalHeadimg);
+        Picasso.with(this).load(headImage).placeholder(R.drawable.me_user_admin).into(personalHeadimg);
         personalFollow.setText("关注" + followNum + " |");
         personalFans.setText(" " + "粉丝" + fansNum);
         if(TextUtils.isEmpty(signature)){
@@ -171,7 +167,7 @@ public class PersonalActivity extends FragmentActivity {
         if (isFollow == 1) {
             btnPersonalFollow.setText("取消关注");
         }
-        Picasso.with(this).load(headImage).transform(new BlurBitmapUtil.BlurTransformation(this))
+        Picasso.with(this).load(headImage).placeholder(R.drawable.me_user_admin).transform(new BlurBitmapUtil.BlurTransformation(this))
                 .into(personalBg);
 
         titles.add("作品" + worksNum);
@@ -184,7 +180,7 @@ public class PersonalActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal);
         ButterKnife.bind(this);
-
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
                     | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);

@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -144,6 +145,9 @@ public class AdapterHomeRecyler extends RecyclerView.Adapter<RecyclerView.ViewHo
             }
             ((Holder) viewHolder).tv_video_ago.setText(createTime);
             ((Holder) viewHolder).tv_video_size.setText(videoSize);
+            if(TextUtils.isEmpty(videoDesc)){
+                ((Holder) viewHolder).tv_video_desc.setVisibility(View.GONE);
+            }
             ((Holder) viewHolder).tv_video_desc.setText(videoDesc);
 
             if (mListener == null) return;

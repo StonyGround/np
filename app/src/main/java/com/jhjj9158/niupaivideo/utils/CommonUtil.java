@@ -1,5 +1,6 @@
 package com.jhjj9158.niupaivideo.utils;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -68,14 +70,22 @@ public class CommonUtil {
     }
 
 
-    public static void showTextToast(String msg, Context context) {
-        Toast toast = null;
-        if (toast == null) {
-            toast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-        } else {
-            toast.setText(msg);
+    private static Toast mToast;
+    private static Handler mHandler = new Handler();
+    private static Runnable r = new Runnable() {
+        public void run() {
+            mToast.cancel();
         }
-        toast.show();
+    };
+
+    public static void showTextToast(Context context, String msg) {
+        mHandler.removeCallbacks(r);
+        if (mToast == null) {
+            mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
+        } else {
+            mToast.setText(msg);
+        }
+        mToast.show();
     }
 
 
@@ -112,34 +122,43 @@ public class CommonUtil {
         out.close();
     }
 
+
     public static int getScreenWidth(Context context) {
         DisplayMetrics display = new DisplayMetrics();
         ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(display);
         return display.widthPixels;
     }
 
-    public static boolean checkPermission(Context context, String permission) {
-        boolean result = false;
+
+    public static boolean checkPermission(Context context, String[] permissions) {
         if (Build.VERSION.SDK_INT >= 23) {
             try {
                 Class clazz = Class.forName("android.content.Context");
                 Method method = clazz.getMethod("checkSelfPermission", String.class);
-                int rest = (Integer) method.invoke(context, permission);
-                if (rest == PackageManager.PERMISSION_GRANTED) {
-                    result = true;
-                } else {
-                    result = false;
+                for (String permission : permissions) {
+                    int rest = (Integer) method.invoke(context, permission);
+                    if (rest == PackageManager.PERMISSION_GRANTED) {
+                        return true;
+                    }
                 }
             } catch (Exception e) {
-                result = false;
+                return false;
             }
         } else {
-            PackageManager pm = context.getPackageManager();
-            if (pm.checkPermission(permission, context.getPackageName()) == PackageManager.PERMISSION_GRANTED) {
-                result = true;
+            for (String permission : permissions) {
+                PackageManager pm = context.getPackageManager();
+                if (pm.checkPermission(permission, context.getPackageName()) == PackageManager.PERMISSION_GRANTED) {
+                    return true;
+                }
             }
         }
-        return result;
+        return false;
+    }
+
+    public static void requestPermissions(Context context, String[] permissions) {
+        if (!checkPermission(context, permissions)) {
+            ActivityCompat.requestPermissions((Activity) context, permissions, Contact.CHECK_PERMISSION);
+        }
     }
 
     public static int getMinVid(List<IndexBean.ResultBean> resultBeanList) {

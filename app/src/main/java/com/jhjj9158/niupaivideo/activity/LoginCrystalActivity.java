@@ -4,12 +4,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -23,12 +20,12 @@ import com.jhjj9158.niupaivideo.bean.UserBean;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -57,7 +54,7 @@ public class LoginCrystalActivity extends BaseActivity {
                     CacheUtils.setString(LoginCrystalActivity.this, "userInfoJson", jsonLogin);
                     Gson gson = new Gson();
                     LoginResultBean loginResult = gson.fromJson(jsonLogin, LoginResultBean.class);
-                    CommonUtil.showTextToast(loginResult.getMsg(), LoginCrystalActivity.this);
+                    CommonUtil.showTextToast(LoginCrystalActivity.this, loginResult.getMsg());
                     if (loginResult.getCode() == 100) {
                         CacheUtils.setInt(LoginCrystalActivity.this, "useridx", loginResult
                                 .getData().get(0).getUseridx());
@@ -72,13 +69,13 @@ public class LoginCrystalActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         platform = getIntent().getIntExtra("platform", 0);
 
-        if(platform==3){
+        if (platform == 3) {
             initTitle(this, "欢乐直播登录");
-        }else{
-            initTitle(this,"水晶直播登录");
+        } else {
+            initTitle(this, "水晶直播登录");
         }
 
         initAutoComplete("history", name);

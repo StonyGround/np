@@ -116,6 +116,7 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
                 .getResult();
 
         if (resultBeanList.size() == 0) {
+            swipeRefresh.setRefreshing(false);
             return;
         }
         minVid = CommonUtil.getMinVid(resultBeanList);

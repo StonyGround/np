@@ -15,6 +15,7 @@ import com.jhjj9158.niupaivideo.fragment.FragmentLike;
 import com.jhjj9158.niupaivideo.fragment.FragmentMoments;
 import com.jhjj9158.niupaivideo.fragment.FragmentMsgComment;
 import com.jhjj9158.niupaivideo.fragment.FragmentNotice;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
 import com.umeng.analytics.MobclickAgent;
 
@@ -36,6 +37,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         setContentView(R.layout.activity_message);
         ButterKnife.bind(this);
 

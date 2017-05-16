@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/toolbar_padding_top"
-    android:background="@color/white">
+    android:background="@color/white"
+    android:paddingTop="@dimen/toolbar_padding_top">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,10 +15,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/background_light"
-            android:padding="10dp">
+            android:background="@android:color/background_light">
 
             <ImageView
+                android:padding="10dp"
                 android:id="@+id/video_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -28,28 +28,31 @@
 
             <ImageView
                 android:id="@+id/video_heart"
+                android:padding="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@+id/video_back"
                 android:src="@drawable/heart"/>
 
             <ImageView
+                android:padding="10dp"
                 android:id="@+id/video_share"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@+id/video_heart"
                 android:src="@drawable/share"/>
 
             <ImageView
+                android:padding="10dp"
                 android:id="@+id/video_follow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="10dp"
                 android:layout_toRightOf="@+id/video_share"
                 android:src="@drawable/follow"/>
 
@@ -60,7 +63,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:gravity="center"
-                android:padding="5dp"
+                android:padding="10dp"
                 android:text="@string/input_comment"
                 android:textColor="@color/home_tab"
                 android:textSize="12sp"/>
@@ -86,11 +89,22 @@
 
                 <!--</com.jhjj9158.niupaivideo.widget.IjkVideoView>-->
 
-                <VideoView
-                    android:id="@+id/video_view"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"/>
+                    android:layout_height="wrap_content">
+
+                    <VideoView
+                        android:id="@+id/video_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"/>
+
+                    <ProgressBar
+                        android:id="@+id/progressbar"
+                        android:layout_centerInParent="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -101,7 +115,6 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
                         android:src="@drawable/user"/>
 
                     <LinearLayout

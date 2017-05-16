@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/bg_my"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    tools:context="com.jhjj9158.niupaivideo.activity.ModifyActivity">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/bg_my"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              tools:context="com.jhjj9158.niupaivideo.activity.ModifyActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_padding_top"
-            android:background="@color/grey" />
+            android:background="@color/grey"/>
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:padding="10dp"
-                    android:src="@drawable/back_b" />
+                    android:src="@drawable/back_b"/>
 
                 <TextView
                     android:id="@+id/toolbar_title"
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
                     android:textColor="@color/tv_black_my"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"/>
 
                 <TextView
                     android:id="@+id/modify_save"
@@ -56,13 +56,13 @@
                     android:layout_marginRight="20dp"
                     android:padding="5dp"
                     android:text="@string/save"
-                    android:textColor="@color/tv_black_my" />
+                    android:textColor="@color/tv_black_my"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_alignParentBottom="true"
-                    android:background="@color/btn_circle_login" />
+                    android:background="@color/btn_circle_login"/>
             </RelativeLayout>
 
 
@@ -78,17 +78,17 @@
             android:id="@+id/modify_headimg"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_margin="10dp"
             android:layout_centerInParent="true"
+            android:layout_margin="10dp"
             android:src="@drawable/me_user_admin"
             app:civ_border_color="@color/white"
-            app:civ_border_width="2dp" />
+            app:civ_border_width="2dp"/>
 
         <ImageView
-            android:layout_alignRight="@+id/modify_headimg"
-            android:layout_alignBottom="@+id/modify_headimg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/modify_headimg"
+            android:layout_alignRight="@+id/modify_headimg"
             android:src="@drawable/icon_userchange"/>
     </RelativeLayout>
 
@@ -102,23 +102,24 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/name" />
+            android:text="@string/name"/>
 
         <EditText
             android:id="@+id/modify_name"
-            android:maxLength="15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@null"
-            android:inputType="text" />
+            android:inputType="text"
+            android:maxLength="15"
+            android:textSize="14sp"/>
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/bg_my" />
+        android:background="@color/bg_my"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -130,20 +131,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/gender" />
+            android:text="@string/gender"/>
 
         <TextView
             android:id="@+id/modify_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" />
+            android:layout_marginRight="10dp"/>
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/bg_my" />
+        android:background="@color/bg_my"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -155,17 +156,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/signature" />
+            android:text="@string/signature"/>
 
         <EditText
             android:id="@+id/modify_signature"
-            android:maxLength="50"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@null"
-            android:inputType="text" />
+            android:inputType="text"
+            android:maxLength="50"
+            android:textSize="14sp"/>
     </LinearLayout>
 
 

@@ -2,24 +2,20 @@ package com.jhjj9158.niupaivideo.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.adapter.FollowAdapter;
-import com.jhjj9158.niupaivideo.adapter.WorksAdapter;
 import com.jhjj9158.niupaivideo.bean.FollowBean;
-import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
-import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
 import com.umeng.analytics.MobclickAgent;
 
 import java.io.IOException;
@@ -38,19 +34,20 @@ public class FollowActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         initTitle(this, "关注");
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvWorks.setLayoutManager(linearLayoutManager);
 
-        int buidx = getIntent().getIntExtra("buidx", 0);
+        Intent intent = getIntent();
+        int buidx = intent.getIntExtra("buidx", 0);
         int uidx = CacheUtils.getInt(this, "useridx");
         if (buidx == 0) {
             buidx = uidx;
-        } else {
-            uidx = buidx;
         }
-        String worksUrl = Contact.HOST + Contact.GET_FOLLOW + "?uidx=" + uidx + "&buidx=" + buidx
-                + "&begin=1&num=100";
+
+        String worksUrl = Contact.HOST + Contact.GET_FOLLOW + "?uidx=" + buidx + "&buidx=" + uidx
+                + "&begin=1&num=1000";
         OkHttpUtils.getOkHttpUtils().get(worksUrl, new OkHttpUtils.MCallBack
                 () {
             @Override

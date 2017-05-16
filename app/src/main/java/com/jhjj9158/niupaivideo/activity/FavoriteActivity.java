@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -17,7 +16,7 @@ import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
-import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
 import com.umeng.analytics.MobclickAgent;
 
@@ -78,10 +77,11 @@ public class FavoriteActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
+        initTitle(FavoriteActivity.this, "喜欢");
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         rvWorks.setLayoutManager(gridLayoutManager);
-        rvWorks.addItemDecoration(new SpaceItemDecoration(2));
+        rvWorks.addItemDecoration(new SpaceItemDecoration(4));
         getFavoriteData();
     }
 

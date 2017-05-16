@@ -65,8 +65,6 @@ public class FollowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     private Context context;
 
-    private int isFollow;
-
     public FollowAdapter(Context context, List<FollowBean.ResultBean> mDatas) {
         this.context = context;
         this.mDatas = mDatas;
@@ -123,14 +121,21 @@ public class FollowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
             String name = new String(Base64.decode(data.getNickName().getBytes(),
                     Base64.DEFAULT));
-            isFollow = data.getIsFollow();
+            final int[] isFollow = {data.getIsFollow()};
+            if (isFollow[0] == 0) {
+                ((Holder) viewHolder).btnFollow.setText(R.string
+                        .tv_personal_follow);
+                ((Holder) viewHolder).btnFollow.setBackgroundResource(R
+                        .drawable.btn_follow);
+                ((Holder) viewHolder).btnFollow.setSelected(true);
+            }
 
-            Picasso.with(context).load(headImage).into(((Holder) viewHolder).followHeadimg);
+            Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).followHeadimg);
             ((Holder) viewHolder).followName.setText(name);
             ((Holder) viewHolder).btnFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (isFollow == 1) {
+                    if (isFollow[0] == 1) {
                         setFollow(2, data.getUidx(), new HandlerCallBack() {
                             @Override
                             public void onFinish(String json) {
@@ -138,20 +143,20 @@ public class FollowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                     JSONObject jsonObject = new JSONObject(json);
                                     String result = jsonObject.getString("msg");
                                     if (result.equals("关注成功")) {
-                                        isFollow = 1;
+                                        isFollow[0] = 1;
                                         ((Holder) viewHolder).btnFollow.setText(R.string.followed);
                                         ((Holder) viewHolder).btnFollow.setBackgroundResource(R
                                                 .drawable.btn_unfollow);
                                         ((Holder) viewHolder).btnFollow.setSelected(false);
                                     } else {
-                                        isFollow = 0;
+                                        isFollow[0] = 0;
                                         ((Holder) viewHolder).btnFollow.setText(R.string
                                                 .tv_personal_follow);
                                         ((Holder) viewHolder).btnFollow.setBackgroundResource(R
                                                 .drawable.btn_follow);
                                         ((Holder) viewHolder).btnFollow.setSelected(true);
                                     }
-                                    CommonUtil.showTextToast(result, context);
+                                    CommonUtil.showTextToast(context, result);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -165,20 +170,20 @@ public class FollowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                                     JSONObject jsonObject = new JSONObject(json);
                                     String result = jsonObject.getString("msg");
                                     if (result.equals("关注成功")) {
-                                        isFollow = 1;
+                                        isFollow[0] = 1;
                                         ((Holder) viewHolder).btnFollow.setText(R.string.followed);
                                         ((Holder) viewHolder).btnFollow.setBackgroundResource(R
                                                 .drawable.btn_unfollow);
                                         ((Holder) viewHolder).btnFollow.setSelected(false);
                                     } else {
-                                        isFollow = 0;
+                                        isFollow[0] = 0;
                                         ((Holder) viewHolder).btnFollow.setText(R.string
                                                 .tv_personal_follow);
                                         ((Holder) viewHolder).btnFollow.setBackgroundResource(R
                                                 .drawable.btn_follow);
                                         ((Holder) viewHolder).btnFollow.setSelected(true);
                                     }
-                                    CommonUtil.showTextToast(result, context);
+                                    CommonUtil.showTextToast(context, result);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -187,13 +192,15 @@ public class FollowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     }
                 }
             });
+
+            if (mListener == null) return;
+            viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mListener.onItemClick(pos, data);
+                }
+            });
         }
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onItemClick(pos, data);
-            }
-        });
     }
 
     private int getRealPosition(RecyclerView.ViewHolder holder) {

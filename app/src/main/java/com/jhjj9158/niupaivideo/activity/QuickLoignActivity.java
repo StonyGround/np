@@ -4,13 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.MyApplication;
@@ -20,9 +16,8 @@ import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.MD5Util;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
-import com.tencent.mm.opensdk.openapi.IWXAPI;
-import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMAuthListener;
 import com.umeng.socialize.UMShareAPI;
@@ -30,20 +25,15 @@ import com.umeng.socialize.UMShareConfig;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Iterator;
 import java.util.Map;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class QuickLoignActivity extends BaseActivity {
@@ -74,7 +64,7 @@ public class QuickLoignActivity extends BaseActivity {
                     String jsonLogin = msg.obj.toString();
                     Gson gson = new Gson();
                     LoginResultBean loginResult = gson.fromJson(jsonLogin, LoginResultBean.class);
-                    CommonUtil.showTextToast(loginResult.getMsg(), QuickLoignActivity.this);
+                    CommonUtil.showTextToast(QuickLoignActivity.this, loginResult.getMsg());
                     if (loginResult.getCode() == 100) {
                         CacheUtils.setInt(QuickLoignActivity.this, "useridx", loginResult
                                 .getData().get(0).getUseridx());
@@ -100,7 +90,7 @@ public class QuickLoignActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initTitle(this, "登录");
-
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
 
         UMShareConfig config = new UMShareConfig();
         config.isNeedAuthOnGetUserInfo(true);
@@ -120,7 +110,7 @@ public class QuickLoignActivity extends BaseActivity {
         switch (view.getId()) {
             case R.id.ll_login_wechat:
                 if (!MyApplication.api.isWXAppInstalled()) {
-                    CommonUtil.showTextToast("未安装微信客户端", QuickLoignActivity.this);
+                    CommonUtil.showTextToast(QuickLoignActivity.this, "未安装微信客户端");
                     return;
                 }
                 final SendAuth.Req req = new SendAuth.Req();

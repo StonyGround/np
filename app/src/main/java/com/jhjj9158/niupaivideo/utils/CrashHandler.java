@@ -23,8 +23,6 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.umeng.analytics.MobclickAgent;
-
 /**
  * UncaughtException处理类,当程序发生Uncaught异常的时候,有该类来接管程序,并记录发送错误报告.
  *
@@ -87,6 +85,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 Log.e(TAG, "error : ", e);
             }
             //退出程序
+            ActivityManagerUtil.getActivityManager().popAllActivityFromStack();
             android.os.Process.killProcess(android.os.Process.myPid());
             System.exit(1);
         }
@@ -114,7 +113,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
         //收集设备参数信息
         collectDeviceInfo(mContext);
         //保存日志文件
-        MobclickAgent.reportError(mContext, ex);
+//        MobclickAgent.reportError(mContext, ex);
         saveCrashInfo2File(ex);
         return true;
     }
@@ -180,7 +179,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
             String time = formatter.format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                String path = Environment.getExternalStorageDirectory().getPath() + "crash/";
+                String path = Environment.getExternalStorageDirectory().getPath() + "/crash/";
                 File dir = new File(path);
                 if (!dir.exists()) {
                     dir.mkdirs();

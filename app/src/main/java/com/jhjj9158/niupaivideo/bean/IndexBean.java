@@ -96,6 +96,7 @@ public class IndexBean {
         private String imgScale;
         private int fromtype;
         private int loginplant;
+        private String imgscale;
 
         public int getVid() {
             return vid;
@@ -305,6 +306,14 @@ public class IndexBean {
             this.loginplant = loginplant;
         }
 
+        public String getImgscale() {
+            return imgscale;
+        }
+
+        public void setImgscale(String imgscale) {
+            this.imgscale = imgscale;
+        }
+
         public ResultBean() {
         }
 
@@ -340,6 +349,8 @@ public class IndexBean {
             dest.writeString(this.videoSize);
             dest.writeString(this.imgScale);
             dest.writeInt(this.fromtype);
+            dest.writeInt(this.loginplant);
+            dest.writeString(this.imgscale);
         }
 
         protected ResultBean(Parcel in) {
@@ -368,6 +379,8 @@ public class IndexBean {
             this.videoSize = in.readString();
             this.imgScale = in.readString();
             this.fromtype = in.readInt();
+            this.loginplant = in.readInt();
+            this.imgscale = in.readString();
         }
 
         public static final Creator<ResultBean> CREATOR = new Creator<ResultBean>() {

@@ -161,7 +161,14 @@ public class FragmentMy extends Fragment {
         tvFavoriteNum.setText(String.valueOf(resultBean.getLove()));
         tvFollowNum.setText(String.valueOf(resultBean.getFollowNum()));
         tvFansNum.setText(String.valueOf(resultBean.getFansNum()));
-        tvMsgNum.setText(String.valueOf(resultBean.getNewmessage()));
+        int msgNum = resultBean.getNewmessage();
+        if (msgNum > 0) {
+            tvMsgNum.setVisibility(View.VISIBLE);
+            tvMsgNum.setText(String.valueOf(msgNum));
+            if (msgNum > 99) {
+                tvMsgNum.setText("99+");
+            }
+        }
         if (resultBean.getGender() == 1) {
             ivGender.setImageResource(R.drawable.man);
         }
@@ -299,12 +306,12 @@ public class FragmentMy extends Fragment {
 
     @Override
     public void onResume() {
-        super.onResume();
         Log.e("FragmentMy", "onResume");
         if (CacheUtils.getInt(getActivity(), "useridx") != 0) {
             getUserDate();
             getUserInfo();
         }
+        super.onResume();
         MobclickAgent.onPageStart("FragmentMy");
     }
 

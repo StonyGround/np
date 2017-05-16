@@ -1,7 +1,6 @@
 package com.jhjj9158.niupaivideo.activity;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +14,7 @@ import com.jhjj9158.niupaivideo.bean.FollowBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.umeng.analytics.MobclickAgent;
 
@@ -34,16 +34,19 @@ public class FansActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         initTitle(this, "粉丝");
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvWorks.setLayoutManager(linearLayoutManager);
 
-        int buidx = getIntent().getIntExtra("buidx", 0);
+        Intent intent = getIntent();
+        int buidx = intent.getIntExtra("buidx", 0);
         int uidx = CacheUtils.getInt(this, "useridx");
-        if (buidx != 0) {
-            uidx = buidx;
+        if (buidx == 0) {
+            buidx = uidx;
         }
-        String worksUrl = Contact.HOST + Contact.GET_FANS + "?uidx=" + uidx + "&begin=1&num=100";
+        String worksUrl = Contact.HOST + Contact.GET_FANS + "?uidx=" + buidx + "&buidx=" + uidx
+                + "&begin=1&num=1000";
         OkHttpUtils.getOkHttpUtils().get(worksUrl, new OkHttpUtils.MCallBack
                 () {
             @Override

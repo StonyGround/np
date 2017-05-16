@@ -1,11 +1,9 @@
 package com.jhjj9158.niupaivideo.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -15,7 +13,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.FileProvider;
@@ -24,7 +21,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -33,22 +29,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.jhjj9158.niupaivideo.MyApplication;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.bean.UserDetailBean;
-import com.jhjj9158.niupaivideo.bean.UserInfoBean;
 import com.jhjj9158.niupaivideo.bean.UserPostBean;
 import com.jhjj9158.niupaivideo.dialog.DialogPicSelector;
 import com.jhjj9158.niupaivideo.dialog.DialogProgress;
-import com.jhjj9158.niupaivideo.utils.AESUtil;
-import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.FileUtils;
-import com.jhjj9158.niupaivideo.utils.InitiView;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
-import com.lzy.imagepicker.loader.ImageLoader;
 import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.squareup.picasso.Picasso;
 import com.umeng.analytics.MobclickAgent;
@@ -105,11 +96,12 @@ public class ModifyActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         if (jsonObject.getInt("code") == 100) {
-                            CommonUtil.showTextToast("修改成功", ModifyActivity.this);
-                            Picasso.with(ModifyActivity.this).load(new File(headImgPath)).into(modifyHeadimg);
+                            CommonUtil.showTextToast(ModifyActivity.this,"修改成功");
+                            Picasso.with(ModifyActivity.this).load(new File(headImgPath)).placeholder(R.drawable.me_user_admin).into
+                                    (modifyHeadimg);
                         } else {
-                            CommonUtil.showTextToast(jsonObject.getString("msg"), ModifyActivity
-                                    .this);
+                            CommonUtil.showTextToast( ModifyActivity
+                                    .this,jsonObject.getString("msg"));
                         }
 
                     } catch (JSONException e) {
@@ -120,11 +112,11 @@ public class ModifyActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         if (jsonObject.getInt("code") == 100) {
-                            CommonUtil.showTextToast("修改成功", ModifyActivity.this);
+                            CommonUtil.showTextToast(ModifyActivity.this,"修改成功");
                             finish();
                         } else {
-                            CommonUtil.showTextToast(jsonObject.getString("msg"), ModifyActivity
-                                    .this);
+                            CommonUtil.showTextToast(ModifyActivity
+                                    .this,jsonObject.getString("msg"));
                         }
 
                     } catch (JSONException e) {
@@ -139,6 +131,7 @@ public class ModifyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         setContentView(R.layout.activity_modify);
         ButterKnife.bind(this);
 
@@ -197,7 +190,7 @@ public class ModifyActivity extends AppCompatActivity {
                 String et_name = modifyName.getText().toString();
                 String et_signature = modifySignature.getText().toString();
                 if (TextUtils.isEmpty(et_name)) {
-                    CommonUtil.showTextToast("名称不能为空", this);
+                    CommonUtil.showTextToast(this,"名称不能为空");
                     return;
                 }
                 if (!et_name.equals(name)) {
@@ -209,23 +202,19 @@ public class ModifyActivity extends AppCompatActivity {
                 }
                 break;
             case R.id.modify_headimg:
-//                if (ActivityCompat.checkSelfPermission(this, Manifest.permission
-//                        .WRITE_EXTERNAL_STORAGE) !=
-//                        PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
-//                        (this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager
-//                        .PERMISSION_GRANTED) {
-//                    ActivityCompat.requestPermissions((Activity) this, new String[]{Manifest
-//                            .permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
-//                            .READ_EXTERNAL_STORAGE}, Contact.CHECK_PERMISSION);
-//                } else {
-////                    DialogPicSelector dialogPicSelector = new DialogPicSelector(this);
-////                    InitiView.initiBottomDialog(dialogPicSelector);
-////                    dialogPicSelector.show();
-//
-//                }
-                Intent intent = new Intent(this, ImageGridActivity.class);
-                startActivityForResult(intent, Contact.IMAGE_PICKER);
-                break;
+                if (!CommonUtil.checkPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+                        .READ_EXTERNAL_STORAGE})) {
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest
+                            .permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+                            .READ_EXTERNAL_STORAGE}, Contact.CHECK_PERMISSION);
+                } else {
+//                    DialogPicSelector dialogPicSelector = new DialogPicSelector(this);
+//                    InitiView.initiBottomDialog(dialogPicSelector);
+//                    dialogPicSelector.show();
+                    Intent intent = new Intent(this, ImageGridActivity.class);
+                    startActivityForResult(intent, Contact.IMAGE_PICKER);
+                    break;
+                }
         }
     }
 
@@ -311,8 +300,8 @@ public class ModifyActivity extends AppCompatActivity {
             case ImagePicker.RESULT_CODE_ITEMS:
                 if (data != null && requestCode == Contact.IMAGE_PICKER) {
                     ArrayList<ImageItem> images = (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
-                    CommonUtil.showTextToast(images.get(0).path, ModifyActivity.this);
-                    setHeadImag(images.get(0).path);
+                    headImgPath = images.get(0).path;
+                    setHeadImag(headImgPath);
                 } else {
                     Toast.makeText(this, "没有数据", Toast.LENGTH_SHORT).show();
                 }
@@ -326,9 +315,8 @@ public class ModifyActivity extends AppCompatActivity {
         switch (requestCode) {
             case Contact.CHECK_PERMISSION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    DialogPicSelector dialogPicSelector = new DialogPicSelector(this);
-                    InitiView.initiBottomDialog(dialogPicSelector);
-                    dialogPicSelector.show();
+                    Intent intent = new Intent(this, ImageGridActivity.class);
+                    startActivityForResult(intent, Contact.IMAGE_PICKER);
                 } else {
                     new AlertDialog.Builder(this).setMessage("请允许牛拍获取您的相机、相册权限，以确保您能更换新的头像！")
                             .setPositiveButton("我知道了", new DialogInterface.OnClickListener() {

@@ -3,6 +3,8 @@ package com.jhjj9158.niupaivideo.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.TextUtils;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -25,10 +27,17 @@ public class DialogComment extends Dialog {
     TextView tvSendComment;
 
     private Context context;
+    private String replyName;
 
     public DialogComment(Context context) {
         super(context, R.style.dialog);
         this.context = context;
+    }
+
+    public DialogComment(Context context, String replyName) {
+        super(context, R.style.dialog);
+        this.context = context;
+        this.replyName = replyName;
     }
 
     @Override
@@ -36,9 +45,12 @@ public class DialogComment extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_comment);
         ButterKnife.bind(this);
+        if (!TextUtils.isEmpty(replyName)) {
+            etComment.setHint(Html.fromHtml("<small>" + "@" + replyName + "：" + "</small>"));
+        }
     }
 
-    NoticeDialogListener mListener;
+    private NoticeDialogListener mListener;
 
     public void setNoticeDialogListerner(NoticeDialogListener mListener) {
         this.mListener = mListener;

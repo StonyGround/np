@@ -84,7 +84,6 @@ public class FragmentHome extends Fragment {
                     tabLayout.setupWithViewPager(viewpager);
                     break;
             }
-            super.handleMessage(msg);
         }
     };
 

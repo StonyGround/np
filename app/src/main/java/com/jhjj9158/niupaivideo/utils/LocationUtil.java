@@ -19,7 +19,7 @@ import static android.content.Context.LOCATION_SERVICE;
 public class LocationUtil {
 
 
-    static Location getLocation(Context context) {
+    public static Location getLocation(Context context) {
 
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
                 PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
@@ -35,7 +35,7 @@ public class LocationUtil {
         } else if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
             locationProvider = LocationManager.NETWORK_PROVIDER;
         } else {
-            CommonUtil.showTextToast("没有可用的位置提供器", context);
+            CommonUtil.showTextToast(context, "没有可用的位置提供器");
             return null;
         }
 

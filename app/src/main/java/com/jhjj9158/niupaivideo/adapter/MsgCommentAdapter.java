@@ -1,6 +1,7 @@
 package com.jhjj9158.niupaivideo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -8,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.PersonalActivity;
 import com.jhjj9158.niupaivideo.bean.MsgCommentBean;
+import com.jhjj9158.niupaivideo.dialog.DialogComment;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -111,16 +115,24 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                 videoPic = "http://" + headImage;
             }
 
-            if(TextUtils.isEmpty(reply)){
+            if (TextUtils.isEmpty(reply)) {
                 ((Holder) viewHolder).msgCommentReply.setVisibility(View.GONE);
             }
-            Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(((MsgCommentAdapter.Holder) viewHolder).msgCommentHeadimg);
+            Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(((MsgCommentAdapter.Holder) viewHolder)
+                    .msgCommentHeadimg);
             Picasso.with(context).load(videoPic).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).msgCommentVideo);
             ((Holder) viewHolder).msgCommentName.setText(name);
-            ((Holder) viewHolder).msgCommentDetail.setText(comment);
-            ((Holder) viewHolder).msgCommentReply.setText(reply);
+            ((Holder) viewHolder).msgCommentDetail.setText("回复我：" + comment);
+            ((Holder) viewHolder).msgCommentReply.setText("我的评论：" + reply);
             ((Holder) viewHolder).msgCommentDate.setText(date);
-
+            ((Holder) viewHolder).msgCommentName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, PersonalActivity.class);
+                    intent.putExtra("buidx", data.getUidx());
+                    context.startActivity(intent);
+                }
+            });
             if (mListener == null) return;
             viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -140,7 +152,6 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public int getItemCount() {
         return mHeaderView == null ? mDatas.size() : mDatas.size() + 1;
-//        return 5;
     }
 
     class Holder extends RecyclerView.ViewHolder {
@@ -150,6 +161,7 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ImageView msgCommentVideo;
         TextView msgCommentDetail;
         TextView msgCommentDate;
+        LinearLayout msg_ll_comment;
 
         public Holder(View itemView) {
             super(itemView);
@@ -160,6 +172,7 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             msgCommentVideo = (ImageView) itemView.findViewById(R.id.msg_comment_video);
             msgCommentDetail = (TextView) itemView.findViewById(R.id.msg_comment_detail);
             msgCommentDate = (TextView) itemView.findViewById(R.id.msg_comment_date);
+            msg_ll_comment = (LinearLayout) itemView.findViewById(R.id.msg_ll_comment);
         }
     }
 
