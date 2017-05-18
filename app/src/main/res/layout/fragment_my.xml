@@ -225,8 +225,7 @@
                 android:background="@color/white"
                 android:orientation="horizontal"
                 android:paddingLeft="10dp"
-                android:paddingTop="10dp"
-                android:visibility="gone">
+                android:paddingTop="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -250,8 +249,7 @@
                 android:paddingBottom="20dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:visibility="gone">
+                android:paddingTop="10dp">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -270,7 +268,6 @@
                         android:id="@+id/tv_wallte"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/money_my"
                         android:textColor="@color/button_login_click"
                         android:textSize="28sp"/>
 

@@ -49,6 +49,7 @@ public class FragmentHome extends Fragment {
     @BindView(R.id.tablLayout)
     TabLayout tabLayout;
     Unbinder unbinder;
+    private boolean isFirst = true;
 
     private List<Fragment> fragmentList = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
@@ -67,25 +68,29 @@ public class FragmentHome extends Fragment {
                     resultBeanList = gson.fromJson(AESUtil.decode(json), TabTitleBean.class)
                             .getResult();
                     for (int i = 0; i < resultBeanList.size(); i++) {
-                        titles.add(new String(Base64.decode(resultBeanList.get(0).getVrname()
-                                .getBytes(), Base64.DEFAULT)));
                         fragmentDynamic = new FragmentDynamic();
                         transaction = getFragmentManager().beginTransaction();
                         Bundle bundle = new Bundle();
-                        bundle.putString("type", new String(Base64.decode(resultBeanList.get(0)
+                        bundle.putString("type", new String(Base64.decode(resultBeanList.get(i)
                                 .getVrid().getBytes(), Base64.DEFAULT)));
                         fragmentDynamic.setArguments(bundle);
                         transaction.commit();
-                        fragmentList.add(fragmentDynamic);
+
+                        tabFragmentAdapter.addData(fragmentDynamic, new String(Base64.decode(resultBeanList.get(i).getVrname()
+                                .getBytes(), Base64.DEFAULT)));
+
+//                        titles.add(new String(Base64.decode(resultBeanList.get(0).getVrname()
+//                                .getBytes(), Base64.DEFAULT)));
+//                        fragmentList.add(fragmentDynamic);
                     }
-                    TabFragmentAdapter tabFragmentAdapter = new TabFragmentAdapter
-                            (getFragmentManager(), fragmentList, titles);
-                    viewpager.setAdapter(tabFragmentAdapter);
-                    tabLayout.setupWithViewPager(viewpager);
+
+
                     break;
             }
         }
     };
+
+    private TabFragmentAdapter tabFragmentAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,29 +103,6 @@ public class FragmentHome extends Fragment {
         fragmentList.add(new FragmentNew());
         fragmentList.add(new FragmentFollow());
 
-
-
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .TAB_TITLE);
-        requestBuilder.method("GET", null);
-        Request request = requestBuilder.build();
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-
-            @Override
-            public void onFailure(Call call, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Message message = new Message();
-                message.obj = response.body().string();
-                message.what = 1;
-                handler.sendMessage(message);
-            }
-        });
     }
 
     private View rootView;
@@ -129,61 +111,51 @@ public class FragmentHome extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle
             savedInstanceState) {
+
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_home, container, false);
+            unbinder = ButterKnife.bind(this, rootView);
+            tabFragmentAdapter = new TabFragmentAdapter(getFragmentManager(), fragmentList, titles);
+            viewpager.setAdapter(tabFragmentAdapter);
+            tabLayout.setupWithViewPager(viewpager);
+
+            OkHttpClient mOkHttpClient = new OkHttpClient();
+            Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
+                    .TAB_TITLE);
+            requestBuilder.method("GET", null);
+            Request request = requestBuilder.build();
+            Call call = mOkHttpClient.newCall(request);
+            call.enqueue(new Callback() {
+
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    Message message = new Message();
+                    message.obj = response.body().string();
+                    message.what = 1;
+                    handler.sendMessage(message);
+                }
+            });
         }
         ViewGroup parent = (ViewGroup) rootView.getParent();
         if (parent != null) {
             parent.removeView(rootView);
         }
-        unbinder = ButterKnife.bind(this, rootView);
+
 
         return rootView;
-
-
-//        tabLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                setIndicator(tabLayout,10,10);
-//            }
-//        });
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
-//
-//    public void setIndicator (TabLayout tabs,int leftDip,int rightDip) {
-//        Class<?> tabLayout = tabs.getClass();
-//        Field tabStrip = null;
-//        try {
-//            tabStrip = tabLayout.getDeclaredField("mTabStrip");
-//        } catch (NoSuchFieldException e) {
-//            e.printStackTrace();
-//        }
-//
-//        tabStrip.setAccessible(true);
-//        LinearLayout llTab = null;
-//        try {
-//            llTab = (LinearLayout) tabStrip.get(tabs);
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-//
-//        int left = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, leftDip,
-// Resources.getSystem().getDisplayMetrics());
-//        int right = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, rightDip,
-// Resources.getSystem().getDisplayMetrics());
-//
-//        for (int i = 0; i < llTab.getChildCount(); i++) {
-//            View child = llTab.getChildAt(i);
-//            child.setPadding(0, 0, 0, 0);
-//            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout
-// .LayoutParams.MATCH_PARENT, 1);
-//            params.leftMargin = left;
-//            params.rightMargin = right;
-//            child.setLayoutParams(params);
-//            child.invalidate();
-//        }
-//    }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -199,7 +171,7 @@ public class FragmentHome extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        unbinder.unbind();
+//        unbinder.unbind();
         Log.e("FragmentHome", "onDestroyView");
     }
 }

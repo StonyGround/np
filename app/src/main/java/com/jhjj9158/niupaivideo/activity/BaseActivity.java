@@ -13,24 +13,34 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.bean.NetworkType;
+import com.jhjj9158.niupaivideo.broadcast.NetStateChangeReceiver;
+import com.jhjj9158.niupaivideo.observer.NetStateChangeObserver;
+import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements NetStateChangeObserver {
 
     Toolbar toolbar;
     LinearLayout llChildContent;
     ImageView toolbar_back;
     TextView toolbar_title;
+    LinearLayout ll_toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
+
+        if (needRegisterNetworkChangeObserver()) {
+            NetStateChangeReceiver.registerObserver(this);
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
@@ -45,6 +55,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar_back = (ImageView) findViewById(R.id.toolbar_back);
         toolbar_title = (TextView) findViewById(R.id.toolbar_title);
+        ll_toolbar = (LinearLayout) findViewById(R.id.ll_toolbar);
 
         View child = getChildView();
         ButterKnife.bind(this, child);
@@ -66,6 +77,10 @@ public abstract class BaseActivity extends AppCompatActivity {
         });
     }
 
+    protected void hintTitle() {
+        ll_toolbar.setVisibility(View.GONE);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -76,5 +91,29 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (needRegisterNetworkChangeObserver()) {
+            NetStateChangeReceiver.unregisterObserver(this);
+        }
+    }
+
+    /**
+     * 是否需要注册网络变化的Observer,如果不需要监听网络变化,则返回false;否则返回true.默认返回false
+     */
+    protected boolean needRegisterNetworkChangeObserver() {
+        return true;
+    }
+
+    @Override
+    public void onNetDisconnected() {
+        CommonUtil.showTextToast(this, "怎么又没网啦!ヾ(。￣□￣)ﾂ゜゜゜", Toast.LENGTH_LONG);
+    }
+
+    @Override
+    public void onNetConnected(NetworkType networkType) {
     }
 }

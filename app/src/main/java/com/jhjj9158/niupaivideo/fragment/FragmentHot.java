@@ -107,6 +107,10 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
                     currentItem = msg.arg1;
                     handler.postDelayed(new InternalRunnable(), 4000);
                     break;
+                case Contact.NET_ERROR:
+                    CommonUtil.showTextToast(getActivity(), "网络请求超时");
+                    swipeRefresh.setRefreshing(false);
+                    break;
             }
             super.handleMessage(msg);
         }
@@ -136,14 +140,14 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
 
         minVid = CommonUtil.getMinVid(resultBeanList);
 
-        if (isRefresh) {
+        if (isRefresh && adapterHomeRecyler != null) {
             isRefresh = false;
             adapterHomeRecyler.addRefreshDatas(resultBeanList);
             swipeRefresh.setRefreshing(false);
             return;
         }
 
-        if (isLoadMore) {
+        if (isLoadMore && adapterHomeRecyler != null) {
             isLoadMore = false;
             adapterHomeRecyler.addDatas(resultBeanList);
             swipeRefresh.setRefreshing(false);
@@ -168,7 +172,7 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("FragmentHot", "onCreate");
-        getHotData(0);
+
     }
 
     @Nullable
@@ -218,7 +222,7 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getActivity().getResources()
                         .getDisplayMetrics()));
         swipeRefresh.setOnRefreshListener(this);
-
+        getHotData(0);
         return view;
     }
 
@@ -234,7 +238,9 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Message message = new Message();
+                message.what = Contact.NET_ERROR;
+                handler.sendMessage(message);
             }
 
             @Override
@@ -258,7 +264,9 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Message message = new Message();
+                message.what = Contact.NET_ERROR;
+                handler.sendMessage(message);
             }
 
             @Override
@@ -367,11 +375,13 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
         adapterHomeRecyler.setHeaderView(topView);
         recyclerview.setAdapter(adapterHomeRecyler);
     }
+
     @Override
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart("FragmentHot");
     }
+
     @Override
     public void onPause() {
         super.onPause();

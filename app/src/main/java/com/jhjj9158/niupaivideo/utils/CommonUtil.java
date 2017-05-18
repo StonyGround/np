@@ -88,6 +88,16 @@ public class CommonUtil {
         mToast.show();
     }
 
+    public static void showTextToast(Context context, String msg, int duration) {
+        mHandler.removeCallbacks(r);
+        if (mToast == null) {
+            mToast = Toast.makeText(context, msg, duration);
+        } else {
+            mToast.setText(msg);
+        }
+        mToast.show();
+    }
+
 
     private static String sID = null;
 

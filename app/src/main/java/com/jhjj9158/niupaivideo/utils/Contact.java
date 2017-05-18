@@ -24,8 +24,8 @@ public class Contact {
     public static final String HOST = "http://service.quliao.com/";
     public static final String GET_USER_INFO = "user/GetUserInfo";
     public static final String INDEX = "works/getIndexRankVideo";
-    public static final String TAB_TITLE = "works/getVRVedioType";
     public static final String TAB_DYNAMIC = "works/getVRVideoInfo";
+    public static final String TAB_TITLE = "works/getVRVedioType";
     public static final String VIDEO_FOLLOW = "works/addPraise";
     public static final String VIDEO_COMMETN = "works/getCommentInfoByVid";
     public static final String ADD_COMMENT = "works/addCommentForDetails";
@@ -58,4 +58,5 @@ public class Contact {
     public static final int REQUEST_PHOTO_RESULT = 11;
     public static final int CHECK_PERMISSION = 12;
     public static final int IMAGE_PICKER = 13;
+    public static final int NET_ERROR = 14;
 }

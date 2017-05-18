@@ -64,7 +64,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ModifyActivity extends AppCompatActivity {
+public class ModifyActivity extends BaseActivity {
 
     @BindView(R.id.toolbar_back)
     ImageView toolbarBack;
@@ -96,12 +96,12 @@ public class ModifyActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         if (jsonObject.getInt("code") == 100) {
-                            CommonUtil.showTextToast(ModifyActivity.this,"修改成功");
+                            CommonUtil.showTextToast(ModifyActivity.this, "修改成功");
                             Picasso.with(ModifyActivity.this).load(new File(headImgPath)).placeholder(R.drawable.me_user_admin).into
                                     (modifyHeadimg);
                         } else {
-                            CommonUtil.showTextToast( ModifyActivity
-                                    .this,jsonObject.getString("msg"));
+                            CommonUtil.showTextToast(ModifyActivity
+                                    .this, jsonObject.getString("msg"));
                         }
 
                     } catch (JSONException e) {
@@ -112,11 +112,11 @@ public class ModifyActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(json);
                         if (jsonObject.getInt("code") == 100) {
-                            CommonUtil.showTextToast(ModifyActivity.this,"修改成功");
+                            CommonUtil.showTextToast(ModifyActivity.this, "修改成功");
                             finish();
                         } else {
                             CommonUtil.showTextToast(ModifyActivity
-                                    .this,jsonObject.getString("msg"));
+                                    .this, jsonObject.getString("msg"));
                         }
 
                     } catch (JSONException e) {
@@ -131,9 +131,8 @@ public class ModifyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hintTitle();
         ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
-        setContentView(R.layout.activity_modify);
-        ButterKnife.bind(this);
 
         toolbarTitle.setText("修改资料");
         userInfo = getIntent().getParcelableExtra("userInfo");
@@ -150,6 +149,11 @@ public class ModifyActivity extends AppCompatActivity {
         initView();
 
 
+    }
+
+    @Override
+    protected View getChildView() {
+        return View.inflate(this, R.layout.activity_modify, null);
     }
 
     private String name;
@@ -190,7 +194,7 @@ public class ModifyActivity extends AppCompatActivity {
                 String et_name = modifyName.getText().toString();
                 String et_signature = modifySignature.getText().toString();
                 if (TextUtils.isEmpty(et_name)) {
-                    CommonUtil.showTextToast(this,"名称不能为空");
+                    CommonUtil.showTextToast(this, "名称不能为空");
                     return;
                 }
                 if (!et_name.equals(name)) {

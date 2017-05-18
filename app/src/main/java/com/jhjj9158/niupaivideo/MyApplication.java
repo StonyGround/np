@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.support.v4.app.ActivityCompat;
 
+import com.jhjj9158.niupaivideo.broadcast.NetStateChangeReceiver;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.CrashHandler;
@@ -47,6 +48,7 @@ public class MyApplication extends Application {
         Config.isJumptoAppStore = true;
         regToWx();
         initImagePicker();
+        NetStateChangeReceiver.registerReceiver(this);
 //        CrashHandler crashHandler = CrashHandler.getInstance();
 //        crashHandler.init(getApplicationContext());
     }
@@ -64,5 +66,12 @@ public class MyApplication extends Application {
         imagePicker.setFocusHeight(500);  //裁剪框的高度。单位像素（圆形自动取宽高最小值）
         imagePicker.setOutPutX(500);//保存文件的宽度。单位像素
         imagePicker.setOutPutY(500);//保存文件的高度。单位像素
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        // 取消BroadcastReceiver注册
+        NetStateChangeReceiver.unregisterReceiver(this);
     }
 }

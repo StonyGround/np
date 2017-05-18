@@ -14,10 +14,14 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.bean.NetworkType;
+import com.jhjj9158.niupaivideo.broadcast.NetStateChangeReceiver;
 import com.jhjj9158.niupaivideo.fragment.FragmentHome;
 import com.jhjj9158.niupaivideo.fragment.FragmentMy;
+import com.jhjj9158.niupaivideo.observer.NetStateChangeObserver;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
@@ -32,7 +36,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends BaseActivity implements NetStateChangeObserver {
 
     @BindView(R.id.iv_screen)
     ImageView ivScreen;
@@ -49,9 +53,8 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        hintTitle();
         ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
-        ButterKnife.bind(this);
 //            CacheUtils.setInt(this, "useridx", 1628007796);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -78,6 +81,12 @@ public class MainActivity extends FragmentActivity {
         initiTabHost();
 
         MobclickAgent.openActivityDurationTrack(false);
+
+    }
+
+    @Override
+    protected View getChildView() {
+        return View.inflate(this, R.layout.activity_main, null);
     }
 
     private List<View> getTabViewList(int len) {
@@ -141,6 +150,14 @@ public class MainActivity extends FragmentActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        if (needRegisterNetworkChangeObserver()) {
+            NetStateChangeReceiver.unregisterObserver(this);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         UMShareAPI.get(this).release();
@@ -148,6 +165,6 @@ public class MainActivity extends FragmentActivity {
 
     @OnClick(R.id.iv_screen)
     public void onViewClicked() {
-        CommonUtil.showTextToast(this,"敬请期待");
+        CommonUtil.showTextToast(this, "敬请期待");
     }
 }

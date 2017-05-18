@@ -105,6 +105,10 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
                     currentItem = msg.arg1;
                     handler.postDelayed(new InternalRunnable(), 4000);
                     break;
+                case Contact.NET_ERROR:
+                    CommonUtil.showTextToast(getActivity(), "网络请求超时");
+                    swipeRefresh.setRefreshing(false);
+                    break;
             }
             super.handleMessage(msg);
         }
@@ -121,14 +125,14 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
         }
         minVid = CommonUtil.getMinVid(resultBeanList);
 
-        if (isRefresh) {
+        if (isRefresh && adapterHomeRecyler != null) {
             isRefresh = false;
             adapterHomeRecyler.addRefreshDatas(resultBeanList);
             swipeRefresh.setRefreshing(false);
             return;
         }
 
-        if (isLoadMore) {
+        if (isLoadMore && adapterHomeRecyler != null) {
             isLoadMore = false;
             adapterHomeRecyler.addDatas(resultBeanList);
             swipeRefresh.setRefreshing(false);
@@ -154,7 +158,6 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
         super.onCreate(savedInstanceState);
 
         Log.e("FragmentFollow", "onCreate");
-        getFollowData(0);
     }
 
     private class InternalRunnable implements Runnable {
@@ -215,6 +218,9 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
         swipeRefresh.setProgressViewOffset(false, 0, (int) TypedValue
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getActivity().getResources()
                         .getDisplayMetrics()));
+        swipeRefresh.setOnRefreshListener(this);
+
+        getFollowData(0);
         return view;
     }
 
@@ -233,7 +239,9 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Message message = new Message();
+                message.what = Contact.NET_ERROR;
+                handler.sendMessage(message);
             }
 
             @Override
@@ -257,7 +265,9 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Message message = new Message();
+                message.what = Contact.NET_ERROR;
+                handler.sendMessage(message);
             }
 
             @Override

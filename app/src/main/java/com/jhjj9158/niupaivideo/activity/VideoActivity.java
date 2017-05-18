@@ -35,6 +35,7 @@ import com.jhjj9158.niupaivideo.bean.FollowPostBean;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
 import com.jhjj9158.niupaivideo.bean.VideoDetailBean;
 import com.jhjj9158.niupaivideo.bean.VideoIsFollowBean;
+import com.jhjj9158.niupaivideo.callback.OKHttpCallback;
 import com.jhjj9158.niupaivideo.dialog.DialogComment;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
@@ -43,6 +44,7 @@ import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.InitiView;
 import com.jhjj9158.niupaivideo.utils.LocationUtil;
 import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
+import com.jhjj9158.niupaivideo.utils.OkHttpClientManager;
 import com.jhjj9158.niupaivideo.widget.AndroidMediaController;
 import com.jhjj9158.niupaivideo.widget.IjkVideoView;
 import com.squareup.picasso.Picasso;
@@ -75,7 +77,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class VideoActivity extends AppCompatActivity {
+public class VideoActivity extends BaseActivity {
 
     private static final int VIDEO_INFO = 1;
     private static final int IS_FOLLOW = 2;
@@ -196,9 +198,8 @@ public class VideoActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hintTitle();
         ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
-        setContentView(R.layout.activity_video);
-        ButterKnife.bind(this);
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false) {
             @Override
@@ -230,11 +231,35 @@ public class VideoActivity extends AppCompatActivity {
             initIsFollow();
         }
         getComment();
+        addPlayNum();
+    }
+
+    private void addPlayNum() {
+        String url = Contact.HOST + Contact.VIDEO_COMMETN + "?vid=" + vid + "&cid=0&num=100";
+        OkHttpClientManager.get(url, new OKHttpCallback() {
+            @Override
+            public void onError(IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Object response) {
+//                Gson gson = new Gson();
+//                CommentBean commentBean = gson.fromJson(AESUtil.decode((String) response), CommentBean.class);
+//                List<CommentBean.ResultBean> resultBeanList = response.getResult();
+//                Log.d("VideoActivity", resultBeanList.size() + "--");
+                Log.d("VideoActivity", response + "--");
+            }
+        });
+    }
+
+    @Override
+    protected View getChildView() {
+        return View.inflate(this, R.layout.activity_video, null);
     }
 
     private void getComment() {
         String url = Contact.HOST + Contact.VIDEO_COMMETN + "?vid=" + vid + "&cid=0&num=100";
-
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(url);
         requestBuilder.method("GET", null);

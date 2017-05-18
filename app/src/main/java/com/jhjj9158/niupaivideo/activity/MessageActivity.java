@@ -25,7 +25,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MessageActivity extends AppCompatActivity {
+public class MessageActivity extends BaseActivity {
 
     @BindView(R.id.msg_tab)
     TabLayout msgTab;
@@ -37,9 +37,8 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        hintTitle();
         ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
-        setContentView(R.layout.activity_message);
-        ButterKnife.bind(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
@@ -47,7 +46,7 @@ public class MessageActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.argb(50,00,00,00));
+            getWindow().setStatusBarColor(Color.argb(50, 00, 00, 00));
         }
 
         titles.add("通知");
@@ -64,6 +63,11 @@ public class MessageActivity extends AppCompatActivity {
         msgViewpager.setAdapter(tabFragmentAdapter);
         msgTab.setTabMode(TabLayout.MODE_FIXED);
         msgTab.setupWithViewPager(msgViewpager);
+    }
+
+    @Override
+    protected View getChildView() {
+        return View.inflate(this, R.layout.activity_message, null);
     }
 
     @Override

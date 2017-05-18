@@ -23,6 +23,7 @@ import com.jhjj9158.niupaivideo.activity.FollowActivity;
 import com.jhjj9158.niupaivideo.activity.MessageActivity;
 import com.jhjj9158.niupaivideo.activity.ModifyActivity;
 import com.jhjj9158.niupaivideo.activity.SettingActivity;
+import com.jhjj9158.niupaivideo.activity.WithDrawActivity;
 import com.jhjj9158.niupaivideo.activity.WorksActivity;
 import com.jhjj9158.niupaivideo.bean.UserDetailBean;
 import com.jhjj9158.niupaivideo.bean.UserInfoBean;
@@ -284,18 +285,19 @@ public class FragmentMy extends Fragment {
         Log.e("FragmentMy", "onCreateView");
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_my, container, false);
+            ButterKnife.bind(this, rootView);
+
+            if (CacheUtils.getInt(getActivity(), "useridx") != 0) {
+                getUserInfo();
+                getUserDate();
+                getReward();
+            }
         }
         ViewGroup parent = (ViewGroup) rootView.getParent();
         if (parent != null) {
             parent.removeView(rootView);
         }
-        unbinder = ButterKnife.bind(this, rootView);
 
-        if (CacheUtils.getInt(getActivity(), "useridx") != 0) {
-            getUserInfo();
-            getUserDate();
-            getReward();
-        }
 
         return rootView;
     }
@@ -325,7 +327,7 @@ public class FragmentMy extends Fragment {
     public void onDestroyView() {
         Log.e("FragmentMy", "onDestroyView");
         super.onDestroyView();
-        unbinder.unbind();
+//        unbinder.unbind();
     }
 
     @OnClick({R.id.profile_image, R.id.rl_works, R.id.tv_make_money, R.id.tv_withdraw, R.id
@@ -341,6 +343,9 @@ public class FragmentMy extends Fragment {
             case R.id.tv_make_money:
                 break;
             case R.id.tv_withdraw:
+                Intent withDrawintent = new Intent(getActivity(), WithDrawActivity.class);
+                withDrawintent.putExtra("money", resultBean.getWallet());
+                startActivity(withDrawintent);
                 break;
             case R.id.rl_daily_reward:
                 break;

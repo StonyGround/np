@@ -108,6 +108,10 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
                     currentItem = msg.arg1;
                     handler.postDelayed(new InternalRunnable(), 4000);
                     break;
+                case Contact.NET_ERROR:
+                    CommonUtil.showTextToast(getActivity(), "网络请求超时");
+                    swipeRefresh.setRefreshing(false);
+                    break;
             }
             super.handleMessage(msg);
         }
@@ -127,14 +131,14 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
         List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
         minVid = CommonUtil.getMinVid(resultBeanList);
-        if (isRefresh) {
+        if (isRefresh && adapterHomeRecyler != null) {
             isRefresh = false;
             adapterHomeRecyler.addRefreshDatas(resultBeanList);
             swipeRefresh.setRefreshing(false);
             return;
         }
 
-        if (isLoadMore) {
+        if (isLoadMore && adapterHomeRecyler != null) {
             isLoadMore = false;
             adapterHomeRecyler.addDatas(resultBeanList);
             swipeRefresh.setRefreshing(false);
@@ -158,7 +162,7 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getDynamicData(0);
+
     }
 
     @Nullable
@@ -174,7 +178,6 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
         recyclerview.setLayoutManager(layoutManager);
         topView = LayoutInflater.from(getActivity()).inflate(R.layout.home_top, recyclerview,
                 false);
-
         recyclerview.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -196,8 +199,6 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
                 }
             }
         });
-//        recyclerview.addItemDecoration(new GridSpacingItemDecoration(2,5,true));
-//        recyclerview.addItemDecoration(new SpaceItemDecoration(5));
         recyclerview.setItemAnimator(new DefaultItemAnimator());
         recyclerview.setNestedScrollingEnabled(false);
         recyclerview.setHasFixedSize(true);
@@ -208,6 +209,7 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
                         .getDisplayMetrics()));
 
         swipeRefresh.setOnRefreshListener(this);
+        getDynamicData(0);
         return view;
     }
 
@@ -236,7 +238,9 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Message message = new Message();
+                message.what = Contact.NET_ERROR;
+                handler.sendMessage(message);
             }
 
             @Override
@@ -261,7 +265,9 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Message message = new Message();
+                message.what = Contact.NET_ERROR;
+                handler.sendMessage(message);
             }
 
             @Override
@@ -299,7 +305,7 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
 
         ll_point_group.removeAllViews();
 
-        if(bannerList.size()>1) {
+        if (bannerList.size() > 1) {
             for (int i = 0; i < bannerList.size(); i++) {
                 ImageView point = new ImageView(getActivity());
                 point.setBackgroundResource(R.drawable.point_selector);
@@ -388,11 +394,13 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
         isRefresh = true;
         getDynamicData(0);
     }
+
     @Override
     public void onResume() {
         super.onResume();
         MobclickAgent.onPageStart("FragmentDynamic");
     }
+
     @Override
     public void onPause() {
         super.onPause();

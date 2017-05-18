@@ -1,10 +1,6 @@
 package com.jhjj9158.niupaivideo.utils;
 
 
-/*  * 文 件 名:  DataCleanManager.java
- * * 描    述:  主要功能有清除内/外缓存，清除数据库，清除sharedPreference，清除files和清除自定义目录
- * */
-
 import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
@@ -12,7 +8,6 @@ import android.text.TextUtils;
 import java.io.File;
 import java.math.BigDecimal;
 
-/** * 本应用数据清除管理器 */
 public class DataCleanUtil {
     /**
      * * 清除本应用内部缓存(/data/data/com.xxx.xxx/cache) * *
@@ -29,7 +24,7 @@ public class DataCleanUtil {
      * @param context
      */
     public static void cleanDatabases(Context context) {
-        deleteFilesByDirectory(new File("/data/data/"
+        deleteFilesByDirectory(new File(context.getFilesDir().getPath()
                 + context.getPackageName() + "/databases"));
     }
 
@@ -39,7 +34,7 @@ public class DataCleanUtil {
      * @param context
      */
     public static void cleanSharedPreference(Context context) {
-        deleteFilesByDirectory(new File("/data/data/"
+        deleteFilesByDirectory(new File(context.getFilesDir().getPath()
                 + context.getPackageName() + "/shared_prefs"));
     }
 
@@ -73,11 +68,12 @@ public class DataCleanUtil {
             deleteFilesByDirectory(context.getExternalCacheDir());
         }
     }
+
     /**
      * * 清除自定义路径下的文件，使用需小心，请不要误删。而且只支持目录下的文件删除 * *
      *
      * @param filePath
-     * */
+     */
     public static void cleanCustomCache(String filePath) {
         deleteFilesByDirectory(new File(filePath));
     }
@@ -91,7 +87,8 @@ public class DataCleanUtil {
         cleanInternalCache(context);
         cleanExternalCache(context);
         cleanDatabases(context);
-//        cleanSharedPreference(context);
+        deleteFolderFile(Environment.getExternalStorageDirectory().getPath() + "/crash/", true);
+        cleanSharedPreference(context);
         cleanFiles(context);
 //        if (filepath == null) {
 //            return;

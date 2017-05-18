@@ -23,6 +23,12 @@ public class TabFragmentAdapter extends FragmentStatePagerAdapter {
         this.titles = titles;
     }
 
+    public void addData(Fragment fragment,String title){
+        fragmentList.add(fragment);
+        titles.add(title);
+        notifyDataSetChanged();
+    }
+
     @Override
     public Fragment getItem(int position) {
         return fragmentList.get(position);

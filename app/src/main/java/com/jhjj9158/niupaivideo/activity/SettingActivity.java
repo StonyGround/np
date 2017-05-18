@@ -34,12 +34,12 @@ public class SettingActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         initTitle(this, "设置");
-        try {
-            settingClearSize.setText(getString(R.string.cache_size, DataCleanUtil
-                    .getTotalCacheSize(SettingActivity.this)));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            settingClearSize.setText(getString(R.string.cache_size, DataCleanUtil
+//                    .getTotalCacheSize(SettingActivity.this)));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
         builder = new AlertDialog.Builder(this);
     }
@@ -61,7 +61,7 @@ public class SettingActivity extends BaseActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 DataCleanUtil.cleanApplicationData(SettingActivity.this);
                                 CommonUtil.showTextToast(SettingActivity.this,"清除成功");
-                                settingClearSize.setText(getString(R.string.cache_size, "0M"));
+//                                settingClearSize.setText(getString(R.string.cache_size, "0M"));
                             }
                         })
                         .setNegativeButton("取消", new DialogInterface.OnClickListener() {

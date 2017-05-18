@@ -105,6 +105,10 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
                     currentItem = msg.arg1;
                     handler.postDelayed(new InternalRunnable(), 4000);
                     break;
+                case Contact.NET_ERROR:
+                    CommonUtil.showTextToast(getActivity(), "网络请求超时");
+                    swipeRefresh.setRefreshing(false);
+                    break;
             }
             super.handleMessage(msg);
         }
@@ -115,14 +119,14 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
         List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
         minVid = CommonUtil.getMinVid(resultBeanList);
-        if (isRefresh) {
+        if (isRefresh && adapterHomeRecyler != null) {
             isRefresh = false;
             adapterHomeRecyler.addRefreshDatas(resultBeanList);
             swipeRefresh.setRefreshing(false);
             return;
         }
 
-        if (isLoadMore) {
+        if (isLoadMore && adapterHomeRecyler != null) {
             isLoadMore = false;
             adapterHomeRecyler.addDatas(resultBeanList);
             swipeRefresh.setRefreshing(false);
@@ -147,7 +151,7 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("FragmentNew", "onCreate");
-        getNewData(0);
+
     }
 
     private int index;
@@ -164,7 +168,9 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Message message = new Message();
+                message.what = Contact.NET_ERROR;
+                handler.sendMessage(message);
             }
 
             @Override
@@ -193,8 +199,6 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
 
         topView = LayoutInflater.from(getActivity()).inflate(R.layout.home_top, recyclerview,
                 false);
-//        recyclerview.addItemDecoration(new GridSpacingItemDecoration(2, 5, true));
-//        recyclerview.addItemDecoration(new SpaceItemDecoration(5));
         recyclerview.setItemAnimator(new DefaultItemAnimator());
         recyclerview.setHasFixedSize(true);
         recyclerview.setNestedScrollingEnabled(false);
@@ -226,7 +230,7 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getActivity().getResources()
                         .getDisplayMetrics()));
         swipeRefresh.setOnRefreshListener(this);
-
+        getNewData(0);
         return view;
     }
 
@@ -241,7 +245,9 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Message message = new Message();
+                message.what = Contact.NET_ERROR;
+                handler.sendMessage(message);
             }
 
             @Override
@@ -286,7 +292,7 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
             }
         });
 
-        if(bannerList.size()>1) {
+        if (bannerList.size() > 1) {
             ll_point_group.removeAllViews();
             for (int i = 0; i < bannerList.size(); i++) {
                 ImageView point = new ImageView(getActivity());
@@ -364,6 +370,7 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
         super.onResume();
         MobclickAgent.onPageStart("FragmentNew");
     }
+
     @Override
     public void onPause() {
         super.onPause();
