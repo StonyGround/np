@@ -4,7 +4,7 @@
               android:layout_height="match_parent"
               android:background="@color/bg_my"
               android:orientation="vertical"
-              android:paddingTop="20dp">
+              android:paddingTop="10dp">
 
     <TextView
         android:layout_width="match_parent"
@@ -17,6 +17,7 @@
         android:textColor="@color/tv_black_my"/>
 
     <RelativeLayout
+        android:id="@+id/withdraw_rl_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -32,6 +33,7 @@
 
         <ImageView
             android:id="@+id/withdraw_account_edit"
+            android:src="@drawable/edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"/>
@@ -66,7 +68,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:background="@null"
+            android:inputType="numberDecimal"
             android:hint="0.00"
+
             android:textColor="@color/tv_black_my"
             android:textColorHint="@color/home_tab"
             android:textSize="26sp"/>

@@ -267,6 +267,7 @@ public class FragmentMy extends Fragment {
             Picasso.with(getContext()).load(headImage).placeholder(R.drawable.me_user_admin)
                     .transform(new BlurBitmapUtil
                             .BlurTransformation(getContext())).into(fragmentMyBg);
+            CacheUtils.setString(getActivity(), "nickName", userInfo.getNickName());
         }
     }
 

@@ -82,7 +82,10 @@
 
     <string name="withdraw_title_1">提现到此账户</string>
     <string name="withdraw_title_2">提现金额</string>
-
+    <string name="zfb">支付宝账号</string>
+    <string name="really_name">真实姓名</string>
+    <string name="account_explain_1">官方会把提现金额打入此支付宝账号，请确保信息准确！</string>
+    <string name="account_explain_2">用于核实您的支付宝账号，请确保信息准确！</string>
     <!--Ijkplayer Start-->
     <string name="N_A">N/A</string>
     <string name="close">Close</string>

@@ -223,6 +223,7 @@ public class VideoActivity extends BaseActivity {
         indexResultBean = getIntent().getParcelableExtra("video");
         vid = indexResultBean.getVid();
         videoUserId = indexResultBean.getUidx();
+        uidx = CacheUtils.getInt(this, "useridx");
 
         initVideoView();
         getVideoInfo(vid);
@@ -235,20 +236,28 @@ public class VideoActivity extends BaseActivity {
     }
 
     private void addPlayNum() {
-        String url = Contact.HOST + Contact.VIDEO_COMMETN + "?vid=" + vid + "&cid=0&num=100";
+        String url = Contact.HOST + Contact.ADD_PLAY_NUM + "?vid=" + vid + "&loginUidx=" + uidx;
+        Log.d("VideoActivity", "url" + url);
         OkHttpClientManager.get(url, new OKHttpCallback() {
             @Override
             public void onError(IOException e) {
-
+                Log.e("VideoActivity", String.valueOf(e));
             }
 
             @Override
             public void onResponse(Object response) {
-//                Gson gson = new Gson();
-//                CommentBean commentBean = gson.fromJson(AESUtil.decode((String) response), CommentBean.class);
-//                List<CommentBean.ResultBean> resultBeanList = response.getResult();
-//                Log.d("VideoActivity", resultBeanList.size() + "--");
-                Log.d("VideoActivity", response + "--");
+                Log.d("VideoActivity", "response" + response);
+                int result = 0;
+                try {
+                    JSONObject object = new JSONObject((String) response);
+                    result = object.getInt("result");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                if (result == 1) {
+                    playNum++;
+                    videoPlaynum.setText(getString(R.string.play_num, playNum));
+                }
             }
         });
     }
@@ -333,7 +342,7 @@ public class VideoActivity extends BaseActivity {
     }
 
     private void initVideoView() {
-        uidx = CacheUtils.getInt(this, "useridx");
+
         String videoUrl = new String(Base64.decode(indexResultBean.getVideoUrl()
                 .getBytes(), Base64.DEFAULT));
         String name = new String(Base64.decode(indexResultBean.getNickname()
@@ -374,7 +383,6 @@ public class VideoActivity extends BaseActivity {
             videoUserName.setText(name + "：");
         }
         videoDesc.setText(desc);
-        videoPlaynum.setText(getString(R.string.play_num, indexResultBean.getPlayNum()));
         tvDate.setText("发布于:" + date);
 
         if (fromType == 11) {
@@ -806,6 +814,8 @@ public class VideoActivity extends BaseActivity {
         }
     }
 
+    private int playNum;
+
     private void setVideoData(String json) {
         Gson gson = new Gson();
         VideoDetailBean videoDetailBean = gson.fromJson(json, VideoDetailBean.class);
@@ -822,8 +832,11 @@ public class VideoActivity extends BaseActivity {
             Picasso.with(this).load(headImage).placeholder(R.drawable.me_user_admin).into(ivHeadImage);
             followNum = resultBean.getGoodNum();
             commentNum = resultBean.getCNum();
+            playNum = resultBean.getPlayNum();
+
             videoFollowNum.setText(getString(R.string.follow_num, followNum));
             videoCommentNum.setText(getString(R.string.comment_num, commentNum));
+            videoPlaynum.setText(getString(R.string.play_num, playNum));
             if (resultBean.getPraiseCount() > 0) {
                 videoHeart.setImageResource(R.drawable.heart1);
             }

@@ -2,6 +2,7 @@ package com.jhjj9158.niupaivideo.utils;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.$Gson$Types;
@@ -36,7 +37,7 @@ public class OkHttpClientManager {
         mGson = new Gson();
     }
 
-    public static OkHttpClientManager getInstance() {
+    private static OkHttpClientManager getInstance() {
         if (mInstance == null) {
             synchronized (OkHttpClientManager.class) {
                 if (mInstance == null) {
@@ -49,6 +50,10 @@ public class OkHttpClientManager {
 
     public static void get(String url, OKHttpCallback callback) {
         getInstance().getAsyn(url, callback);
+    }
+
+    public static void getUnencrypt(String url, OKHttpCallback callback) {
+        getInstance().getAsynUnencrypt(url, callback);
     }
 
     private void getAsyn(String url, final OKHttpCallback callback) {
@@ -78,6 +83,32 @@ public class OkHttpClientManager {
                     o = mGson.fromJson((String) o, type);
                 }
                 callback.onResponse(o);
+            }
+        });
+    }
+
+    private void getAsynUnencrypt(String url, final OKHttpCallback callback) {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        mOkHttpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                sendFailedCallback(callback, e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                sendUnencryptSuccessCallback(response.body().string(), callback);
+            }
+        });
+    }
+
+    private void sendUnencryptSuccessCallback(final String json, final OKHttpCallback callback) {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                callback.onResponse(json);
             }
         });
     }

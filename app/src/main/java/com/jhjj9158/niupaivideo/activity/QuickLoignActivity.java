@@ -73,11 +73,8 @@ public class QuickLoignActivity extends BaseActivity {
                         CacheUtils.setString(QuickLoignActivity.this, "oldid", loginResult
                                 .getData().get(0).getOldid());
                         String pwd = loginResult.getData().get(0).getPassword();
-                        try {
-                            CacheUtils.setString(QuickLoignActivity.this, "password", MD5Util.getMD5(pwd));
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        }
+                        CacheUtils.setString(QuickLoignActivity.this, "password", MD5Util.md5(pwd));
+                        CommonUtil.updateInfo(QuickLoignActivity.this);
                         finish();
                     }
                     break;

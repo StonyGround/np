@@ -1,13 +1,20 @@
 package com.jhjj9158.niupaivideo.activity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -16,9 +23,12 @@ import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.bean.GoogleLocationBean;
 import com.jhjj9158.niupaivideo.bean.NetworkType;
 import com.jhjj9158.niupaivideo.broadcast.NetStateChangeReceiver;
+import com.jhjj9158.niupaivideo.callback.OKHttpCallback;
 import com.jhjj9158.niupaivideo.fragment.FragmentHome;
 import com.jhjj9158.niupaivideo.fragment.FragmentMy;
 import com.jhjj9158.niupaivideo.observer.NetStateChangeObserver;
@@ -26,9 +36,15 @@ import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
+import com.jhjj9158.niupaivideo.utils.LocationUtil;
+import com.jhjj9158.niupaivideo.utils.OkHttpClientManager;
+import com.lzy.imagepicker.ui.ImageGridActivity;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.UMShareAPI;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,8 +96,37 @@ public class MainActivity extends BaseActivity implements NetStateChangeObserver
         tabList = getTabViewList(tabTitles.length);
         initiTabHost();
 
-        MobclickAgent.openActivityDurationTrack(false);
+        CommonUtil.updateInfo(MainActivity.this);
 
+        MobclickAgent.openActivityDurationTrack(false);
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case Contact.CHECK_PERMISSION:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (CacheUtils.getInt(this, "useridx") != 0) {
+                        Location location = LocationUtil.getLocation(this);
+                        double latitude = location.getLatitude();
+                        double longitude = location.getLongitude();
+                        String url = Contact.GOOGLE_LOCATION + latitude + "," + longitude;
+                        OkHttpClientManager.get(url, new OKHttpCallback() {
+                            @Override
+                            public void onResponse(Object response) {
+                                Log.d("Location", String.valueOf(response));
+                            }
+
+                            @Override
+                            public void onError(IOException e) {
+
+                            }
+                        });
+                    }
+                }
+        }
     }
 
     @Override

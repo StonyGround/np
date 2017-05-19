@@ -113,6 +113,7 @@ public class ModifyActivity extends BaseActivity {
                         JSONObject jsonObject = new JSONObject(json);
                         if (jsonObject.getInt("code") == 100) {
                             CommonUtil.showTextToast(ModifyActivity.this, "修改成功");
+                            CommonUtil.updateInfo(ModifyActivity.this);
                             finish();
                         } else {
                             CommonUtil.showTextToast(ModifyActivity

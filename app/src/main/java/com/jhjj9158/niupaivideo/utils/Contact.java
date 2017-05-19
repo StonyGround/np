@@ -12,6 +12,8 @@ public class Contact {
 
     public static final String AES_KEY = "192c96beaec59d367329c70016e7a50f";
 
+    public static final String GOOGLE_LOCATION="http://maps.google.cn/maps/api/geocode/json?language=zh-CN&sensor=true&latlng=";
+
     public static final String USER_INFO = "http://down.tiange.com/NiupatInterface.aspx";
 
     public static final String LOGIN_SINA = "http://down.tiange" +
@@ -40,6 +42,10 @@ public class Contact {
     public static final String GET_LIKE = "works/getPraiseInfo_112";
     public static final String GET_REWARD = "works/GetRewardTrendsInfo";
     public static final String GET_BANNER = "Profit/loadAdvertisement";
+    public static final String ADD_PLAY_NUM = "works/addWorksWatchNum";
+    public static final String BIND_ALIPAY = "user/BingAlipay";
+    public static final String UPDATE_INFO = "user/setLoginInfo";
+    public static final String WITHDRAW = "Profit/WithDraw";
 
     public static final String IS_START_MAIN = "is_start_main";
 

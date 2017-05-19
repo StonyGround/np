@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
@@ -20,15 +21,20 @@ import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.activity.SettingActivity;
+import com.jhjj9158.niupaivideo.bean.GoogleLocationBean;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
+import com.jhjj9158.niupaivideo.callback.OKHttpCallback;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.UUID;
 
@@ -179,6 +185,74 @@ public class CommonUtil {
             }
         }
         return min;
+    }
+
+    public static void updateInfo(final Context context) {
+        if (!CommonUtil.checkPermission(context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION})) {
+            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Contact
+                    .CHECK_PERMISSION);
+        } else {
+            final int uidx = CacheUtils.getInt(context, "useridx");
+            if (uidx != 0) {
+                Location location = LocationUtil.getLocation(context);
+                final double latitude = location.getLatitude();
+                final double longitude = location.getLongitude();
+                String url = Contact.GOOGLE_LOCATION + latitude + "," + longitude;
+                OkHttpClientManager.getUnencrypt(url, new OKHttpCallback() {
+                    @Override
+                    public void onResponse(Object response) {
+                        String locationPro = "未知";
+                        String locationCity = "未知";
+                        String locationDistrict = "未知";
+
+                        Gson gson = new Gson();
+                        GoogleLocationBean locationBean = gson.fromJson(String.valueOf(response), GoogleLocationBean.class);
+                        if (locationBean.getStatus().equals("OK")) {
+                            List<GoogleLocationBean.ResultsBean.AddressComponentsBean> resultsBean = locationBean.getResults().get(0)
+                                    .getAddress_components();
+                            for (int i = 0; i < resultsBean.size(); i++) {
+                                String type = resultsBean.get(i).getTypes().get(0);
+                                if (type.equals("political")) {
+                                    locationDistrict = resultsBean.get(i).getLong_name();
+                                } else if (type.equals("locality")) {
+                                    locationCity = resultsBean.get(i).getLong_name();
+                                } else if (type.equals("administrative_area_level_1")) {
+                                    locationPro = resultsBean.get(i).getLong_name();
+                                }
+                            }
+                        }
+
+
+                        String url = null;
+                        try {
+                            url = Contact.HOST + Contact.UPDATE_INFO + "?uidx=" + uidx + "&locationPro=" + URLEncoder.encode
+                                    (locationPro, "utf-8") + "&locationCity=" + URLEncoder.encode
+                                    (locationCity, "utf-8") + "&locationDistrict=" + URLEncoder.encode
+                                    (locationDistrict, "utf-8") + "&latitude=" + latitude + "&longitude=" + longitude +
+                                    "&secret=&versioncode=1.0.0&client=android&unique=" + CommonUtil.getDeviceID(context);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+
+                        OkHttpClientManager.get(url, new OKHttpCallback() {
+                            @Override
+                            public void onResponse(Object response) {
+                            }
+
+                            @Override
+                            public void onError(IOException e) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(IOException e) {
+
+                    }
+                });
+            }
+        }
     }
 
 }
