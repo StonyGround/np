@@ -1,5 +1,8 @@
 package com.jhjj9158.niupaivideo.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 
 /**
@@ -33,7 +36,7 @@ public class FollowBean {
         this.result = result;
     }
 
-    public static class ResultBean {
+    public static class ResultBean implements Parcelable {
         /**
          * uidx : 1628007796
          * nickName : eHdsMTIz
@@ -87,5 +90,42 @@ public class FollowBean {
         public void setIsFollow(int isFollow) {
             this.isFollow = isFollow;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.uidx);
+            dest.writeString(this.nickName);
+            dest.writeString(this.signature);
+            dest.writeString(this.headphoto);
+            dest.writeInt(this.isFollow);
+        }
+
+        public ResultBean() {
+        }
+
+        protected ResultBean(Parcel in) {
+            this.uidx = in.readInt();
+            this.nickName = in.readString();
+            this.signature = in.readString();
+            this.headphoto = in.readString();
+            this.isFollow = in.readInt();
+        }
+
+        public static final Parcelable.Creator<ResultBean> CREATOR = new Parcelable.Creator<ResultBean>() {
+            @Override
+            public ResultBean createFromParcel(Parcel source) {
+                return new ResultBean(source);
+            }
+
+            @Override
+            public ResultBean[] newArray(int size) {
+                return new ResultBean[size];
+            }
+        };
     }
 }

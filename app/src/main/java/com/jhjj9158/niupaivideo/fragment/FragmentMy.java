@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.AccountEditActivity;
 import com.jhjj9158.niupaivideo.activity.FansActivity;
 import com.jhjj9158.niupaivideo.activity.FavoriteActivity;
 import com.jhjj9158.niupaivideo.activity.FollowActivity;
@@ -24,19 +27,25 @@ import com.jhjj9158.niupaivideo.activity.MessageActivity;
 import com.jhjj9158.niupaivideo.activity.ModifyActivity;
 import com.jhjj9158.niupaivideo.activity.SettingActivity;
 import com.jhjj9158.niupaivideo.activity.WithDrawActivity;
+import com.jhjj9158.niupaivideo.activity.WithdrawRuleActivity;
 import com.jhjj9158.niupaivideo.activity.WorksActivity;
 import com.jhjj9158.niupaivideo.bean.UserDetailBean;
 import com.jhjj9158.niupaivideo.bean.UserInfoBean;
 import com.jhjj9158.niupaivideo.bean.UserPostBean;
+import com.jhjj9158.niupaivideo.callback.OKHttpCallback;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.BlurBitmapUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.OkHttpClientManager;
 import com.jhjj9158.niupaivideo.utils.OkHttpUtils;
 import com.jhjj9158.niupaivideo.widget.ResizableImageView;
 import com.squareup.picasso.Picasso;
 import com.umeng.analytics.MobclickAgent;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -292,6 +301,7 @@ public class FragmentMy extends Fragment {
                 getUserInfo();
                 getUserDate();
                 getReward();
+                inSeven();
             }
         }
         ViewGroup parent = (ViewGroup) rootView.getParent();
@@ -301,6 +311,28 @@ public class FragmentMy extends Fragment {
 
 
         return rootView;
+    }
+
+    private int inSevenResult = 1;
+
+    private void inSeven() {
+        String url = Contact.HOST + Contact.IN_SEVEN + "?uidx=" + CacheUtils.getInt(getActivity(), "useridx");
+        OkHttpClientManager.get(url, new OKHttpCallback() {
+            @Override
+            public void onResponse(Object response) {
+                try {
+                    JSONObject object = new JSONObject((String) response);
+                    inSevenResult = object.getInt("result");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onError(IOException e) {
+
+            }
+        });
     }
 
     private void getReward() {
@@ -313,6 +345,7 @@ public class FragmentMy extends Fragment {
         if (CacheUtils.getInt(getActivity(), "useridx") != 0) {
             getUserDate();
             getUserInfo();
+            inSeven();
         }
         super.onResume();
         MobclickAgent.onPageStart("FragmentMy");
@@ -344,8 +377,28 @@ public class FragmentMy extends Fragment {
             case R.id.tv_make_money:
                 break;
             case R.id.tv_withdraw:
-                Intent withDrawintent = new Intent(getActivity(), WithDrawActivity.class);
-                withDrawintent.putExtra("money", resultBean.getWallet());
+                Intent withDrawintent = new Intent();
+                if (resultBean.getWallet() < 100) {
+                    withDrawintent.setClass(getActivity(), WithdrawRuleActivity.class);
+                    withDrawintent.putExtra("rule", 1);
+                } else {
+                    if (inSevenResult == 1) {
+                        withDrawintent.setClass(getActivity(), WithdrawRuleActivity.class);
+                        withDrawintent.putExtra("rule", 2);
+                    } else {
+                        if (TextUtils.isEmpty(resultBean.getAlipay())) {
+                            withDrawintent.setClass(getActivity(), AccountEditActivity.class);
+                            withDrawintent.putExtra("money", resultBean.getWallet());
+                        } else {
+                            withDrawintent.setClass(getActivity(), WithDrawActivity.class);
+                            withDrawintent.putExtra("alipay", new String(Base64.decode(resultBean.getAlipay().getBytes(),
+                                    Base64.DEFAULT)));
+                            withDrawintent.putExtra("alipay_name", new String(Base64.decode(resultBean.getAlipayName().getBytes(),
+                                    Base64.DEFAULT)));
+                            withDrawintent.putExtra("money", resultBean.getWallet());
+                        }
+                    }
+                }
                 startActivity(withDrawintent);
                 break;
             case R.id.rl_daily_reward:

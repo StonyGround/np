@@ -49,8 +49,8 @@ public class MyApplication extends Application {
         regToWx();
         initImagePicker();
         NetStateChangeReceiver.registerReceiver(this);
-//        CrashHandler crashHandler = CrashHandler.getInstance();
-//        crashHandler.init(getApplicationContext());
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
     }
 
     private void initImagePicker() {

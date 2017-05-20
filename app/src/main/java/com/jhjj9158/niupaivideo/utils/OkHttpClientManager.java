@@ -52,6 +52,11 @@ public class OkHttpClientManager {
         getInstance().getAsyn(url, callback);
     }
 
+    /**
+     * 返回未加密数据
+     * @param url
+     * @param callback
+     */
     public static void getUnencrypt(String url, OKHttpCallback callback) {
         getInstance().getAsynUnencrypt(url, callback);
     }

@@ -1,6 +1,7 @@
 package com.jhjj9158.niupaivideo.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.callback.OKHttpCallback;
+import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
@@ -39,16 +41,19 @@ public class AccountEditActivity extends BaseActivity {
     TextView accountConfirm;
 
     private boolean isClick = false;
+    private double money;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initTitle(this, "绑定支付宝账号");
+        ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
 
-        if(!TextUtils.isEmpty(CacheUtils.getString(this,"account_alipay"))){
-            accountAlipay.setText(CacheUtils.getString(this,"account_alipay"));
-            accountName.setText(CacheUtils.getString(this,"account_name"));
-        }
+//        if(!TextUtils.isEmpty(CacheUtils.getString(this,"account_alipay"))){
+//            accountAlipay.setText(CacheUtils.getString(this,"account_alipay"));
+//            accountName.setText(CacheUtils.getString(this,"account_name"));
+//        }
+        money = getIntent().getDoubleExtra("money", 0);
 
         accountAlipay.addTextChangedListener(new TextWatcher() {
             @Override
@@ -117,7 +122,6 @@ public class AccountEditActivity extends BaseActivity {
                             } catch (UnsupportedEncodingException e) {
                                 e.printStackTrace();
                             }
-                            Log.d("AccountEditActivity", "url----" + url);
                             OkHttpClientManager.get(url, new OKHttpCallback() {
                                 @Override
                                 public void onResponse(Object response) {
@@ -126,11 +130,13 @@ public class AccountEditActivity extends BaseActivity {
                                         String errorcode = object.getString("errorcode");
                                         if (errorcode.equals("00000:ok")) {
                                             CommonUtil.showTextToast(AccountEditActivity.this, "绑定成功");
-                                            CacheUtils.setString(AccountEditActivity.this, "account_alipay", accountAlipay.getText()
-                                                    .toString());
-                                            CacheUtils.setString(AccountEditActivity.this, "account_name", accountName.getText()
-                                                    .toString());
-                                            finish();
+                                            Intent intent = new Intent(AccountEditActivity.this, WithDrawActivity.class);
+                                            intent.putExtra("alipay", accountAlipay.getText().toString());
+                                            intent.putExtra("alipay_name", accountName.getText().toString());
+                                            intent.putExtra("money", money);
+                                            startActivity(intent);
+
+                                            AccountEditActivity.this.finish();
                                         } else {
                                             CommonUtil.showTextToast(AccountEditActivity.this, "绑定失败,请核对支付宝信息!");
                                         }

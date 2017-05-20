@@ -1,5 +1,6 @@
 package com.jhjj9158.niupaivideo.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,14 +13,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
+import com.jhjj9158.niupaivideo.activity.SearchActivity;
 import com.jhjj9158.niupaivideo.adapter.TabFragmentAdapter;
 import com.jhjj9158.niupaivideo.bean.TabTitleBean;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
-import com.jhjj9158.niupaivideo.utils.CacheUtils;
+import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
 import com.umeng.analytics.MobclickAgent;
@@ -30,6 +32,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -48,8 +51,8 @@ public class FragmentHome extends Fragment {
     HorizontalScrollViewPager viewpager;
     @BindView(R.id.tablLayout)
     TabLayout tabLayout;
-    Unbinder unbinder;
-    private boolean isFirst = true;
+    @BindView(R.id.home_search)
+    ImageView homeSearch;
 
     private List<Fragment> fragmentList = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
@@ -57,6 +60,8 @@ public class FragmentHome extends Fragment {
 
     private FragmentTransaction transaction;
     private FragmentDynamic fragmentDynamic;
+    private TabFragmentAdapter tabFragmentAdapter;
+    private View rootView;
 
     private Handler handler = new Handler() {
         @Override
@@ -90,8 +95,6 @@ public class FragmentHome extends Fragment {
         }
     };
 
-    private TabFragmentAdapter tabFragmentAdapter;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +108,7 @@ public class FragmentHome extends Fragment {
 
     }
 
-    private View rootView;
+
 
     @Nullable
     @Override
@@ -114,7 +117,8 @@ public class FragmentHome extends Fragment {
 
         if (rootView == null) {
             rootView = inflater.inflate(R.layout.fragment_home, container, false);
-            unbinder = ButterKnife.bind(this, rootView);
+            ButterKnife.bind(this, rootView);
+
             tabFragmentAdapter = new TabFragmentAdapter(getFragmentManager(), fragmentList, titles);
             viewpager.setAdapter(tabFragmentAdapter);
             tabLayout.setupWithViewPager(viewpager);
@@ -146,14 +150,7 @@ public class FragmentHome extends Fragment {
             parent.removeView(rootView);
         }
 
-
         return rootView;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
     }
 
     @Override
@@ -171,7 +168,11 @@ public class FragmentHome extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-//        unbinder.unbind();
         Log.e("FragmentHome", "onDestroyView");
+    }
+
+    @OnClick(R.id.home_search)
+    public void onViewClicked() {
+        startActivity(new Intent(getActivity(), SearchActivity.class));
     }
 }

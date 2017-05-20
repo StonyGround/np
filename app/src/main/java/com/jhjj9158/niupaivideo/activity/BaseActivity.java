@@ -2,6 +2,7 @@ package com.jhjj9158.niupaivideo.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetState
     ImageView toolbar_back;
     TextView toolbar_title;
     LinearLayout ll_toolbar;
+    RelativeLayout toolbar_right;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetState
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            getWindow().setStatusBarColor(Color.argb(50,00,00,00));
+            getWindow().setStatusBarColor(Color.argb(50, 00, 00, 00));
         }
 
         llChildContent = (LinearLayout) findViewById(R.id.ll_child_content);
@@ -56,6 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity implements NetState
         toolbar_back = (ImageView) findViewById(R.id.toolbar_back);
         toolbar_title = (TextView) findViewById(R.id.toolbar_title);
         ll_toolbar = (LinearLayout) findViewById(R.id.ll_toolbar);
+        toolbar_right = (RelativeLayout) findViewById(R.id.toolbar_right);
 
         View child = getChildView();
         ButterKnife.bind(this, child);
@@ -75,6 +79,14 @@ public abstract class BaseActivity extends AppCompatActivity implements NetState
                 activity.finish();
             }
         });
+    }
+
+    protected void addToolBarRightView(View view, View.OnClickListener mOnClickListener) {
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout
+//                .LayoutParams.MATCH_PARENT);
+        toolbar_right.addView(view);
+        if (mOnClickListener == null) return;
+        toolbar_right.setOnClickListener(mOnClickListener);
     }
 
     protected void hintTitle() {

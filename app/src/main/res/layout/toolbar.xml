@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/ll_toolbar"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:id="@+id/ll_toolbar"
               android:orientation="vertical">
 
     <View
@@ -24,12 +24,12 @@
             android:layout_height="match_parent">
 
             <ImageView
-                android:layout_marginLeft="10dp"
                 android:id="@+id/toolbar_back"
-                android:padding="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:padding="10dp"
                 android:src="@drawable/back_b"/>
 
             <TextView
@@ -40,13 +40,22 @@
                 android:textColor="@color/tv_black_my"
                 android:textSize="16sp"/>
 
+            <RelativeLayout
+                android:id="@+id/toolbar_right"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp">
+
+            </RelativeLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_alignParentBottom="true"
                 android:background="@color/btn_circle_login"/>
         </RelativeLayout>
-
 
     </android.support.v7.widget.Toolbar>
 </LinearLayout>

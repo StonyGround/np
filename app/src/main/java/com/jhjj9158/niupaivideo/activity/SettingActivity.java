@@ -1,6 +1,7 @@
 package com.jhjj9158.niupaivideo.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -53,6 +54,7 @@ public class SettingActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.setting_feedback:
+                startActivity(new Intent(this, FeedbackActivity.class));
                 break;
             case R.id.setting_clear:
                 builder.setMessage("确定清除缓存吗？")
@@ -60,7 +62,7 @@ public class SettingActivity extends BaseActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 DataCleanUtil.cleanApplicationData(SettingActivity.this);
-                                CommonUtil.showTextToast(SettingActivity.this,"清除成功");
+                                CommonUtil.showTextToast(SettingActivity.this, "清除成功");
 //                                settingClearSize.setText(getString(R.string.cache_size, "0M"));
                             }
                         })

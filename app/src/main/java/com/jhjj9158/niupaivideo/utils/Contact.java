@@ -46,6 +46,10 @@ public class Contact {
     public static final String BIND_ALIPAY = "user/BingAlipay";
     public static final String UPDATE_INFO = "user/setLoginInfo";
     public static final String WITHDRAW = "Profit/WithDraw";
+    public static final String IN_SEVEN = "profit/InSeven";
+    public static final String WITHDRAW_HISTORY = "Profit/GetWithdrawRecord";
+    public static final String FEEDBACK = "user/addFeedback";
+    public static final String SEARCH_USER = "works/getSearchKeyTopFive";
 
     public static final String IS_START_MAIN = "is_start_main";
 

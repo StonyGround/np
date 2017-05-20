@@ -235,6 +235,7 @@
                     android:textSize="16sp"/>
 
                 <TextView
+                    android:visibility="gone"
                     android:id="@+id/tv_make_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -257,14 +258,15 @@
                     android:orientation="horizontal">
 
                     <TextView
+                        android:layout_marginLeft="10dp"
                         android:id="@+id/tv_rmb_sign"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:text="@string/rmb_sign"
                         android:textColor="@color/button_login_click"/>
 
                     <TextView
+                        android:layout_marginLeft="5dp"
                         android:id="@+id/tv_wallte"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -64,7 +64,7 @@
     <string name="save">保存</string>
     <string name="gender">性别:</string>
     <string name="click_go">点击前往></string>
-
+    <string name="cancel">取消</string>
     <string name="withdraw_affirm">确定</string>
 
     <string name="guide">立即体验</string>
@@ -86,6 +86,13 @@
     <string name="really_name">真实姓名</string>
     <string name="account_explain_1">官方会把提现金额打入此支付宝账号，请确保信息准确！</string>
     <string name="account_explain_2">用于核实您的支付宝账号，请确保信息准确！</string>
+    <string name="string_rule">提现规则</string>
+    <string name="string_rule_1">1.钱包满100元才能提现</string>
+    <string name="string_rule_2">2.每周限提现一次</string>
+    <string name="feedback_hint">请尽情吐槽吧~(๑≧∀≦๑)</string>
+
+    <string name="search_hint">输入昵称、用户id、标签</string>
+
     <!--Ijkplayer Start-->
     <string name="N_A">N/A</string>
     <string name="close">Close</string>

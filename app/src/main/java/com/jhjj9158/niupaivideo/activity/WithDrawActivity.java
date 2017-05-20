@@ -24,11 +24,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 public class WithDrawActivity extends BaseActivity {
+
+    private static final int BIND = 1;
 
     @BindView(R.id.withdraw_account_name)
     TextView withdrawAccountName;
@@ -40,21 +44,38 @@ public class WithDrawActivity extends BaseActivity {
     TextView withdrawCurrentMoney;
     @BindView(R.id.withdraw_confirm)
     TextView withdrawConfirm;
+
     private boolean isClick = false;
+    private String alipay;
+    private String alipay_name;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
         initTitle(this, "提现");
-        final double currentMoney = getIntent().getDoubleExtra("money", 0);
+        TextView textView = new TextView(this);
+        textView.setText("提现记录");
+        addToolBarRightView(textView, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(WithDrawActivity.this, WithDrawHistoryActivity.class));
+            }
+        });
+
+
+        Intent intent = getIntent();
+        final double currentMoney = intent.getDoubleExtra("money", 0);
+        alipay = intent.getStringExtra("alipay");
+        alipay_name = intent.getStringExtra("alipay_name");
 //        final double currentMoney = 120.35;
 
-        if (TextUtils.isEmpty(CacheUtils.getString(this, "account_alipay"))) {
+        if (TextUtils.isEmpty(alipay)) {
             withdrawAccountName.setText("添加账户");
             withdrawAccountName.setTextColor(getResources().getColor(R.color.colorPrimary));
         } else {
-            withdrawAccountName.setText(CacheUtils.getString(this, "account_zfb"));
+            withdrawAccountName.setText(alipay);
         }
 
         withdrawCurrentMoney.setText("当前钱包余额：" + currentMoney + "元");
@@ -105,7 +126,7 @@ public class WithDrawActivity extends BaseActivity {
     }
 
     public void userIsEmpty() {
-        if (!TextUtils.isEmpty(withdrawMoney.getText()) && !TextUtils.isEmpty(CacheUtils.getString(this, "account_alipay"))) {
+        if (!TextUtils.isEmpty(withdrawMoney.getText()) && !TextUtils.isEmpty(alipay)) {
             isClick = true;
             withdrawConfirm.setBackgroundResource(R.drawable.btn_circle_quit);
         } else {
@@ -123,7 +144,8 @@ public class WithDrawActivity extends BaseActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.withdraw_rl_account:
-                startActivity(new Intent(this, AccountEditActivity.class));
+//                startActivity(new Intent(this, AccountEditActivity.class));
+//                WithDrawActivity.this.finish();
                 break;
             case R.id.withdraw_confirm:
                 if (!isClick)
@@ -134,9 +156,14 @@ public class WithDrawActivity extends BaseActivity {
                     return;
                 }
 
-                String url = Contact.HOST + Contact.WITHDRAW + "?uidx=" + CacheUtils.getInt(this, "useridx") + "&nickName=" +
-                        CacheUtils.getString(this, "nickName") + "&alipay=" + CacheUtils.getString(this, "account_alipay") +
-                        "&alipayName=" + CacheUtils.getString(this, "account_name") + "&wallet=" + withdrawMoney.getText().toString();
+                String url = null;
+                try {
+                    url = Contact.HOST + Contact.WITHDRAW + "?uidx=" + CacheUtils.getInt(this, "useridx") + "&nickName=" +
+                            CacheUtils.getString(this, "nickName") + "&alipay=" + alipay + "&alipayName=" + URLEncoder.encode
+                            (alipay_name, "utf-8") + "&wallet=" + withdrawMoney.getText().toString();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
                 OkHttpClientManager.get(url, new OKHttpCallback() {
                     @Override
                     public void onResponse(Object response) {
@@ -164,13 +191,11 @@ public class WithDrawActivity extends BaseActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        if (TextUtils.isEmpty(CacheUtils.getString(this, "account_alipay"))) {
-            withdrawAccountName.setText("添加账户");
-            withdrawAccountName.setTextColor(getResources().getColor(R.color.colorPrimary));
-        } else {
-            withdrawAccountName.setText(CacheUtils.getString(this, "account_alipay"));
-        }
     }
 }
