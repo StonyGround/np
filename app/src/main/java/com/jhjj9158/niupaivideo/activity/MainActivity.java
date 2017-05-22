@@ -88,15 +88,17 @@ public class MainActivity extends BaseActivity implements NetStateChangeObserver
             startActivity(new Intent(this, GuideActivity.class));
         }
 
-        if (!CommonUtil.checkPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE})) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, Contact.CHECK_PERMISSION);
+        if (!CommonUtil.checkPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+                .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+                    .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, Contact.CHECK_PERMISSION);
+        } else {
+            CommonUtil.updateInfo(MainActivity.this);
         }
 
         inflater = LayoutInflater.from(this);
         tabList = getTabViewList(tabTitles.length);
         initiTabHost();
-
-        CommonUtil.updateInfo(MainActivity.this);
 
         MobclickAgent.openActivityDurationTrack(false);
     }
@@ -108,24 +110,9 @@ public class MainActivity extends BaseActivity implements NetStateChangeObserver
         switch (requestCode) {
             case Contact.CHECK_PERMISSION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (CacheUtils.getInt(this, "useridx") != 0) {
-                        Location location = LocationUtil.getLocation(this);
-                        double latitude = location.getLatitude();
-                        double longitude = location.getLongitude();
-                        String url = Contact.GOOGLE_LOCATION + latitude + "," + longitude;
-                        OkHttpClientManager.get(url, new OKHttpCallback() {
-                            @Override
-                            public void onResponse(Object response) {
-                                Log.d("Location", String.valueOf(response));
-                            }
-
-                            @Override
-                            public void onError(IOException e) {
-
-                            }
-                        });
-                    }
+                    CommonUtil.updateInfo(MainActivity.this);
                 }
+                break;
         }
     }
 

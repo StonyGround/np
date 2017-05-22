@@ -71,6 +71,7 @@
 
 
         <ScrollView
+            android:id="@+id/video_scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:overScrollMode="never"
@@ -93,7 +94,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <VideoView
+                    <com.pili.pldroid.player.widget.PLVideoTextureView
                         android:id="@+id/video_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"

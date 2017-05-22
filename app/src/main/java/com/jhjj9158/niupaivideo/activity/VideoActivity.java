@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,17 +11,21 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -44,9 +47,11 @@ import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.InitiView;
 import com.jhjj9158.niupaivideo.utils.LocationUtil;
 import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
+import com.jhjj9158.niupaivideo.utils.MediaController;
 import com.jhjj9158.niupaivideo.utils.OkHttpClientManager;
-import com.jhjj9158.niupaivideo.widget.AndroidMediaController;
-import com.jhjj9158.niupaivideo.widget.IjkVideoView;
+import com.pili.pldroid.player.IMediaController;
+import com.pili.pldroid.player.widget.PLVideoTextureView;
+import com.pili.pldroid.player.widget.PLVideoView;
 import com.squareup.picasso.Picasso;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.socialize.ShareAction;
@@ -61,12 +66,12 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.Call;
@@ -86,8 +91,10 @@ public class VideoActivity extends BaseActivity {
     private static final int ADD_COMMENT = 5;
     private static final int FOLLOW = 6;
 
+    @BindView(R.id.video_scrollView)
+    ScrollView videoScrollView;
     @BindView(R.id.video_view)
-    VideoView videoView;
+    PLVideoTextureView videoView;
     @BindView(R.id.video_back)
     ImageView videoBack;
     @BindView(R.id.video_heart)
@@ -127,10 +134,8 @@ public class VideoActivity extends BaseActivity {
     @BindView(R.id.progressbar)
     ProgressBar progressbar;
 
-    private Settings mSettings;
-    private AndroidMediaController mMediaController;
-    private boolean mBackPressed;
     private VideoIsFollowBean isFollowBean;
+    private MediaController mediaController;
     private int vid;
     private int videoUserId;
     private int uidx;
@@ -364,13 +369,12 @@ public class VideoActivity extends BaseActivity {
         int fromType = indexResultBean.getFromtype();
         int loginplant = indexResultBean.getLoginplant();
 
-        if (LocationUtil.getLocation(this) != null) {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                    PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
-                        .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, Contact.CHECK_PERMISSION);
-            } else {
+        if (!CommonUtil.checkPermission(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission
+                .ACCESS_COARSE_LOCATION})) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
+                    .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, Contact.CHECK_PERMISSION);
+        } else {
+            if (LocationUtil.getLocation(this) != null) {
                 double longitude = indexResultBean.getLongitude();
                 double latitude = indexResultBean.getLatitude();
                 tvDistance.setText(getDistance(longitude, latitude));
@@ -399,51 +403,28 @@ public class VideoActivity extends BaseActivity {
             }
         }
 
-//        mSettings = new Settings(this);
-//        mMediaController = new AndroidMediaController(this, false);
-//        IjkMediaPlayer.loadLibrariesOnce(null);
-//        IjkMediaPlayer.native_profileBegin("libijkplayer.so");
-
-
-//        videoView.setMediaController(mMediaController);
-//        videoView.setHudView(hudView);
         int width = CommonUtil.getScreenWidth(this);
+        int heigh = CommonUtil.getScreenHeigh(this);
         if (TextUtils.isEmpty(imageScale)) {
             imageScale = "0.75";
         }
-        double heigh = width / (Double.parseDouble(imageScale));
-        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, (int) heigh);
+        double viewHeigh = width / (Double.parseDouble(imageScale));
+        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(width, (int) viewHeigh);
         videoView.setLayoutParams(layoutParams);
-        videoView.setVideoURI(Uri.parse(videoUrl));
-//        videoView.setMediaController(new MediaController(this));
-        videoView.start();
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                videoView.start();
-            }
-        });
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                progressbar.setVisibility(View.GONE);
-            }
-        });
-//        videoView.setOnPreparedListener(new IMediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(IMediaPlayer mp) {
-//                videoView.start();
-//            }
-//        });
-//        videoView.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(IMediaPlayer iMediaPlayer) {
-//                videoView.start();
-//            }
-//        });
-    }
 
-    private IjkVideoView ijkVideoView;
+//        mediaController = new MediaController(this, false, false);
+//        videoView.setMediaController(mediaController);
+
+        videoView.setBufferingIndicator(progressbar);
+//        videoView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_FIT_PARENT);
+
+//        videoView.setOnCompletionListener(mOnCompletionListener);
+//        videoView.setOnErrorListener(mOnErrorListener);
+
+        videoView.setVideoURI(Uri.parse(videoUrl));
+        videoView.start();
+
+    }
 
 
     @Override
@@ -482,7 +463,6 @@ public class VideoActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        mBackPressed = true;
         super.onBackPressed();
     }
 
@@ -490,30 +470,14 @@ public class VideoActivity extends BaseActivity {
     protected void onStop() {
         super.onStop();
         Log.e("VideoView", "onStop");
-//        videoView.stopPlayback();
-//        if (mBackPressed || !videoView.isBackgroundPlayEnabled()) {
-//            videoView.stopPlayback();
-//            videoView.release(true);
-//            videoView.stopBackgroundPlay();
-//        } else {
-//            videoView.enterBackground();
-//        }
-//        IjkMediaPlayer.native_profileEnd();
-
-//        if (mBackPressed || !ijkVideoView.isBackgroundPlayEnabled()) {
-//            ijkVideoView.stopPlayback();
-//            ijkVideoView.release(true);
-//            ijkVideoView.stopBackgroundPlay();
-//        } else {
-//            ijkVideoView.enterBackground();
-//        }
-//        IjkMediaPlayer.native_profileEnd();
     }
 
     @Override
     protected void onDestroy() {
+
         super.onDestroy();
         Log.e("VideoView", "onDestroy");
+        videoView.stopPlayback();
     }
 
     @OnClick({R.id.video_back, R.id.video_heart, R.id.video_share, R.id.tv_input, R.id
@@ -582,6 +546,7 @@ public class VideoActivity extends BaseActivity {
                 }
                 Intent intentHead = new Intent(this, PersonalActivity.class);
                 intentHead.putExtra("buidx", videoUserId);
+                intentHead.putExtra("vid", vid);
                 startActivity(intentHead);
                 break;
             case R.id.video_follow:
@@ -697,9 +662,14 @@ public class VideoActivity extends BaseActivity {
         if (buidx == uidx) {
             replyCid = 0;
         }
-        String url = Contact.HOST + Contact.ADD_COMMENT + "?vid=" + vid + "&uidx=" + uidx +
-                "&buidx=" + buidx + "&comment=" + comment +
-                "&identify=" + identify + "&replyCid=" + replyCid;
+        String url = null;
+        try {
+            url = Contact.HOST + Contact.ADD_COMMENT + "?vid=" + vid + "&uidx=" + uidx +
+                    "&buidx=" + buidx + "&comment=" + URLEncoder.encode(comment, "UTF-8") +
+                    "&identify=" + identify + "&replyCid=" + replyCid;
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(url);
         requestBuilder.method("GET", null);
@@ -851,8 +821,6 @@ public class VideoActivity extends BaseActivity {
 //        progressbar.setVisibility(View.VISIBLE);
         uidx = CacheUtils.getInt(this, "useridx");
         Log.e("VideoView", "onResume");
-//        initVideoView();
-        videoView.seekTo(per);
         videoView.start();
         if (CacheUtils.getInt(this, "useridx") != 0) {
             initIsFollow();
@@ -866,7 +834,7 @@ public class VideoActivity extends BaseActivity {
         super.onPause();
         Log.e("VideoView", "onPause");
         videoView.pause();
-        per = videoView.getCurrentPosition();
+//        per = videoView.getCurrentPosition();
         MobclickAgent.onPageEnd("VideoActivity");
         MobclickAgent.onPause(this);
     }

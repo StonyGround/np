@@ -140,8 +140,11 @@ public class SearchUserAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-//        return mHeaderView == null ? mDatas.size() : mDatas.size() + 1;
-        return 5;
+        if(mDatas.size()>5){
+            return 5;
+        }else{
+            return mHeaderView == null ? mDatas.size() : mDatas.size() + 1;
+        }
     }
 
     class Holder extends RecyclerView.ViewHolder {

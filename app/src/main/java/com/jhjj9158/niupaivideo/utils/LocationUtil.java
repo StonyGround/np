@@ -37,7 +37,6 @@ public class LocationUtil {
         } else if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
             locationProvider = LocationManager.NETWORK_PROVIDER;
         } else {
-            CommonUtil.showTextToast(context, "没有可用的位置提供器");
             return null;
         }
 

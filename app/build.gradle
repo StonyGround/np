@@ -34,18 +34,6 @@ android {
         }
     }
 
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['jniLibs']
-        }
-    }
-
-
-
-    dataBinding {
-        enabled = true
-    }
-
     productFlavors {
         wandoujia {}
         xiaomi {}
@@ -82,13 +70,11 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'tv.danmaku.ijk.media:ijkplayer-java:0.7.9'
-    compile 'tv.danmaku.ijk.media:ijkplayer-armv7a:0.7.9'
-    compile 'tv.danmaku.ijk.media:ijkplayer-exo:0.7.9'
     compile 'com.tencent.mm.opensdk:wechat-sdk-android-with-mta:+'
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.lzy.widget:imagepicker:0.5.5'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'com.qiniu.pili:pili-android-qos:0.8.+'
+    compile files('libs/pldroid-player-1.5.1.jar')
 }

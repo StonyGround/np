@@ -50,6 +50,7 @@ public class Contact {
     public static final String WITHDRAW_HISTORY = "Profit/GetWithdrawRecord";
     public static final String FEEDBACK = "user/addFeedback";
     public static final String SEARCH_USER = "works/getSearchKeyTopFive";
+    public static final String USER_REPORT = "user/report";
 
     public static final String IS_START_MAIN = "is_start_main";
 

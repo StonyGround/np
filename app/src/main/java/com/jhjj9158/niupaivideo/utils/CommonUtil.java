@@ -145,6 +145,12 @@ public class CommonUtil {
         return display.widthPixels;
     }
 
+    public static int getScreenHeigh(Context context) {
+        DisplayMetrics display = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(display);
+        return display.heightPixels;
+    }
+
 
     public static boolean checkPermission(Context context, String[] permissions) {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -188,15 +194,13 @@ public class CommonUtil {
     }
 
     public static void updateInfo(final Context context) {
-        if (!CommonUtil.checkPermission(context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION})) {
-            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Contact
-                    .CHECK_PERMISSION);
-        } else {
-            final int uidx = CacheUtils.getInt(context, "useridx");
-            if (uidx != 0) {
-                Location location = LocationUtil.getLocation(context);
+        final int uidx = CacheUtils.getInt(context, "useridx");
+        if (uidx != 0) {
+            Location location = LocationUtil.getLocation(context);
+            if (location != null) {
                 final double latitude = location.getLatitude();
                 final double longitude = location.getLongitude();
+
                 String url = Contact.GOOGLE_LOCATION + latitude + "," + longitude;
                 OkHttpClientManager.getUnencrypt(url, new OKHttpCallback() {
                     @Override
@@ -254,5 +258,4 @@ public class CommonUtil {
             }
         }
     }
-
 }

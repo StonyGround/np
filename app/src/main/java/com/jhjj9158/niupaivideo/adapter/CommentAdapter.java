@@ -104,8 +104,13 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             if (!headImage.contains("http")) {
                 headImage = "http://" + headImage;
             }
-            String comment = new String(Base64.decode(data.getComment().getBytes(),
-                    Base64.DEFAULT));
+            String comment = null;
+            try {
+                comment = URLDecoder.decode(new String(Base64.decode(data.getComment().getBytes(),
+                        Base64.DEFAULT)), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             String date = new String(Base64.decode(data.getCDate().getBytes(), Base64.DEFAULT));
             double distance = LocationUtil.gps2m(context, data.getLatitude(), data.getLongitude()
             ) / 1000;
@@ -133,7 +138,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((Holder) viewHolder).video_reply_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (CacheUtils.getInt(context,"useridx") == 0) {
+                    if (CacheUtils.getInt(context, "useridx") == 0) {
                         context.startActivity(new Intent(context, QuickLoignActivity.class));
                         return;
                     }
@@ -147,7 +152,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             ((Holder) viewHolder).comment_name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (CacheUtils.getInt(context,"useridx") == 0) {
+                    if (CacheUtils.getInt(context, "useridx") == 0) {
                         context.startActivity(new Intent(context, QuickLoignActivity.class));
                         return;
                     }

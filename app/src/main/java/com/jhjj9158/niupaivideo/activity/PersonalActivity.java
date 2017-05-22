@@ -23,6 +23,9 @@ import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.adapter.TabFragmentAdapter;
 import com.jhjj9158.niupaivideo.bean.FollowPostBean;
 import com.jhjj9158.niupaivideo.bean.PersonalBean;
+import com.jhjj9158.niupaivideo.callback.OKHttpCallback;
+import com.jhjj9158.niupaivideo.dialog.DialogComment;
+import com.jhjj9158.niupaivideo.dialog.DialogReport;
 import com.jhjj9158.niupaivideo.fragment.FragmentFavorite;
 import com.jhjj9158.niupaivideo.fragment.FragmentWorks;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
@@ -31,6 +34,8 @@ import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
 import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
+import com.jhjj9158.niupaivideo.utils.InitiView;
+import com.jhjj9158.niupaivideo.utils.OkHttpClientManager;
 import com.jhjj9158.niupaivideo.widget.HorizontalScrollViewPager;
 import com.squareup.picasso.Picasso;
 import com.umeng.analytics.MobclickAgent;
@@ -92,6 +97,7 @@ public class PersonalActivity extends FragmentActivity {
     private int uidx;
     private int isFollow;
     private int fansNum;
+    private int vid;
 
     private List<Fragment> fragmentList = new ArrayList<>();
     private List<String> titles = new ArrayList<>();
@@ -120,7 +126,7 @@ public class PersonalActivity extends FragmentActivity {
                             personalFans.setText(" " + "粉丝" + fansNum);
                         }
                         CommonUtil.showTextToast(PersonalActivity
-                                .this,result);
+                                .this, result);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -158,9 +164,9 @@ public class PersonalActivity extends FragmentActivity {
         Picasso.with(this).load(headImage).placeholder(R.drawable.me_user_admin).into(personalHeadimg);
         personalFollow.setText("关注" + followNum + " |");
         personalFans.setText(" " + "粉丝" + fansNum);
-        if(TextUtils.isEmpty(signature)){
+        if (TextUtils.isEmpty(signature)) {
             personalSignature.setText("这个人很懒，什么都没有写...");
-        }else {
+        } else {
             personalSignature.setText(signature);
         }
         personalId.setText("ID:" + showuidx);
@@ -191,7 +197,9 @@ public class PersonalActivity extends FragmentActivity {
         }
 
 
-        buidx = getIntent().getIntExtra("buidx", 0);
+        Intent getIntent = getIntent();
+        buidx = getIntent.getIntExtra("buidx", 0);
+        vid = getIntent.getIntExtra("vid", 0);
         uidx = CacheUtils.getInt(this, "useridx");
         CacheUtils.setInt(this, "buidx", buidx);
 
@@ -241,9 +249,41 @@ public class PersonalActivity extends FragmentActivity {
 
     @OnClick({R.id.personal_more, R.id.personal_back, R.id.btn_personal_follow, R.id
             .personal_follow, R.id.personal_fans})
-    public void onViewClicked(View view) {
+    public void onViewClicked(final View view) {
         switch (view.getId()) {
             case R.id.personal_more:
+                DialogReport dialogReport = new DialogReport(this);
+                dialogReport.setReportDialogListener(new DialogReport.ReportDialogListener() {
+                    @Override
+                    public void onClick() {
+                        String url = Contact.HOST + Contact.USER_REPORT + "?uidx=" + uidx + "&buidx=" + buidx + "&vid=" + vid;
+                        OkHttpClientManager.get(url, new OKHttpCallback() {
+                            @Override
+                            public void onResponse(Object response) {
+                                try {
+                                    JSONObject object = new JSONObject((String) response);
+                                    int result = object.getInt("result");
+                                    if (result == 1) {
+                                        CommonUtil.showTextToast(PersonalActivity.this, "举报成功");
+                                        finish();
+                                    } else {
+                                        CommonUtil.showTextToast(PersonalActivity.this, "举报失败");
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
+                            @Override
+                            public void onError(IOException e) {
+
+                            }
+                        });
+                    }
+                });
+                InitiView.initiBottomDialog(dialogReport);
+//                InitiView.setDialogMatchParent(dialogComment);
+                dialogReport.show();
                 break;
             case R.id.btn_personal_follow:
                 if (isFollow == 1) {
