@@ -9,6 +9,7 @@ import android.webkit.WebView;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.utils.CacheUtils;
 import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
+import com.jhjj9158.niupaivideo.utils.Contact;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.BindView;
@@ -35,6 +36,8 @@ public class WebViewActivity extends BaseActivity {
             initTitle(this, "欢乐直播登录");
         } else if(fromType==11) {
             initTitle(this, "水晶直播登录");
+        }else if(fromType== Contact.WEBVIEW_AGREEMENT){
+            initTitle(this, "牛拍注册协议");
         }else{
             initTitle(this, "牛拍");
         }

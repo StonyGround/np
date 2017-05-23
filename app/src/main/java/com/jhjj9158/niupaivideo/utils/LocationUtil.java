@@ -8,6 +8,11 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
+
 import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -19,15 +24,8 @@ import static android.content.Context.LOCATION_SERVICE;
 public class LocationUtil {
 
 
-    public static Location getLocation(Context context) {
+    static Location getLocation(Context context) throws SecurityException {
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Contact
-//                    .CHECK_PERMISSION);
-            return null;
-        }
         LocationManager locationManager;
         String locationProvider;
         locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
@@ -43,14 +41,25 @@ public class LocationUtil {
         return locationManager.getLastKnownLocation(locationProvider);
     }
 
-    public static double gps2m(Context context, double lat_a, double lng_a) {
-        Location location = getLocation(context);
-        double lat_b = 0;
-        double lng_b = 0;
-        if (location != null) {
-            lat_b = location.getLatitude();
-            lng_b = location.getLongitude();
-        }
+    public static AMapLocation getAMLocation(Context context) {
+        final AMapLocation[] aMap = {null};
+        AMapLocationClient mLocationClient = new AMapLocationClient(context);
+        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        mLocationOption.setOnceLocationLatest(true);
+        mLocationClient.setLocationOption(mLocationOption);
+        mLocationClient.startLocation();
+        mLocationClient.setLocationListener(new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                aMap[0] = aMapLocation;
+            }
+        });
+        return aMap[0];
+    }
+
+
+    public static double gps2m(double lat_a, double lng_a,double lat_b,double lng_b) {
         double radLat1 = (lat_a * Math.PI / 180.0);
         double radLat2 = (lat_b * Math.PI / 180.0);
         double a = radLat1 - radLat2;

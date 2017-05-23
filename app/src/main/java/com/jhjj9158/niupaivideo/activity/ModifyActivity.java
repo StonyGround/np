@@ -50,6 +50,9 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -99,6 +102,7 @@ public class ModifyActivity extends BaseActivity {
                             CommonUtil.showTextToast(ModifyActivity.this, "修改成功");
                             Picasso.with(ModifyActivity.this).load(new File(headImgPath)).placeholder(R.drawable.me_user_admin).into
                                     (modifyHeadimg);
+                            CommonUtil.updateInfo(ModifyActivity.this);
                         } else {
                             CommonUtil.showTextToast(ModifyActivity
                                     .this, jsonObject.getString("msg"));
@@ -123,6 +127,9 @@ public class ModifyActivity extends BaseActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    break;
+                case Contact.NET_ERROR:
+                    CommonUtil.showTextToast(ModifyActivity.this,"网络超时");
                     break;
             }
             super.handleMessage(msg);
@@ -163,10 +170,15 @@ public class ModifyActivity extends BaseActivity {
     private void initView() {
         String headImage = new String(Base64.decode(userInfo.getHeadphoto().getBytes(),
                 Base64.DEFAULT));
-        name = new String(Base64.decode(userInfo.getNickName().getBytes(),
-                Base64.DEFAULT));
-        signature = new String(Base64.decode(userInfo.getSignature().getBytes(),
-                Base64.DEFAULT));
+        try {
+            name = URLDecoder.decode(new String(Base64.decode(userInfo.getNickName().getBytes(),
+                    Base64.DEFAULT)), "utf-8");
+            signature = URLDecoder.decode(new String(Base64.decode(userInfo.getSignature().getBytes(),
+                    Base64.DEFAULT)), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
         if (!headImage.contains("http")) {
             headImage = "http://" + headImage;
         }
@@ -192,12 +204,17 @@ public class ModifyActivity extends BaseActivity {
                 finish();
                 break;
             case R.id.modify_save:
-                String et_name = modifyName.getText().toString();
-                String et_signature = modifySignature.getText().toString();
+                String et_name = modifyName.getText().toString().trim();
+                String et_signature = CommonUtil.replaceBlank(modifySignature.getText().toString());
                 if (TextUtils.isEmpty(et_name)) {
                     CommonUtil.showTextToast(this, "名称不能为空");
                     return;
                 }
+                if (TextUtils.isEmpty(et_signature)) {
+                    CommonUtil.showTextToast(this, "签名不能为空");
+                    return;
+                }
+
                 if (!et_name.equals(name)) {
                     saveInfo(1, et_name);
                 } else if (!et_signature.equals(signature)) {
@@ -227,7 +244,11 @@ public class ModifyActivity extends BaseActivity {
         UserPostBean userPostBean = new UserPostBean();
         userPostBean.setOpcode("UpdateUserInfor");
         userPostBean.setUseridx(userInfo.getUidx());
-        userPostBean.setName(modifyString);
+        try {
+            userPostBean.setName(URLEncoder.encode(modifyString, "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         userPostBean.setChooseSelect(chooseSelect);
 
         Gson gson = new Gson();
@@ -251,7 +272,9 @@ public class ModifyActivity extends BaseActivity {
 
             @Override
             public void onFailure(Call call, IOException e) {
-
+                Message message = new Message();
+                message.what = Contact.NET_ERROR;
+                handler.sendMessage(message);
             }
 
             @Override

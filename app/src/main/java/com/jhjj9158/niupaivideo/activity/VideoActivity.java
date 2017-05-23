@@ -1,6 +1,7 @@
 package com.jhjj9158.niupaivideo.activity;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -10,7 +11,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -29,6 +32,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.Settings;
@@ -133,6 +140,8 @@ public class VideoActivity extends BaseActivity {
     ImageView videoFollow;
     @BindView(R.id.progressbar)
     ProgressBar progressbar;
+    @BindView(R.id.video_view_bottom)
+    View videoViewBottom;
 
     private VideoIsFollowBean isFollowBean;
     private MediaController mediaController;
@@ -142,6 +151,8 @@ public class VideoActivity extends BaseActivity {
     private boolean isShowComment = true;
     private int followNum;
     private int commentNum;
+    public AMapLocationClient mLocationClient = null;
+    public AMapLocationClientOption mLocationOption = null;
 
     private Handler handler = new Handler() {
         @Override
@@ -205,6 +216,7 @@ public class VideoActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         hintTitle();
         ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
+
         LinearLayoutManager mLinearLayoutManager = new LinearLayoutManager(this,
                 LinearLayoutManager.VERTICAL, false) {
             @Override
@@ -213,7 +225,6 @@ public class VideoActivity extends BaseActivity {
             }
         };
         rvComment.setLayoutManager(mLinearLayoutManager);
-//        setTitle(this, "播放");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
@@ -225,6 +236,7 @@ public class VideoActivity extends BaseActivity {
             getWindow().setStatusBarColor(Color.argb(50, 00, 00, 00));
         }
 
+
         indexResultBean = getIntent().getParcelableExtra("video");
         vid = indexResultBean.getVid();
         videoUserId = indexResultBean.getUidx();
@@ -233,7 +245,7 @@ public class VideoActivity extends BaseActivity {
         initVideoView();
         getVideoInfo(vid);
 
-        if (CacheUtils.getInt(this, "useridx") != 0) {
+        if (uidx != 0) {
             initIsFollow();
         }
         getComment();
@@ -374,13 +386,15 @@ public class VideoActivity extends BaseActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission
                     .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, Contact.CHECK_PERMISSION);
         } else {
-            if (LocationUtil.getLocation(this) != null) {
-                double longitude = indexResultBean.getLongitude();
-                double latitude = indexResultBean.getLatitude();
-                tvDistance.setText(getDistance(longitude, latitude));
-            }
+            double longitude = indexResultBean.getLongitude();
+            double latitude = indexResultBean.getLatitude();
+//            tvDistance.setText(getDistance(longitude, latitude));
+            setDistance(latitude, longitude);
         }
 
+        if (uidx == videoUserId) {
+            videoFollow.setVisibility(View.GONE);
+        }
         if (TextUtils.isEmpty(desc)) {
             videoUserName.setText(name);
         } else {
@@ -390,21 +404,21 @@ public class VideoActivity extends BaseActivity {
         tvDate.setText("发布于:" + date);
 
         if (fromType == 11) {
-            videoFromType.setText("主播在水晶直播等你哟~");
+            videoFromType.setText("我在水晶直播，快来看~");
         } else if (fromType == 3) {
-            videoFromType.setText("主播在欢乐直播等你哟~");
+            videoFromType.setText("我在欢乐直播，快来看~");
         } else {
             if (loginplant == 11) {
-                videoFromType.setText("主播在水晶直播等你哟~");
+                videoFromType.setText("我在水晶直播，快来看~");
             } else if (loginplant == 3) {
-                videoFromType.setText("主播在欢乐直播等你哟~");
+                videoFromType.setText("我在欢乐直播，快来看~");
             } else {
                 videoRlBottom.setVisibility(View.GONE);
+                videoViewBottom.setVisibility(View.GONE);
             }
         }
 
         int width = CommonUtil.getScreenWidth(this);
-        int heigh = CommonUtil.getScreenHeigh(this);
         if (TextUtils.isEmpty(imageScale)) {
             imageScale = "0.75";
         }
@@ -435,30 +449,50 @@ public class VideoActivity extends BaseActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     double longitude = indexResultBean.getLongitude();
                     double latitude = indexResultBean.getLatitude();
-                    tvDistance.setText(getDistance(longitude, latitude));
+//                    tvDistance.setText(getDistance(longitude, latitude));
+                    setDistance(latitude, longitude);
                 } else {
-//                    new AlertDialog.Builder(this).setMessage("请允许牛拍获取您的相机、相册权限，否则无法更换新的头像。")
-//                            .setPositiveButton("我知道了", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    dialog.dismiss();
-//                                }
-//                            }).show();
+                    new AlertDialog.Builder(this).setMessage("开启定位功能可以查看附近的小伙伴哟~")
+                            .setPositiveButton("我知道了", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
                 }
         }
     }
 
-    private String getDistance(double longitude, double latitude) {
-        String tv_distance = null;
-        double distance = LocationUtil.gps2m(this, latitude, longitude) / 1000;
-        if (distance < 1) {
-            tv_distance = "距你" + (int) (distance * 1000) + "m";
-        } else if (distance > 1 && distance < 1000) {
-            tv_distance = "距你" + (int) distance + "km";
-        } else {
-            tv_distance = "距你1000km外";
-        }
-        return tv_distance;
+    private void setDistance(final double latitude, final double longitude) {
+        AMapLocationClient mLocationClient = new AMapLocationClient(getApplicationContext());
+        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        mLocationOption.setOnceLocationLatest(true);
+        mLocationClient.setLocationOption(mLocationOption);
+        mLocationClient.startLocation();
+        mLocationClient.setLocationListener(new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                if (aMapLocation != null) {
+                    if (aMapLocation.getErrorCode() == 0) {
+                        Log.e("AMapLocation", aMapLocation.getLatitude() + "---" + aMapLocation.getLongitude());
+                        double distance = LocationUtil.gps2m(latitude, longitude, aMapLocation.getLatitude(), aMapLocation.getLongitude()
+                        ) / 1000;
+                        if (distance < 1 && distance > 0) {
+                            tvDistance.setText("距你" + (int) (distance * 1000) + "m");
+                        } else if (distance > 1 && distance < 1000) {
+                            tvDistance.setText("距你" + (int) distance + "km");
+                        } else if (distance > 1000) {
+                            tvDistance.setText("距你1000km外");
+                        }
+                    } else {
+                        Log.e("AmapError", "location Error, ErrCode:"
+                                + aMapLocation.getErrorCode() + ", errInfo:"
+                                + aMapLocation.getErrorInfo());
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -654,6 +688,7 @@ public class VideoActivity extends BaseActivity {
     }
 
     private void sendComment(int buidx, String comment, int identify, int replyCid) {
+        comment = CommonUtil.replaceBlank(comment);
         if (TextUtils.isEmpty(comment)) {
             CommonUtil.showTextToast(this, "评论内容不能为空");
             return;
@@ -665,7 +700,7 @@ public class VideoActivity extends BaseActivity {
         String url = null;
         try {
             url = Contact.HOST + Contact.ADD_COMMENT + "?vid=" + vid + "&uidx=" + uidx +
-                    "&buidx=" + buidx + "&comment=" + URLEncoder.encode(comment, "UTF-8") +
+                    "&buidx=" + buidx + "&comment=" + URLEncoder.encode(URLEncoder.encode(comment, "UTF-8"), "UTF-8") +
                     "&identify=" + identify + "&replyCid=" + replyCid;
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -728,6 +763,7 @@ public class VideoActivity extends BaseActivity {
         List<CommentBean.ResultBean> resultBeanList = gson.fromJson(json, CommentBean.class)
                 .getResult();
         if (resultBeanList.size() == 0) {
+            commentNothing.setText("你要是主动一点，说不定我们现在都有孩子了~");
             commentNothing.setVisibility(View.VISIBLE);
             return;
         }
@@ -770,7 +806,7 @@ public class VideoActivity extends BaseActivity {
             followNum = followNum + 1;
             videoFollowNum.setText(getString(R.string.follow_num, followNum));
         } else if (result == 2) {
-            CommonUtil.showTextToast(this, "今日点赞已满10次，请明天再来哟~");
+            CommonUtil.showTextToast(this, "今日已点赞，请明天再来哟~");
         } else {
             CommonUtil.showTextToast(this, "点赞失败");
         }
@@ -812,8 +848,6 @@ public class VideoActivity extends BaseActivity {
             }
         }
     }
-
-    private int per;
 
     @Override
     public void onResume() {

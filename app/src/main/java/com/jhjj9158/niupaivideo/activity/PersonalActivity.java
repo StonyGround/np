@@ -115,14 +115,10 @@ public class PersonalActivity extends FragmentActivity {
                         JSONObject jsonObject = new JSONObject(json);
                         String result = jsonObject.getString("msg");
                         if (result.equals("关注成功")) {
-                            isFollow = 1;
                             btnPersonalFollow.setText(R.string.unfollow);
-                            fansNum = fansNum + 1;
                             personalFans.setText(" " + "粉丝" + fansNum);
                         } else {
-                            isFollow = 0;
                             btnPersonalFollow.setText(R.string.tv_personal_follow);
-                            fansNum = fansNum - 1;
                             personalFans.setText(" " + "粉丝" + fansNum);
                         }
                         CommonUtil.showTextToast(PersonalActivity
@@ -175,7 +171,6 @@ public class PersonalActivity extends FragmentActivity {
         }
         Picasso.with(this).load(headImage).placeholder(R.drawable.me_user_admin).transform(new BlurBitmapUtil.BlurTransformation(this))
                 .into(personalBg);
-
         titles.add("作品" + worksNum);
         titles.add("喜欢" + favoriteNum);
         initTabPager();
@@ -287,8 +282,12 @@ public class PersonalActivity extends FragmentActivity {
                 break;
             case R.id.btn_personal_follow:
                 if (isFollow == 1) {
+                    fansNum = fansNum - 1;
+                    isFollow = 2;
                     setFollow(2);
                 } else {
+                    isFollow = 1;
+                    fansNum = fansNum + 1;
                     setFollow(1);
                 }
                 break;

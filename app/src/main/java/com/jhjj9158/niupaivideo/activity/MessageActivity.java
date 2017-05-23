@@ -37,7 +37,8 @@ public class MessageActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hintTitle();
+//        hintTitle();
+        initTitle(this,"消息");
         ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

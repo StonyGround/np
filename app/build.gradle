@@ -77,4 +77,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'com.qiniu.pili:pili-android-qos:0.8.+'
     compile files('libs/pldroid-player-1.5.1.jar')
+    compile 'com.amap.api:location:latest.integration'
 }

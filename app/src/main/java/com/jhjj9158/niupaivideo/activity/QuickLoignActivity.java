@@ -136,6 +136,10 @@ public class QuickLoignActivity extends BaseActivity {
                 startActivity(intentHappy);
                 break;
             case R.id.tv_agressment:
+                Intent webIntent = new Intent(this, WebViewActivity.class);
+                webIntent.putExtra("fromType", Contact.WEBVIEW_AGREEMENT);
+                webIntent.putExtra("url","file:///android_asset/agreement.html");
+                startActivity(webIntent);
                 break;
         }
 

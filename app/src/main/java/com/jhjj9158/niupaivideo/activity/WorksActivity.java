@@ -61,7 +61,7 @@ public class WorksActivity extends BaseActivity {
             worksNothing.setVisibility(View.VISIBLE);
             return;
         }
-        initTitle(WorksActivity.this, "作品" + resultBean.size());
+        initTitle(WorksActivity.this, "作品(" + resultBean.size()+")");
 
         WorksAdapter adapter = new WorksAdapter(WorksActivity.this, resultBean);
         adapter.setOnItemClickListener(new WorksAdapter.OnItemClickListener() {

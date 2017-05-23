@@ -68,9 +68,8 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:background="@null"
-            android:inputType="numberDecimal"
+            android:inputType="number"
             android:hint="0.00"
-
             android:textColor="@color/tv_black_my"
             android:textColorHint="@color/home_tab"
             android:textSize="26sp"/>

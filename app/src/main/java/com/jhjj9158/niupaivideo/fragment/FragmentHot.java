@@ -138,6 +138,11 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
         final List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
 
+        if (resultBeanList.size() == 0) {
+            swipeRefresh.setRefreshing(false);
+            return;
+        }
+
         minVid = CommonUtil.getMinVid(resultBeanList);
 
         if (isRefresh && adapterHomeRecyler != null) {
@@ -230,7 +235,7 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
         index = begin + 8;
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .INDEX + "?type=1&uidx=1&begin=" + begin + "&num=" + index + "&vid=" + minVid);
+                .INDEX + "?type=1&uidx=1&begin=" + begin + "&num=" + 8 + "&vid=" + minVid);
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

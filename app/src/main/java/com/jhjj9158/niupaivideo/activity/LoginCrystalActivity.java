@@ -123,7 +123,7 @@ public class LoginCrystalActivity extends BaseActivity {
     }
 
     public void userIsEmpty() {
-        if (!TextUtils.isEmpty(name.getText()) && !TextUtils.isEmpty(pwd.getText())) {
+        if (!TextUtils.isEmpty(name.getText()) && !TextUtils.isEmpty(pwd.getText()) && pwd.getText().toString().length() >= 6) {
             btnLogin.setClickable(true);
             btnLogin.setBackgroundColor(getResources().getColor(R.color.button_login_click));
         } else {

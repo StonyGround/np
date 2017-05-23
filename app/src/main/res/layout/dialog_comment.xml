@@ -18,6 +18,7 @@
         android:inputType="textMultiLine"
         android:textColorHint="@color/button_login"
         android:maxLength="50"
+        android:maxLines="5"
         android:layout_toLeftOf="@+id/tv_send_comment"/>
 
     <TextView

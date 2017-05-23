@@ -48,6 +48,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -263,13 +265,21 @@ public class FragmentMy extends Fragment {
             }
             Picasso.with(getContext()).load(headImage).placeholder(R.drawable.me_user_admin).into
                     (profileImage);
-            tvName.setText(userInfo.getNickName());
+            try {
+                tvName.setText(URLDecoder.decode(userInfo.getNickName(),"utf-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             CacheUtils.setString(getActivity(), "userName", "");
             if (userInfo.getUserSex().equals("1")) {
                 ivGender.setBackgroundResource(R.drawable.man);
             }
             if (!userInfo.getUserTrueName().equals("")) {
-                tvBio.setText("签名：" + userInfo.getUserTrueName());
+                try {
+                    tvBio.setText("签名：" + URLDecoder.decode(userInfo.getUserTrueName(),"utf-8"));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             } else {
                 tvBio.setText(R.string.bio_default);
             }

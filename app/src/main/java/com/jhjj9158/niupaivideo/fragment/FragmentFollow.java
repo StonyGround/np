@@ -231,7 +231,7 @@ public class FragmentFollow extends Fragment implements SwipeRefreshLayout.OnRef
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
                 .INDEX + "?type=3&uidx=" + CacheUtils.getInt(getActivity(), "useridx") +
-                "&begin=" + begin + "&num=" + index + "&vid=" + minVid);
+                "&begin=" + begin + "&num=" + 8 + "&vid=" + minVid);
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

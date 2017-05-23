@@ -130,7 +130,14 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
         Gson gson = new Gson();
         List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
                 .getResult();
+
+        if (resultBeanList.size() == 0) {
+            swipeRefresh.setRefreshing(false);
+            return;
+        }
+
         minVid = CommonUtil.getMinVid(resultBeanList);
+
         if (isRefresh && adapterHomeRecyler != null) {
             isRefresh = false;
             adapterHomeRecyler.addRefreshDatas(resultBeanList);
@@ -230,7 +237,7 @@ public class FragmentDynamic extends Fragment implements SwipeRefreshLayout.OnRe
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
                 .TAB_DYNAMIC + "?vrtype=" + type + "&uidx=" + CacheUtils.getInt(getActivity(),
-                "useridx") + "&begin=" + begin + "&num=" + index + "&vid=" + minVid);
+                "useridx") + "&begin=" + begin + "&num=" + 8 + "&vid=" + minVid);
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

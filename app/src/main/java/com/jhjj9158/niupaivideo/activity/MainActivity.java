@@ -86,21 +86,18 @@ public class MainActivity extends BaseActivity implements NetStateChangeObserver
                 Contact.IS_START_MAIN);
         if (!isStartMain) {
             startActivity(new Intent(this, GuideActivity.class));
-        }
-
-        if (!CommonUtil.checkPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
-                .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
-                    .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, Contact.CHECK_PERMISSION);
-        } else {
+        }else {
+            if (!CommonUtil.checkPermission(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+                    .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+                        .ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, Contact.CHECK_PERMISSION);
+            }
+            inflater = LayoutInflater.from(this);
+            tabList = getTabViewList(tabTitles.length);
+            initiTabHost();
             CommonUtil.updateInfo(MainActivity.this);
+            MobclickAgent.openActivityDurationTrack(false);
         }
-
-        inflater = LayoutInflater.from(this);
-        tabList = getTabViewList(tabTitles.length);
-        initiTabHost();
-
-        MobclickAgent.openActivityDurationTrack(false);
     }
 
 

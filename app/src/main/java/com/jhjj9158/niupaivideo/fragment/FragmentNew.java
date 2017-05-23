@@ -160,7 +160,7 @@ public class FragmentNew extends Fragment implements SwipeRefreshLayout.OnRefres
         index = begin + 8;
         OkHttpClient mOkHttpClient = new OkHttpClient();
         Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .INDEX + "?type=2&uidx=1&begin=" + begin + "&num=" + index + "&vid=" + minVid);
+                .INDEX + "?type=2&uidx=1&begin=" + begin + "&num=" + 8 + "&vid=" + minVid);
         requestBuilder.method("GET", null);
         Request request = requestBuilder.build();
         Call call = mOkHttpClient.newCall(request);

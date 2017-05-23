@@ -14,12 +14,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -107,6 +109,19 @@ public class CrashHandler implements UncaughtExceptionHandler {
             public void run() {
                 Looper.prepare();
                 Toast.makeText(mContext, "很抱歉,程序出现异常!即将退出..", Toast.LENGTH_LONG).show();
+//                new AlertDialog.Builder(mContext).setMessage("很抱歉，我们的APP出现崩溃给您带来的不便，您可以选择发送错误日志用以优化我们的程序，感谢您的支持！")
+//                        .setPositiveButton("发送", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        })
+//                        .setNegativeButton("不发送", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        }).show();
                 Looper.loop();
             }
         }.start();

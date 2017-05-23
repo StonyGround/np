@@ -1,6 +1,7 @@
 package com.jhjj9158.niupaivideo.activity;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -43,8 +44,12 @@ public class FeedbackActivity extends BaseActivity {
 
     @OnClick(R.id.feedback_confirm)
     public void onViewClicked() {
-        String url = Contact.HOST + Contact.FEEDBACK + "?uidx=" + CacheUtils.getInt(this, "useridx") + "&content=" + feedbackContent
-                .getText().toString() + "&email=";
+        String content=CommonUtil.replaceBlank(feedbackContent.getText().toString());
+        if(TextUtils.isEmpty(content)){
+            CommonUtil.showTextToast(this,"您还没有输入任何内容~");
+            return;
+        }
+        String url = Contact.HOST + Contact.FEEDBACK + "?uidx=" + CacheUtils.getInt(this, "useridx") + "&content=" + content + "&email=";
         OkHttpClientManager.get(url, new OKHttpCallback() {
             @Override
             public void onResponse(Object response) {

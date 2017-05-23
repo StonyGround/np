@@ -19,8 +19,13 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.google.gson.Gson;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.activity.SettingActivity;
@@ -37,6 +42,8 @@ import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -159,8 +166,8 @@ public class CommonUtil {
                 Method method = clazz.getMethod("checkSelfPermission", String.class);
                 for (String permission : permissions) {
                     int rest = (Integer) method.invoke(context, permission);
-                    if (rest == PackageManager.PERMISSION_GRANTED) {
-                        return true;
+                    if (rest != PackageManager.PERMISSION_GRANTED) {
+                        return false;
                     }
                 }
             } catch (Exception e) {
@@ -169,18 +176,12 @@ public class CommonUtil {
         } else {
             for (String permission : permissions) {
                 PackageManager pm = context.getPackageManager();
-                if (pm.checkPermission(permission, context.getPackageName()) == PackageManager.PERMISSION_GRANTED) {
-                    return true;
+                if (pm.checkPermission(permission, context.getPackageName()) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
                 }
             }
         }
-        return false;
-    }
-
-    public static void requestPermissions(Context context, String[] permissions) {
-        if (!checkPermission(context, permissions)) {
-            ActivityCompat.requestPermissions((Activity) context, permissions, Contact.CHECK_PERMISSION);
-        }
+        return true;
     }
 
     public static int getMinVid(List<IndexBean.ResultBean> resultBeanList) {
@@ -193,69 +194,74 @@ public class CommonUtil {
         return min;
     }
 
+    public static String replaceBlank(String str) {
+        String dest = "";
+        if (str!=null) {
+            Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+            Matcher m = p.matcher(str);
+            dest = m.replaceAll("");
+        }
+        return dest;
+    }
+
     public static void updateInfo(final Context context) {
         final int uidx = CacheUtils.getInt(context, "useridx");
         if (uidx != 0) {
-            Location location = LocationUtil.getLocation(context);
-            if (location != null) {
-                final double latitude = location.getLatitude();
-                final double longitude = location.getLongitude();
+            AMapLocationClient mLocationClient = new AMapLocationClient(context);
+            AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+            mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+            mLocationOption.setOnceLocationLatest(true);
+            mLocationClient.setLocationOption(mLocationOption);
+            mLocationClient.startLocation();
+            mLocationClient.setLocationListener(new AMapLocationListener() {
+                @Override
+                public void onLocationChanged(AMapLocation aMapLocation) {
+                    if (aMapLocation != null) {
+                        if (aMapLocation.getErrorCode() == 0) {
+                            Log.e("AMapLocation", aMapLocation.getLatitude() + "---" + aMapLocation.getLongitude());
+                            String locationPro = "未知";
+                            String locationCity = "未知";
+                            String locationDistrict = "未知";
+                            double latitude = 0;
+                            double longitude = 0;
+                            locationPro = aMapLocation.getProvince();
+                            locationCity = aMapLocation.getCity();
+                            locationDistrict = aMapLocation.getDistrict();
+                            latitude = aMapLocation.getLatitude();
+                            longitude = aMapLocation.getLongitude();
 
-                String url = Contact.GOOGLE_LOCATION + latitude + "," + longitude;
-                OkHttpClientManager.getUnencrypt(url, new OKHttpCallback() {
-                    @Override
-                    public void onResponse(Object response) {
-                        String locationPro = "未知";
-                        String locationCity = "未知";
-                        String locationDistrict = "未知";
-
-                        Gson gson = new Gson();
-                        GoogleLocationBean locationBean = gson.fromJson(String.valueOf(response), GoogleLocationBean.class);
-                        if (locationBean.getStatus().equals("OK")) {
-                            List<GoogleLocationBean.ResultsBean.AddressComponentsBean> resultsBean = locationBean.getResults().get(0)
-                                    .getAddress_components();
-                            for (int i = 0; i < resultsBean.size(); i++) {
-                                String type = resultsBean.get(i).getTypes().get(0);
-                                if (type.equals("political")) {
-                                    locationDistrict = resultsBean.get(i).getLong_name();
-                                } else if (type.equals("locality")) {
-                                    locationCity = resultsBean.get(i).getLong_name();
-                                } else if (type.equals("administrative_area_level_1")) {
-                                    locationPro = resultsBean.get(i).getLong_name();
+                            String url = null;
+                            try {
+                                url = Contact.HOST + Contact.UPDATE_INFO + "?uidx=" + uidx + "&locationPro=" + URLEncoder.encode
+                                        (locationPro, "utf-8") + "&locationCity=" + URLEncoder.encode
+                                        (locationCity, "utf-8") + "&locationDistrict=" + URLEncoder.encode
+                                        (locationDistrict, "utf-8") + "&latitude=" + latitude + "&longitude=" + longitude +
+                                        "&secret=&versioncode=1.0.0&client=android&unique=" + CommonUtil.getDeviceID(context);
+                            } catch (UnsupportedEncodingException e) {
+                                e.printStackTrace();
+                            }
+                            Log.e("updateInfo", "url---"+url);
+                            OkHttpClientManager.get(url, new OKHttpCallback() {
+                                @Override
+                                public void onResponse(Object response) {
+                                    Log.e("updateInfo", String.valueOf(response));
                                 }
-                            }
+
+                                @Override
+                                public void onError(IOException e) {
+
+                                }
+                            });
+                        } else {
+                            Log.e("AmapError", "location Error, ErrCode:"
+                                    + aMapLocation.getErrorCode() + ", errInfo:"
+                                    + aMapLocation.getErrorInfo());
                         }
-
-
-                        String url = null;
-                        try {
-                            url = Contact.HOST + Contact.UPDATE_INFO + "?uidx=" + uidx + "&locationPro=" + URLEncoder.encode
-                                    (locationPro, "utf-8") + "&locationCity=" + URLEncoder.encode
-                                    (locationCity, "utf-8") + "&locationDistrict=" + URLEncoder.encode
-                                    (locationDistrict, "utf-8") + "&latitude=" + latitude + "&longitude=" + longitude +
-                                    "&secret=&versioncode=1.0.0&client=android&unique=" + CommonUtil.getDeviceID(context);
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        }
-
-                        OkHttpClientManager.get(url, new OKHttpCallback() {
-                            @Override
-                            public void onResponse(Object response) {
-                            }
-
-                            @Override
-                            public void onError(IOException e) {
-
-                            }
-                        });
+                    }else{
+                        Log.e("updateInfo", "null---");
                     }
-
-                    @Override
-                    public void onError(IOException e) {
-
-                    }
-                });
-            }
+                }
+            });
         }
     }
 }

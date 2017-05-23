@@ -4,12 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.jhjj9158.niupaivideo.R;
 import com.jhjj9158.niupaivideo.activity.PersonalActivity;
 import com.jhjj9158.niupaivideo.activity.QuickLoignActivity;
@@ -91,14 +96,13 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder viewHolder, int position) {
         if (getItemViewType(position) == TYPE_HEADER) return;
         this.position = position;
         final int pos = getRealPosition(viewHolder);
         final CommentBean.ResultBean data = mDatas.get(pos);
         if (viewHolder instanceof Holder) {
-            String name = new String(Base64.decode(data.getNickName().getBytes(),
-                    Base64.DEFAULT));
+            String name = null;
             String headImage = new String(Base64.decode(data.getHeadphoto().getBytes(),
                     Base64.DEFAULT));
             if (!headImage.contains("http")) {
@@ -108,20 +112,55 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             try {
                 comment = URLDecoder.decode(new String(Base64.decode(data.getComment().getBytes(),
                         Base64.DEFAULT)), "UTF-8");
+                name = URLDecoder.decode(new String(Base64.decode(data.getNickName().getBytes(),
+                        Base64.DEFAULT)), "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            String date = new String(Base64.decode(data.getCDate().getBytes(), Base64.DEFAULT));
-            double distance = LocationUtil.gps2m(context, data.getLatitude(), data.getLongitude()
-            ) / 1000;
-            String distance_date = null;
-            if (distance < 1) {
-                distance_date = (int) (distance * 1000) + "m | " + data;
-            } else if (distance > 1 && distance < 1000) {
-                distance_date = (int) distance + "km | " + data;
-            } else {
-                distance_date = "1000km外";
-            }
+
+            final String video_date = new String(Base64.decode(data.getCDate().getBytes(), Base64.DEFAULT));
+
+//            double distance = LocationUtil.gps2m(context, data.getLatitude(), data.getLongitude()
+//            ) / 1000;
+//            if (distance > 0 && distance < 1) {
+//                distance_date = (int) (distance * 1000) + "m | " + video_date;
+//            } else if (distance > 1 && distance < 1000) {
+//                distance_date = (int) distance + "km | " + video_date;
+//            } else if (distance > 1000) {
+//                distance_date = "1000km外 | " + video_date;
+//            }
+
+            AMapLocationClient mLocationClient = new AMapLocationClient(context);
+            AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
+            mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+            mLocationOption.setOnceLocationLatest(true);
+            mLocationClient.setLocationOption(mLocationOption);
+            mLocationClient.startLocation();
+            mLocationClient.setLocationListener(new AMapLocationListener() {
+                @Override
+                public void onLocationChanged(AMapLocation aMapLocation) {
+                    if (aMapLocation != null) {
+                        if (aMapLocation.getErrorCode() == 0) {
+                            Log.e("AMapLocation", aMapLocation.getLatitude() + "---" + aMapLocation.getLongitude());
+                            double distance = LocationUtil.gps2m(data.getLatitude(), data.getLongitude(), aMapLocation.getLatitude(),
+                                    aMapLocation.getLongitude()
+                            ) / 1000;
+                            if (distance < 1 && distance > 0) {
+                                ((Holder) viewHolder).comment_distance_date.setText((int) (distance * 1000) + "m | " + video_date);
+                            } else if (distance > 1 && distance < 1000) {
+                                ((Holder) viewHolder).comment_distance_date.setText((int) distance + "km | " + video_date);
+                            } else if (distance > 1000) {
+                                ((Holder) viewHolder).comment_distance_date.setText("1000km外 | " + video_date);
+                            }
+                        } else {
+                            Log.e("AmapError", "location Error, ErrCode:"
+                                    + aMapLocation.getErrorCode() + ", errInfo:"
+                                    + aMapLocation.getErrorInfo());
+                        }
+                    }
+                }
+            });
+
             String replyName = new String(Base64.decode(data.getBnickName().getBytes(),
                     Base64.DEFAULT));
             int identify = data.getIdentify();
@@ -132,7 +171,7 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
             Picasso.with(context).load(headImage).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).comment_headimg);
             ((Holder) viewHolder).comment_name.setText(name);
-//            ((Holder) viewHolder).comment_distance_date.setText(distance_date);
+
             ((Holder) viewHolder).comment_detail.setText(comment);
 
             ((Holder) viewHolder).video_reply_name.setOnClickListener(new View.OnClickListener() {
@@ -150,6 +189,19 @@ public class CommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             });
 
             ((Holder) viewHolder).comment_name.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (CacheUtils.getInt(context, "useridx") == 0) {
+                        context.startActivity(new Intent(context, QuickLoignActivity.class));
+                        return;
+                    }
+
+                    Intent intent = new Intent(context, PersonalActivity.class);
+                    intent.putExtra("buidx", data.getUidx());
+                    context.startActivity(intent);
+                }
+            });
+            ((Holder) viewHolder).comment_headimg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (CacheUtils.getInt(context, "useridx") == 0) {

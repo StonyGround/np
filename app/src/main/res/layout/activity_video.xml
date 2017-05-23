@@ -83,13 +83,6 @@
                 android:orientation="vertical">
 
 
-                <!--<com.jhjj9158.niupaivideo.widget.IjkVideoView-->
-                <!--android:id="@+id/video_view"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content">-->
-
-                <!--</com.jhjj9158.niupaivideo.widget.IjkVideoView>-->
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -250,9 +243,16 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="20dp"
+                    android:textSize="12sp"
                     android:layout_marginTop="20dp"
                     android:text="@string/tv_nothing"
                     android:visibility="gone"/>
+
+                <View
+                    android:id="@+id/video_view_bottom"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/white"/>
 
             </LinearLayout>
         </ScrollView>

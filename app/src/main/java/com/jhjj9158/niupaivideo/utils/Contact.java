@@ -70,4 +70,8 @@ public class Contact {
     public static final int CHECK_PERMISSION = 12;
     public static final int IMAGE_PICKER = 13;
     public static final int NET_ERROR = 14;
+    public static final int WEBVIEW_CRYSTAL = 15;
+    public static final int WEBVIEW_HAPPY = 16;
+    public static final int WEBVIEW_OTHER = 17;
+    public static final int WEBVIEW_AGREEMENT = 18;
 }

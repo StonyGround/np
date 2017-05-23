@@ -75,7 +75,7 @@ public class WithDrawActivity extends BaseActivity {
             withdrawAccountName.setText("添加账户");
             withdrawAccountName.setTextColor(getResources().getColor(R.color.colorPrimary));
         } else {
-            withdrawAccountName.setText(alipay);
+            withdrawAccountName.setText(alipay + "(" + alipay_name + ")");
         }
 
         withdrawCurrentMoney.setText("当前钱包余额：" + currentMoney + "元");
