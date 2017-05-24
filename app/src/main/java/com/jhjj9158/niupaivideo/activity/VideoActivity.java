@@ -57,6 +57,7 @@ import com.jhjj9158.niupaivideo.utils.ActivityManagerUtil;
 import com.jhjj9158.niupaivideo.utils.MediaController;
 import com.jhjj9158.niupaivideo.utils.OkHttpClientManager;
 import com.pili.pldroid.player.IMediaController;
+import com.pili.pldroid.player.PLMediaPlayer;
 import com.pili.pldroid.player.widget.PLVideoTextureView;
 import com.pili.pldroid.player.widget.PLVideoView;
 import com.squareup.picasso.Picasso;
@@ -431,12 +432,18 @@ public class VideoActivity extends BaseActivity {
 
         videoView.setBufferingIndicator(progressbar);
 //        videoView.setDisplayAspectRatio(PLVideoView.ASPECT_RATIO_FIT_PARENT);
-
 //        videoView.setOnCompletionListener(mOnCompletionListener);
 //        videoView.setOnErrorListener(mOnErrorListener);
 
         videoView.setVideoURI(Uri.parse(videoUrl));
         videoView.start();
+
+        videoView.setOnCompletionListener(new PLMediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(PLMediaPlayer plMediaPlayer) {
+                videoView.start();
+            }
+        });
 
     }
 

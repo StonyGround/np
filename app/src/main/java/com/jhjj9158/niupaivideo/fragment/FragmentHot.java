@@ -28,9 +28,11 @@ import com.jhjj9158.niupaivideo.adapter.AdapterHomeBanner;
 import com.jhjj9158.niupaivideo.adapter.AdapterHomeRecyler;
 import com.jhjj9158.niupaivideo.bean.BannerBean;
 import com.jhjj9158.niupaivideo.bean.IndexBean;
+import com.jhjj9158.niupaivideo.callback.OKHttpCallback;
 import com.jhjj9158.niupaivideo.utils.AESUtil;
 import com.jhjj9158.niupaivideo.utils.CommonUtil;
 import com.jhjj9158.niupaivideo.utils.Contact;
+import com.jhjj9158.niupaivideo.utils.OkHttpClientManager;
 import com.jhjj9158.niupaivideo.widget.AdaptiveHeightlViewPager;
 import com.jhjj9158.niupaivideo.widget.GridSpacingItemDecoration;
 import com.jhjj9158.niupaivideo.widget.SpaceItemDecoration;
@@ -134,43 +136,7 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
     }
 
     private void setHotData(String json) {
-        Gson gson = new Gson();
-        final List<IndexBean.ResultBean> resultBeanList = gson.fromJson(json, IndexBean.class)
-                .getResult();
 
-        if (resultBeanList.size() == 0) {
-            swipeRefresh.setRefreshing(false);
-            return;
-        }
-
-        minVid = CommonUtil.getMinVid(resultBeanList);
-
-        if (isRefresh && adapterHomeRecyler != null) {
-            isRefresh = false;
-            adapterHomeRecyler.addRefreshDatas(resultBeanList);
-            swipeRefresh.setRefreshing(false);
-            return;
-        }
-
-        if (isLoadMore && adapterHomeRecyler != null) {
-            isLoadMore = false;
-            adapterHomeRecyler.addDatas(resultBeanList);
-            swipeRefresh.setRefreshing(false);
-            return;
-        }
-
-        adapterHomeRecyler = new AdapterHomeRecyler(getActivity(),
-                resultBeanList);
-        adapterHomeRecyler.setOnItemClickListener(new AdapterHomeRecyler.OnItemClickListener() {
-            @Override
-            public void onItemClick(int position, IndexBean.ResultBean data) {
-                Intent intent = new Intent(getActivity(), VideoActivity.class);
-                intent.putExtra("video", data);
-                startActivity(intent);
-            }
-        });
-        getBannerData();
-        swipeRefresh.setRefreshing(false);
     }
 
     @Override
@@ -233,27 +199,72 @@ public class FragmentHot extends Fragment implements SwipeRefreshLayout.OnRefres
 
     private void getHotData(int begin) {
         index = begin + 8;
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        Request.Builder requestBuilder = new Request.Builder().url(Contact.HOST + Contact
-                .INDEX + "?type=1&uidx=1&begin=" + begin + "&num=" + 8 + "&vid=" + minVid);
-        requestBuilder.method("GET", null);
-        Request request = requestBuilder.build();
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-
+        String url = Contact.HOST + Contact.INDEX + "?type=1&uidx=1&begin=" + begin + "&num=" + 8 + "&vid=" + minVid;
+//        OkHttpClient mOkHttpClient = new OkHttpClient();
+//        Request.Builder requestBuilder = new Request.Builder().url(url);
+//        requestBuilder.method("GET", null);
+//        Request request = requestBuilder.build();
+//        Call call = mOkHttpClient.newCall(request);
+//        call.enqueue(new Callback() {
+//
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                Message message = new Message();
+//                message.what = Contact.NET_ERROR;
+//                handler.sendMessage(message);
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                Message message = new Message();
+//                message.obj = response.body().string();
+//                message.what = Contact.GET_HOT_DATA;
+//                handler.sendMessage(message);
+//            }
+//        });
+        OkHttpClientManager.get(url, new OKHttpCallback<IndexBean>() {
             @Override
-            public void onFailure(Call call, IOException e) {
-                Message message = new Message();
-                message.what = Contact.NET_ERROR;
-                handler.sendMessage(message);
+            public void onResponse(IndexBean response) {
+                final List<IndexBean.ResultBean> resultBeanList = response.getResult();
+
+                if (resultBeanList.size() == 0) {
+                    swipeRefresh.setRefreshing(false);
+                    return;
+                }
+
+                minVid = CommonUtil.getMinVid(resultBeanList);
+
+                if (isRefresh && adapterHomeRecyler != null) {
+                    isRefresh = false;
+                    adapterHomeRecyler.addRefreshDatas(resultBeanList);
+                    swipeRefresh.setRefreshing(false);
+                    return;
+                }
+
+                if (isLoadMore && adapterHomeRecyler != null) {
+                    isLoadMore = false;
+                    adapterHomeRecyler.addDatas(resultBeanList);
+                    swipeRefresh.setRefreshing(false);
+                    return;
+                }
+
+                adapterHomeRecyler = new AdapterHomeRecyler(getActivity(),
+                        resultBeanList);
+                adapterHomeRecyler.setOnItemClickListener(new AdapterHomeRecyler.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position, IndexBean.ResultBean data) {
+                        Intent intent = new Intent(getActivity(), VideoActivity.class);
+                        intent.putExtra("video", data);
+                        startActivity(intent);
+                    }
+                });
+                getBannerData();
+                swipeRefresh.setRefreshing(false);
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                Message message = new Message();
-                message.obj = response.body().string();
-                message.what = Contact.GET_HOT_DATA;
-                handler.sendMessage(message);
+            public void onError(IOException e) {
+
             }
         });
     }

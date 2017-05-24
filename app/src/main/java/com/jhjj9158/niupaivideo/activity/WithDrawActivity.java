@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
+import android.text.method.NumberKeyListener;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -79,6 +81,18 @@ public class WithDrawActivity extends BaseActivity {
         }
 
         withdrawCurrentMoney.setText("当前钱包余额：" + currentMoney + "元");
+        withdrawMoney.setKeyListener(new NumberKeyListener() {
+            @Override
+            protected char[] getAcceptedChars() {
+                char[] numberChars = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0'};
+                return numberChars;
+            }
+
+            @Override
+            public int getInputType() {
+                return android.text.InputType.TYPE_CLASS_PHONE;
+            }
+        });
         withdrawMoney.addTextChangedListener(new TextWatcher() {
             boolean deleteLastChar;
 
@@ -89,12 +103,12 @@ public class WithDrawActivity extends BaseActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().contains(".")) {
-                    // 如果点后面有超过三位数值,则删掉最后一位
-                    int length = s.length() - s.toString().lastIndexOf(".");
-                    // 说明后面有三位数值
-                    deleteLastChar = length >= 4;
-                }
+//                if (s.toString().contains(".")) {
+//                    // 如果点后面有超过三位数值,则删掉最后一位
+//                    int length = s.length() - s.toString().lastIndexOf(".");
+//                    // 说明后面有三位数值
+//                    deleteLastChar = length >= 4;
+//                }
                 userIsEmpty();
             }
 
@@ -103,21 +117,23 @@ public class WithDrawActivity extends BaseActivity {
                 if (s == null) {
                     return;
                 }
-                if (deleteLastChar) {
-                    // 设置新的截取的字符串
-                    withdrawMoney.setText(s.toString().substring(0, s.toString().length() - 1));
-                    // 光标强制到末尾
-                    withdrawMoney.setSelection(withdrawMoney.getText().length());
-                }
-                // 以小数点开头，前面自动加上 "0"
-                if (s.toString().startsWith(".")) {
-                    withdrawMoney.setText("0" + s);
-                    withdrawMoney.setSelection(withdrawMoney.getText().length());
-                }
+//                if (deleteLastChar) {
+//                    // 设置新的截取的字符串
+//                    withdrawMoney.setText(s.toString().substring(0, s.toString().length() - 1));
+//                    // 光标强制到末尾
+//                    withdrawMoney.setSelection(withdrawMoney.getText().length());
+//                }
+//                // 以小数点开头，前面自动加上 "0"
+//                if (s.toString().startsWith(".")) {
+//                    withdrawMoney.setText("0" + s);
+//                    withdrawMoney.setSelection(withdrawMoney.getText().length());
+//                }
                 if (s.length() > 0) {
                     if (Double.parseDouble(s.toString()) > currentMoney) {
-                        withdrawMoney.setText(String.valueOf(currentMoney));
-                        withdrawMoney.setSelection(withdrawMoney.getText().length());
+                        String money = String.valueOf(currentMoney);
+                        money= money.substring(0, money.indexOf("."));
+                        withdrawMoney.setText(money);
+                        withdrawMoney.setSelection(money.length());
                     }
                 }
                 userIsEmpty();

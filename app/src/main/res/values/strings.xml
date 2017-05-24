@@ -72,7 +72,7 @@
     <string name="about">关于</string>
     <string name="setting">设置</string>
     <string name="feedback">反馈</string>
-    <string name="cache_clear">清除缓存</string>
+    <string name="cache_clear">清理缓存</string>
     <string name="quit">退出登录</string>
 
     <string name="cache_size">%1$s</string>
@@ -92,7 +92,7 @@
     <string name="feedback_hint">请尽情吐槽吧~(๑≧∀≦๑)</string>
 
     <string name="search_hint">输入昵称、用户id、标签</string>
-
+    <string name="withdraw_money_hint"><font size="16">提现金额只能为整数~</font></string>
     <!--Ijkplayer Start-->
     <string name="N_A">N/A</string>
     <string name="close">Close</string>

@@ -57,11 +57,12 @@ public class WorksActivity extends BaseActivity {
         Gson gson = new Gson();
         final List<IndexBean.ResultBean> resultBean = gson.fromJson(json, IndexBean
                 .class).getResult();
+
+        initTitle(WorksActivity.this, "作品(" + resultBean.size() + ")");
         if (resultBean.size() == 0) {
             worksNothing.setVisibility(View.VISIBLE);
             return;
         }
-        initTitle(WorksActivity.this, "作品(" + resultBean.size()+")");
 
         WorksAdapter adapter = new WorksAdapter(WorksActivity.this, resultBean);
         adapter.setOnItemClickListener(new WorksAdapter.OnItemClickListener() {
@@ -79,7 +80,6 @@ public class WorksActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityManagerUtil.getActivityManager().pushActivity2Stack(this);
-        initTitle(WorksActivity.this, "作品");
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         rvWorks.setLayoutManager(gridLayoutManager);
         rvWorks.addItemDecoration(new SpaceItemDecoration(4));

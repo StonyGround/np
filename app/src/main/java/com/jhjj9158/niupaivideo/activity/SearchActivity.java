@@ -108,8 +108,12 @@ public class SearchActivity extends BaseActivity {
                 searchRlUser.setVisibility(View.VISIBLE);
                 resultBean = response.getResult();
                 if (resultBean.size() == 0) {
+                    searchNothing.setText("暂无相关用户数据");
                     searchNothing.setVisibility(View.VISIBLE);
-                    return;
+                    searchMore.setVisibility(View.GONE);
+                }else{
+                    searchNothing.setVisibility(View.GONE);
+                    searchMore.setVisibility(View.VISIBLE);
                 }
                 SearchUserAdapter adapter = new SearchUserAdapter(SearchActivity.this, resultBean);
                 adapter.setOnItemClickListener(new SearchUserAdapter.OnItemClickListener() {

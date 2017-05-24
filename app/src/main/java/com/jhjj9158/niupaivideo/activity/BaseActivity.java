@@ -3,12 +3,15 @@ package com.jhjj9158.niupaivideo.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -35,6 +38,10 @@ public abstract class BaseActivity extends AppCompatActivity implements NetState
     TextView toolbar_title;
     LinearLayout ll_toolbar;
     RelativeLayout toolbar_right;
+
+    private AlertDialog alertDialog;
+
+    private boolean isNetConnect = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,14 +110,13 @@ public abstract class BaseActivity extends AppCompatActivity implements NetState
     protected void onResume() {
         super.onResume();
         MobclickAgent.onResume(this);
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (needRegisterNetworkChangeObserver()) {
-            NetStateChangeReceiver.unregisterObserver(this);
-        }
+
     }
 
     /**
@@ -122,10 +128,40 @@ public abstract class BaseActivity extends AppCompatActivity implements NetState
 
     @Override
     public void onNetDisconnected() {
-        CommonUtil.showTextToast(this, "怎么又没网啦!ヾ(。￣□￣)ﾂ゜゜゜", Toast.LENGTH_LONG);
+//        CommonUtil.showTextToast(this, "怎么又没网啦!ヾ(。￣□￣)ﾂ゜゜゜", Toast.LENGTH_LONG);
+        Log.e("BaseActivity", "onNetDisconnected");
+        alertDialog = new AlertDialog.Builder(this).setTitle("提示")
+                .setMessage("网络连接已断开")
+                .setPositiveButton("网络设置", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new
+                                Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
+                        startActivity(intent);
+                    }
+                })
+                .setNeutralButton("退出APP", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.exit(0);
+                    }
+                }).show();
+        alertDialog.setCanceledOnTouchOutside(false);
     }
 
     @Override
     public void onNetConnected(NetworkType networkType) {
+        Log.e("BaseActivity", "onNetConnected");
+        if (alertDialog != null) {
+            alertDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (needRegisterNetworkChangeObserver()) {
+            NetStateChangeReceiver.unregisterObserver(this);
+        }
     }
 }

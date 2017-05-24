@@ -57,7 +57,7 @@ public class SettingActivity extends BaseActivity {
                 startActivity(new Intent(this, FeedbackActivity.class));
                 break;
             case R.id.setting_clear:
-                builder.setMessage("确定清除缓存吗？")
+                builder.setMessage("确定清理缓存吗？")
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {

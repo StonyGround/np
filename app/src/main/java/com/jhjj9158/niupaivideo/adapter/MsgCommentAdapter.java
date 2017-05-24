@@ -122,7 +122,7 @@ public class MsgCommentAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     .msgCommentHeadimg);
             Picasso.with(context).load(videoPic).placeholder(R.drawable.me_user_admin).into(((Holder) viewHolder).msgCommentVideo);
             ((Holder) viewHolder).msgCommentName.setText(name);
-            ((Holder) viewHolder).msgCommentDetail.setText("回复我：" + comment);
+            ((Holder) viewHolder).msgCommentDetail.setText("评论了你的视频：" + comment);
             ((Holder) viewHolder).msgCommentReply.setText("我的评论：" + reply);
             ((Holder) viewHolder).msgCommentDate.setText(date);
             ((Holder) viewHolder).msgCommentName.setOnClickListener(new View.OnClickListener() {

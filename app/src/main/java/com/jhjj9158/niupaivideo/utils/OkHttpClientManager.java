@@ -3,6 +3,7 @@ package com.jhjj9158.niupaivideo.utils;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.internal.$Gson$Types;
@@ -83,6 +84,7 @@ public class OkHttpClientManager {
             @Override
             public void run() {
                 Object o = AESUtil.decode(json);
+                Log.d("json", String.valueOf(o));
                 Type type = callback.getType();
                 if (type != null) {
                     o = mGson.fromJson((String) o, type);

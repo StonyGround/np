@@ -69,7 +69,7 @@
             android:layout_marginLeft="10dp"
             android:background="@null"
             android:inputType="number"
-            android:hint="0.00"
+            android:hint="@string/withdraw_money_hint"
             android:textColor="@color/tv_black_my"
             android:textColorHint="@color/home_tab"
             android:textSize="26sp"/>
